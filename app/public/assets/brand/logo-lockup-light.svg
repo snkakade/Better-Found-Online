@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 512" role="img" aria-labelledby="title">
+  <title id="title">Better Found Online logo</title>
+  <g fill="none" stroke="#F1ECE7" stroke-linecap="round" stroke-width="48">
+    <path d="M54 47v239c0 119 83 190 197 190 116 0 190-80 166-243"/>
+    <path d="M121 47v237c0 84 53 134 127 134 77 0 123-55 123-129 0-27-7-51-22-73"/>
+  </g>
+  <path d="M166 165c43-31 102-39 154 5l-34 36c-32-22-75-22-120 8v-49Z" fill="#F1ECE7"/>
+  <g fill="#F1ECE7" font-family="Outfit, 'Avenir Next', Arial, sans-serif" font-weight="500">
+    <text x="570" y="238" font-size="94" letter-spacing="-4">better found</text>
+    <text x="570" y="344" font-size="94" letter-spacing="-4">online.</text>
+  </g>
+</svg>

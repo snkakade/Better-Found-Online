@@ -1,0 +1,148 @@
+.scroll63-story {
+  --scroll63-light: #dcdbd5;
+  --scroll63-accent: #e12c1a;
+  --scroll63-dark: #1a0401;
+  color: var(--scroll63-light);
+  background: var(--scroll63-dark);
+}
+
+.scroll63-story *,
+.scroll63-story *::before,
+.scroll63-story *::after { box-sizing: border-box; }
+
+.scroll63-hero,
+.scroll63-about {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.scroll63-about {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scroll63-dark);
+  text-align: center;
+  padding: 2rem;
+}
+
+.scroll63-about > div { width: min(74rem, 86vw); }
+.scroll63-about h3,
+.scroll63-hero h2,
+.scroll63-hero h3 { margin: 0; text-wrap: balance; }
+.scroll63-about h3 { font-size: clamp(2.65rem, 6vw, 7.5rem); line-height: 0.94; font-weight: 400; }
+.scroll63-about p { width: min(48rem, 90%); margin: 2rem auto 0; font-size: clamp(1rem, 1.25vw, 1.35rem); line-height: 1.6; color: color-mix(in srgb, var(--scroll63-light) 70%, transparent); }
+
+.scroll63-hero-fg-content,
+.scroll63-hero-bg-content,
+.scroll63-hero-outro-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scroll63-hero-fg-content {
+  z-index: 2;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  transform-origin: 50% 50%;
+  will-change: transform, clip-path;
+}
+
+.scroll63-hero-fg-img,
+.scroll63-hero-fg-img img,
+.scroll63-hero-outro-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.scroll63-hero-fg-header {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 3;
+  width: 95%;
+  padding: 2rem;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.scroll63-hero-fg-header h2 { font-size: clamp(3rem, 8.2vw, 10.5rem); line-height: 0.88; font-weight: 400; letter-spacing: -0.055em; }
+
+.scroll63-hero-fg-overlay-dark,
+.scroll63-hero-fg-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scroll63-hero-fg-overlay-dark { z-index: 4; background: var(--scroll63-dark); }
+.scroll63-hero-fg-overlay { z-index: 5; background: var(--scroll63-accent); }
+
+.scroll63-hero-bg-content {
+  z-index: auto;
+  display: flex;
+  background: var(--scroll63-light);
+  color: var(--scroll63-dark);
+}
+
+.scroll63-hero-bg-content-col {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  padding: 2rem;
+  will-change: transform;
+}
+
+.scroll63-hero-bg-content-col:nth-child(2) { justify-content: flex-end; text-align: right; }
+.scroll63-hero-bg-content-copy { display: flex; width: min(50%, 31rem); flex-direction: column; gap: 0.75rem; }
+.scroll63-hero-bg-content-copy h3 { color: var(--scroll63-accent); font-size: clamp(2.25rem, 4vw, 5.25rem); line-height: 0.94; font-weight: 400; }
+.scroll63-hero-bg-content-copy p { margin: 0; font-size: clamp(0.9rem, 1.02vw, 1.08rem); line-height: 1.48; }
+
+.scroll63-hero-outro-content { z-index: 1; display: flex; }
+.scroll63-hero-outro-img { flex: 1; min-width: 0; overflow: hidden; will-change: clip-path; }
+.scroll63-hero-outro-img:first-child { clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); }
+.scroll63-hero-outro-img:nth-child(2) { clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%); }
+.scroll63-hero-outro-header { position: absolute; top: 50%; left: 50%; z-index: 2; display: flex; width: min(72%, 58rem); transform: translate(-50%, -50%); flex-direction: column; align-items: center; gap: 1.75rem; text-align: center; }
+.scroll63-hero-outro-header h3 { font-size: clamp(2.6rem, 5.2vw, 6rem); line-height: 0.92; font-weight: 600; letter-spacing: -0.045em; text-shadow: 0 0.08em 0.45em rgb(26 4 1 / 0.45); }
+.scroll63-hero-outro-cta { display: inline-flex; min-height: 3.5rem; align-items: center; justify-content: center; gap: 1.4rem; border: 1px solid currentColor; padding: 0.85rem 1.25rem; color: inherit; font-size: clamp(0.85rem, 1vw, 1rem); font-weight: 700; letter-spacing: 0.02em; text-decoration: none; text-transform: uppercase; }
+.scroll63-hero-outro-cta span { font-size: 1.25em; transition: transform 180ms ease; }
+.scroll63-hero-outro-cta:hover span,
+.scroll63-hero-outro-cta:focus-visible span { transform: translate(0.18rem, -0.18rem); }
+.scroll63-line { position: relative; will-change: transform; }
+
+@media (max-width: 1000px) {
+  .scroll63-hero-bg-content-copy { width: 72%; }
+  .scroll63-hero-bg-content-col:nth-child(2) .scroll63-hero-bg-content-copy { margin-left: auto; }
+  .scroll63-hero-bg-content-col:first-child .scroll63-hero-bg-content-copy { margin-top: -50svh; }
+  .scroll63-hero-bg-content-col:nth-child(2) .scroll63-hero-bg-content-copy { margin-top: 50svh; }
+  .scroll63-hero-bg-content-col { padding: 1.25rem; }
+  .scroll63-hero-fg-header { width: 100%; padding: 1.25rem; }
+  .scroll63-hero-outro-header { width: min(88%, 44rem); padding: 2rem; }
+  .scroll63-about { width: 100%; padding: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .scroll63-hero-bg-content-col { padding: 0.8rem; }
+  .scroll63-hero-bg-content-copy { width: 68%; gap: 0.45rem; }
+  .scroll63-hero-bg-content-col:first-child .scroll63-hero-bg-content-copy { margin-top: -38svh; }
+  .scroll63-hero-bg-content-col:nth-child(2) .scroll63-hero-bg-content-copy { margin-top: 34svh; }
+  .scroll63-hero-bg-content-copy h3 { font-size: clamp(1.55rem, 7.6vw, 2rem); line-height: 0.96; }
+  .scroll63-hero-bg-content-copy p { font-size: 0.67rem; line-height: 1.28; }
+  .scroll63-hero-outro-header { gap: 1.25rem; }
+  .scroll63-hero-outro-header h3 { font-size: clamp(2rem, 9vw, 3.15rem); }
+  .scroll63-hero-outro-cta { min-height: 3.1rem; font-size: 0.72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll63-hero { min-height: 100svh; height: auto; display: grid; }
+  .scroll63-hero-fg-content,
+  .scroll63-hero-bg-content,
+  .scroll63-hero-outro-content { position: relative; inset: auto; min-height: 100svh; }
+  .scroll63-hero-fg-content { clip-path: none !important; transform: none !important; }
+  .scroll63-hero-bg-content-col,
+  .scroll63-hero-outro-img { transform: none !important; clip-path: none !important; }
+  .scroll63-hero-fg-overlay-dark,
+  .scroll63-hero-fg-overlay { display: none; }
+}
