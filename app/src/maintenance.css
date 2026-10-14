@@ -1,6 +1,8 @@
 @font-face {
-  font-family: BfoDisplay;
+  font-family: Outfit;
   src: url("/assets/fonts/Outfit.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -17,7 +19,8 @@
   --silver: #f0ece8;
   --muted: #aea5a5;
   --line: rgb(240 236 232 / 17%);
-  font-family: BfoDisplay, Arial, sans-serif;
+  font-family: Outfit, sans-serif;
+  font-weight: 350;
   color-scheme: dark;
 }
 
@@ -32,6 +35,11 @@ body,
 body {
   min-width: 320px;
   background: var(--deep);
+  color: var(--silver);
+  font-family: Outfit, sans-serif;
+  font-weight: 350;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a { text-decoration: none; }
