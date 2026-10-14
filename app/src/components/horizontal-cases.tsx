@@ -39,9 +39,9 @@ const cases = [
 
 type CaseDevice = (typeof cases)[number]["devices"][number];
 
-function DevicePreview({ device }: { device: CaseDevice }) {
+function DevicePreview({ device, registerVideo, synchronized = false }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; synchronized?: boolean }) {
   const video = (
-    <video autoPlay loop muted playsInline preload="metadata" aria-label={device.label}>
+    <video ref={registerVideo} autoPlay={!synchronized} loop muted playsInline preload="auto" aria-label={device.label}>
       <source src={device.src} type="video/webm" />
     </video>
   );
@@ -55,6 +55,80 @@ function DevicePreview({ device }: { device: CaseDevice }) {
   }
 
   return <div className="case-device case-device-macbook"><div className="case-device-macbook-lid"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-macbook-screen">{video}</div></div><span className="case-device-macbook-base" aria-hidden="true" /></div>;
+}
+
+function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
+  const videos = useRef<(HTMLVideoElement | null)[]>([]);
+  const synchronized = devices.length > 1;
+
+  useEffect(() => {
+    if (!synchronized) return;
+
+    let readyTimer = 0;
+    let syncTimer = 0;
+    const media = videos.current.filter((video): video is HTMLVideoElement => Boolean(video));
+
+    const startTogether = () => {
+      if (media.length !== devices.length || media.some((video) => video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA)) return false;
+      media.forEach((video) => {
+        video.pause();
+        video.currentTime = 0;
+        video.playbackRate = 1;
+      });
+      void Promise.all(media.map((video) => video.play().catch(() => undefined)));
+      return true;
+    };
+
+    const keepTogether = () => {
+      const master = media[0];
+      if (!master || master.paused || master.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+      media.slice(1).forEach((video) => {
+        if (video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) void video.play().catch(() => undefined);
+        const difference = master.currentTime - video.currentTime;
+        if (Math.abs(difference) > 0.75) {
+          video.currentTime = master.currentTime;
+          video.playbackRate = 1;
+        } else {
+          video.playbackRate = Math.min(1.04, Math.max(0.96, 1 + difference * 0.08));
+        }
+      });
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState !== "visible" || !media[0]) return;
+      media.slice(1).forEach((video) => {
+        video.currentTime = media[0]!.currentTime;
+        video.playbackRate = 1;
+      });
+    };
+
+    if (!startTogether()) {
+      readyTimer = window.setInterval(() => {
+        if (startTogether()) window.clearInterval(readyTimer);
+      }, 100);
+    }
+    syncTimer = window.setInterval(keepTogether, 500);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.clearInterval(readyTimer);
+      window.clearInterval(syncTimer);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [devices.length, synchronized]);
+
+  return (
+    <div className="case-device-stage">
+      {devices.map((device, index) => (
+        <DevicePreview
+          device={device}
+          key={device.src}
+          synchronized={synchronized}
+          registerVideo={(video) => { videos.current[index] = video; }}
+        />
+      ))}
+    </div>
+  );
 }
 
 export function HorizontalCases() {
@@ -85,9 +159,7 @@ export function HorizontalCases() {
         {cases.map((item, index) => (
           <article className="case-panel" key={item.name}>
             <div className={`case-visual case-visual--${item.devices.length > 1 ? "ensemble" : item.devices[0].kind}`}>
-              <div className="case-device-stage">
-                {item.devices.map((device) => <DevicePreview device={device} key={`${item.name}-${device.kind}`} />)}
-              </div>
+              <DeviceSet devices={item.devices} />
             </div>
             <div className="case-copy">
               <strong className="case-name">{item.name}</strong>
