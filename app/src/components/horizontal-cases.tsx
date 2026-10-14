@@ -1,12 +1,61 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const cases = [
-  { name: "Dr Shweta Valunj", service: "Website Strategy / Design / SEO", image: "/assets/portals.webp", headline: "Make specialist expertise easier to trust.", text: "A carefully structured dental practice website that brings clarity to treatment information, communicates professional expertise, and makes the consultation path easier to follow." },
-  { name: "CharterX", service: "Website / Digital Experience", image: "/assets/macro.webp", headline: "Premium presentation. Clear purpose.", text: "A polished website experience that brings structure and character to yacht services, with a focus on presenting a specialized offer clearly." },
-  { name: "Tech Sales Sourced", service: "Positioning / Website Development", image: "/assets/connect.webp", headline: "Stand out in a market full of sameness.", text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates." },
-];
+  {
+    name: "Dr Shweta Valunj",
+    service: "Website Strategy / Design / SEO",
+    headline: "Make specialist expertise easier to trust.",
+    text: "A carefully structured dental practice website that brings clarity to treatment information, communicates professional expertise, and makes the consultation path easier to follow.",
+    devices: [{ kind: "macbook", src: "/assets/work/dr-shweta-desktop.webm", label: "Dr Shweta Valunj website preview on a MacBook" }],
+  },
+  {
+    name: "Say Vanilla",
+    service: "Website Strategy / Design / Development",
+    headline: "Turn a specialist product into a story worth exploring.",
+    text: "A tactile, mobile-first website that gives an ingredient-led brand the space to explain its product, build confidence, and make discovery feel effortless.",
+    devices: [{ kind: "phone", src: "/assets/work/say-vanilla-mobile.webm", label: "Say Vanilla mobile website preview on an iPhone" }],
+  },
+  {
+    name: "CharterX",
+    service: "Website / Digital Experience",
+    headline: "Premium presentation. Clear purpose.",
+    text: "A polished website experience that brings structure and character to yacht services, with a focus on presenting a specialized offer clearly.",
+    devices: [{ kind: "tablet", src: "/assets/work/charterx-tablet.webm", label: "CharterX website preview on an iPad" }],
+  },
+  {
+    name: "Tech Sales Sourced",
+    service: "Positioning / Website Development",
+    headline: "Stand out in a market full of sameness.",
+    text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates.",
+    devices: [
+      { kind: "macbook", src: "/assets/work/tech-sales-desktop.webm", label: "Tech Sales Sourced desktop website preview" },
+      { kind: "tablet", src: "/assets/work/tech-sales-tablet.webm", label: "Tech Sales Sourced tablet website preview" },
+      { kind: "phone", src: "/assets/work/tech-sales-mobile.webm", label: "Tech Sales Sourced mobile website preview" },
+    ],
+  },
+] as const;
+
+type CaseDevice = (typeof cases)[number]["devices"][number];
+
+function DevicePreview({ device }: { device: CaseDevice }) {
+  const video = (
+    <video autoPlay loop muted playsInline preload="metadata" aria-label={device.label}>
+      <source src={device.src} type="video/webm" />
+    </video>
+  );
+
+  if (device.kind === "phone") {
+    return <div className="case-device case-device-phone"><div className="case-device-phone-screen">{video}<span className="case-device-phone-island" aria-hidden="true" /></div></div>;
+  }
+
+  if (device.kind === "tablet") {
+    return <div className="case-device case-device-tablet"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-tablet-screen">{video}</div></div>;
+  }
+
+  return <div className="case-device case-device-macbook"><div className="case-device-macbook-lid"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-macbook-screen">{video}</div></div><span className="case-device-macbook-base" aria-hidden="true" /></div>;
+}
 
 export function HorizontalCases() {
   const root = useRef<HTMLElement>(null);
@@ -32,10 +81,14 @@ export function HorizontalCases() {
 
   return (
     <section className="horizontal-cases" ref={root} aria-label="Selected case studies">
-      <div className="case-track" ref={track}>
+      <div className="case-track" ref={track} style={{ "--case-count": cases.length } as CSSProperties}>
         {cases.map((item, index) => (
           <article className="case-panel" key={item.name}>
-            <div className="case-visual"><img src={item.image} alt="" /></div>
+            <div className={`case-visual case-visual--${item.devices.length > 1 ? "ensemble" : item.devices[0].kind}`}>
+              <div className="case-device-stage">
+                {item.devices.map((device) => <DevicePreview device={device} key={`${item.name}-${device.kind}`} />)}
+              </div>
+            </div>
             <div className="case-copy">
               <strong className="case-name">{item.name}</strong>
               <span>{item.service}</span>
