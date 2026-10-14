@@ -64,6 +64,7 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
   useEffect(() => {
     if (!synchronized) return;
 
+    const basePlaybackRate = 0.44;
     let readyTimer = 0;
     let syncTimer = 0;
     const media = videos.current.filter((video): video is HTMLVideoElement => Boolean(video));
@@ -73,7 +74,7 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
       media.forEach((video) => {
         video.pause();
         video.currentTime = 0;
-        video.playbackRate = 1;
+        video.playbackRate = basePlaybackRate;
       });
       void Promise.all(media.map((video) => video.play().catch(() => undefined)));
       return true;
@@ -87,9 +88,9 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
         const difference = master.currentTime - video.currentTime;
         if (Math.abs(difference) > 0.75) {
           video.currentTime = master.currentTime;
-          video.playbackRate = 1;
+          video.playbackRate = basePlaybackRate;
         } else {
-          video.playbackRate = Math.min(1.04, Math.max(0.96, 1 + difference * 0.08));
+          video.playbackRate = Math.min(basePlaybackRate + 0.025, Math.max(basePlaybackRate - 0.025, basePlaybackRate + difference * 0.04));
         }
       });
     };
@@ -98,7 +99,7 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
       if (document.visibilityState !== "visible" || !media[0]) return;
       media.slice(1).forEach((video) => {
         video.currentTime = media[0]!.currentTime;
-        video.playbackRate = 1;
+        video.playbackRate = basePlaybackRate;
       });
     };
 
