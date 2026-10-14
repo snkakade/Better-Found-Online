@@ -60,6 +60,8 @@ function CreativeProductionPage() {
           <div className="creative-orbit" aria-hidden="true"><span>VIDEO</span><span>CGI</span><span>MOTION</span><span>DESIGN</span><i /></div>
         </section>
 
+        <CreativeCapabilityCarousel capabilities={capabilities} />
+
         <InformationScrollStory
           foregroundImage="/assets/world/poster.webp"
           foregroundAlt="Abstract metallic sculpture representing creative production"
@@ -78,7 +80,6 @@ function CreativeProductionPage() {
           afterHeading="Video. CGI. Motion. Design."
           afterBody="One connected creative direction can adapt across brand films, product visuals, campaign assets, social content, and promotional work."
         />
-        <CreativeCapabilityCarousel capabilities={capabilities} />
 
         <section className="creative-growth section-pad" aria-labelledby="creative-growth-title"><div><p className="eyebrow">Related growth services</p><h2 id="creative-growth-title">Great creative needs<br />somewhere to go.</h2><p>Creative production works alongside the channels where your audience discovers, sees, and engages with your business.</p></div><div className="creative-growth-grid"><article><span>01 / Paid campaigns</span><h3>Performance Marketing</h3><p>Paid campaign support that connects audience targeting, campaign creative, and ongoing optimization to business objectives.</p><TransitionLink href="/services/performance-marketing">Explore Performance Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink></article><article><span>02 / Ongoing content</span><h3>Social Media Management</h3><p>Content planning, creative coordination, publishing, and ongoing social media support that helps your business communicate consistently.</p><TransitionLink href="/services/social-media-management">Explore Social Media Management <ArrowUpRight size={17} weight="light" /></TransitionLink></article></div></section>
 
