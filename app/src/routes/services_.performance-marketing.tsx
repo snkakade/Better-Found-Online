@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
 import { InformationScrollStory } from "@/components/information-scroll-story";
+import { PerformanceProofCards, type PerformanceProofCard } from "@/components/performance-proof-cards";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 
 const pageTitle = "Performance Marketing & Paid Ads | Better Found Online";
@@ -36,6 +37,76 @@ const process = [
   { number: "02", title: "Measure", copy: "Review tracking, landing pages, and reporting requirements." },
   { number: "03", title: "Launch", copy: "Build and activate the agreed campaigns and creative." },
   { number: "04", title: "Refine", copy: "Review the evidence and prioritize the next adjustment." },
+];
+
+const campaignEvidence: PerformanceProofCard[] = [
+  {
+    category: "Industrial manufacturing / B2B",
+    headline: "Make more of the product line discoverable.",
+    challenge: "An established manufacturer was well known for only part of its offer. The campaign needed to create demand for overlooked business units without losing high-intent search traffic.",
+    approach: "Search-led planning for the underrepresented business units, followed by paid social to broaden the channel mix.",
+    evidenceLabel: "Google Ads campaign report",
+    evidenceNote: "The 90-day source report labels 266 configured conversions. It does not identify those actions as qualified leads, so we do not describe them as leads.",
+    metrics: [
+      { label: "Impressions", value: "25,311" },
+      { label: "Clicks", value: "4,301" },
+      { label: "Reported conversions", value: "266" },
+      { label: "Reported spend", value: "₹203,060.06" },
+      { label: "Average CPC", value: "₹47.21" },
+    ],
+    evidence: [{
+      src: "/assets/performance-evidence/industrial-search-report.png",
+      alt: "Anonymized Google Ads dashboard showing a 90-day industrial search campaign summary",
+      platform: "Google Ads",
+      period: "15 Jul–12 Oct 2026",
+      width: 2048,
+      height: 620,
+      caption: "Account identity and contact details are permanently redacted. The dashboard retains the original platform labels and reporting period.",
+    }],
+  },
+  {
+    category: "Consumer technology / ecommerce",
+    headline: "Make measurement reliable before scaling.",
+    challenge: "A growing consumer technology program needed clearer website tracking and a coordinated channel mix in a competitive category.",
+    approach: "Tracking improvements came first, followed by search across Google and Microsoft Advertising, marketplace advertising, and awareness activity.",
+    evidenceLabel: "Google Ads + Amazon Ads reporting",
+    evidenceNote: "The source dashboards use platform-defined conversions, conversion value, purchases, sales, ACOS, and ROAS. These are platform-reported figures, not independently audited revenue or profit.",
+    metrics: [
+      { label: "Google Ads impressions", value: "839,418" },
+      { label: "Google Ads conversions", value: "5,836.63" },
+      { label: "Google Ads cost", value: "₹2,750,711.36" },
+      { label: "Amazon Ads purchases", value: "43,623" },
+      { label: "Amazon Ads ROAS", value: "9.80" },
+    ],
+    evidence: [
+      {
+        src: "/assets/performance-evidence/consumer-search-report.png",
+        alt: "Anonymized Google Ads dashboard showing a consumer technology campaign summary",
+        platform: "Google Ads",
+        period: "15 Jul–12 Oct 2026",
+        width: 2048,
+        height: 560,
+        caption: "Platform-reported cost, conversions, conversion value, impressions, and average CPC for the stated 90-day period.",
+      },
+      {
+        src: "/assets/performance-evidence/consumer-marketplace-report.png",
+        alt: "Anonymized Amazon Ads dashboard showing marketplace campaign reporting",
+        platform: "Amazon Ads",
+        period: "13 Oct 2025–13 Oct 2026",
+        width: 2048,
+        height: 973,
+        caption: "Client, campaign, and account identifiers are permanently redacted; platform totals and column labels remain visible.",
+      },
+    ],
+  },
+  {
+    category: "Residential real estate",
+    headline: "Focus on the inquiries that matter.",
+    challenge: "A high-consideration residential campaign prioritized marketing-qualified inquiries at a controlled acquisition cost.",
+    approach: "High-intent Google Search supported by paid social advertising to balance active demand with broader discovery.",
+    evidenceLabel: "Campaign approach",
+    evidenceNote: "No result screenshot or verified outcome was supplied for this example, so this is presented as an approach rather than a performance claim.",
+  },
 ];
 
 const related = [
@@ -119,6 +190,11 @@ function PerformanceMarketingPage() {
           <div><p className="eyebrow">Evidence before claims</p><h2 id="evidence-title">Measure what the business can use.</h2></div>
           <div><p>A dashboard can show reported activity. It does not automatically prove qualified leads, verified revenue, profit, or incremental growth.</p><p>We define the meaningful action, check the tracking context, and explain what the available reporting does and does not show before making optimization decisions.</p></div>
         </section>
+
+        <PerformanceProofCards
+          items={campaignEvidence}
+          disclosure="Anonymous campaign examples from prior specialist experience, shown at the website owner’s direction. Platform-reported metrics reflect the stated reporting periods, depend on each account’s tracking configuration, and are not guarantees of future performance."
+        />
 
         <section className="performance-process section-pad" aria-labelledby="performance-process-title">
           <div className="performance-section-heading"><p className="eyebrow">Our process</p><h2 id="performance-process-title">Clarity in. Better decisions out.</h2></div>

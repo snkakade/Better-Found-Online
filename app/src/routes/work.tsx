@@ -49,6 +49,17 @@ function WorkPage() {
               <TransitionLink href="/services/performance-marketing">See Our Paid Media Approach <ArrowUpRight size={18} weight="light" /></TransitionLink>
             </div>
           </div>
+          <div className="work-paid-media-evidence">
+            <figure>
+              <img src="/assets/performance-evidence/industrial-search-report.png" alt="Anonymized Google Ads campaign reporting excerpt" width="2048" height="620" loading="lazy" decoding="async" />
+              <figcaption>Google Ads reporting excerpt. Account identity and contact details permanently redacted.</figcaption>
+            </figure>
+            <dl>
+              <div><dt>Industrial B2B report</dt><dd>266 <span>configured conversions</span></dd></div>
+              <div><dt>Consumer marketplace report</dt><dd>9.80 <span>Amazon Ads ROAS</span></dd></div>
+            </dl>
+            <p>Platform-reported figures for specific periods. Configured conversions are not presented as qualified leads, and marketplace reporting is not an independent audit of revenue or profit.</p>
+          </div>
         </section>
 
         <section className="work-outro section-pad">
