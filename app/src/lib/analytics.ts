@@ -93,7 +93,13 @@ export function initGoogleMeasurement() {
   if (initialized || typeof window === "undefined") return;
   initialized = true;
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag = window.gtag ?? function gtag(...args: unknown[]) { window.dataLayer?.push(args); };
+  window.gtag = window.gtag ?? function gtag(...args: unknown[]) {
+    // Google documents gtag as pushing its arguments object, rather than a
+    // nested array, into dataLayer. Preserve that wire format exactly.
+    window.dataLayer?.push(arguments);
+  };
+
+  window.gtag("js", new Date());
 
   const preferences = readConsent();
   window.gtag("consent", "default", {
