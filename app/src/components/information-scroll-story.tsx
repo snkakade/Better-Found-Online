@@ -19,9 +19,10 @@ export type InformationScrollStoryProps = {
     { src: string; alt: string },
   ];
   outroHeading: string;
+  outroBody?: string;
   outroCtaLabel: string;
   outroCtaHref: string;
-  afterHeading: string;
+  afterHeading?: string;
   afterBody?: string;
 };
 
@@ -36,6 +37,7 @@ export function InformationScrollStory({
   rightBody,
   outroImages,
   outroHeading,
+  outroBody,
   outroCtaLabel,
   outroCtaHref,
   afterHeading,
@@ -65,6 +67,7 @@ export function InformationScrollStory({
       const backgroundColumns = element.querySelectorAll<HTMLElement>(".scroll63-hero-bg-content-col");
       const outroImagesElements = element.querySelectorAll<HTMLElement>(".scroll63-hero-outro-img");
       const outroHeadingElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-header h3");
+      const outroBodyElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-header p");
       const outroCtaElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-cta");
 
       if (!hero || !foreground || !darkOverlay || !accentOverlay || backgroundColumns.length < 2 || outroImagesElements.length < 2 || !outroHeadingElement || !outroCtaElement) return;
@@ -75,6 +78,7 @@ export function InformationScrollStory({
         linesClass: "scroll63-line",
       });
       gsap.set(outroSplit.lines, { yPercent: 100 });
+      if (outroBodyElement) gsap.set(outroBodyElement, { autoAlpha: 0, y: 18 });
       gsap.set(outroCtaElement, { autoAlpha: 0, y: 24 });
 
       const mobileLayout = window.matchMedia("(max-width: 600px)").matches;
@@ -123,6 +127,12 @@ export function InformationScrollStory({
           });
 
           gsap.set(outroSplit!.lines, { yPercent: 100 * (1 - finalRevealProgress) });
+          if (outroBodyElement) {
+            gsap.set(outroBodyElement, {
+              autoAlpha: gsap.utils.clamp(0, 1, (finalRevealProgress - 0.25) / 0.65),
+              y: 18 * (1 - finalRevealProgress),
+            });
+          }
           gsap.set(outroCtaElement, {
             autoAlpha: gsap.utils.clamp(0, 1, (finalRevealProgress - 0.45) / 0.55),
             y: 24 * (1 - finalRevealProgress),
@@ -161,14 +171,13 @@ export function InformationScrollStory({
           {outroImages.map((image) => <div className="scroll63-hero-outro-img" key={`${image.src}-${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /></div>)}
           <div className="scroll63-hero-outro-header">
             <h3>{outroHeading}</h3>
+            {outroBody && <p>{outroBody}</p>}
             <a className="scroll63-hero-outro-cta" href={outroCtaHref} target={outroCtaHref.startsWith("http") ? "_blank" : undefined} rel={outroCtaHref.startsWith("http") ? "noopener noreferrer" : undefined}>{outroCtaLabel}<span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </section>
 
-      <section className="scroll63-about">
-        <div><h3>{afterHeading}</h3>{afterBody && <p>{afterBody}</p>}</div>
-      </section>
+      {afterHeading && <section className="scroll63-about"><div><h3>{afterHeading}</h3>{afterBody && <p>{afterBody}</p>}</div></section>}
     </div>
   );
 }

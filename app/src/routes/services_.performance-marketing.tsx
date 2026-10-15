@@ -5,7 +5,7 @@ import { PerformanceProofCards, type PerformanceProofCard } from "@/components/p
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 
 const pageTitle = "Performance Marketing & Paid Ads | Better Found Online";
-const pageDescription = "Performance marketing built around clear goals, paid search, campaign tracking, practical reporting, and informed optimization. Discuss your advertising needs.";
+const pageDescription = "Performance marketing services covering Google Ads, paid social, marketplace advertising, tracking, and campaign optimization. Explore selected results.";
 const canonical = "https://betterfoundonline.com/services/performance-marketing";
 
 export const Route = createFileRoute("/services_/performance-marketing")({
@@ -25,105 +25,122 @@ export const Route = createFileRoute("/services_/performance-marketing")({
 });
 
 const campaignCapabilities = [
-  { number: "01", title: "Paid Search", copy: "Meet existing demand with search campaigns built around relevant queries, clear offers, and useful landing pages." },
-  { number: "02", title: "Paid Social", copy: "Support discovery and consideration with messaging and creative built for the audience and placement." },
-  { number: "03", title: "Tracking & Measurement", copy: "Check that your tracking captures meaningful actions before relying on the numbers." },
-  { number: "04", title: "Media Planning & Optimization", copy: "Review channel mix, spend, audience response, and the next adjustment with a defined goal in mind." },
-  { number: "05", title: "Creative & Landing Pages", copy: "Connect ads to the pages, visuals, and messages people actually see after the click." },
-];
-
-const process = [
-  { number: "01", title: "Define", copy: "Agree on the audience, offer, business goal, and meaningful tracked action." },
-  { number: "02", title: "Measure", copy: "Review tracking, landing pages, and reporting requirements." },
-  { number: "03", title: "Launch", copy: "Build and activate the agreed campaigns and creative." },
-  { number: "04", title: "Refine", copy: "Review the evidence and prioritize the next adjustment." },
+  { number: "01", title: "Capture existing demand.", label: "Paid Search", copy: "Meet people already looking for what you sell.", detail: "Google Ads / Microsoft Advertising / Search Intent" },
+  { number: "02", title: "Create demand earlier.", label: "Paid Social", copy: "Introduce the offer before the customer starts searching.", detail: "Audience Strategy / Paid Social / Campaign Creative" },
+  { number: "03", title: "Measure meaningful action.", label: "Tracking & Attribution", copy: "Separate useful business signals from dashboard noise.", detail: "Conversion Tracking / Attribution / Reporting" },
+  { number: "04", title: "Direct the budget.", label: "Media Planning", copy: "Put spend behind the channels and decisions with a clear job.", detail: "Channel Mix / Budget Allocation / Optimization" },
+  { number: "05", title: "Make the click count.", label: "Creative & Landing Pages", copy: "Connect the ad to a message and destination that make sense.", detail: "Ad Creative / Landing Pages / Conversion Journeys" },
 ];
 
 const campaignEvidence: PerformanceProofCard[] = [
   {
-    category: "Industrial manufacturing / B2B",
-    headline: "Make more of the product line discoverable.",
-    challenge: "An established manufacturer was well known for only part of its offer. The campaign needed to create demand for overlooked business units without losing high-intent search traffic.",
-    approach: "Search-led planning for the underrepresented business units, followed by paid social to broaden the channel mix.",
+    category: "Industrial equipment manufacturer / B2B search",
+    headline: "Bringing overlooked product lines into the search conversation.",
+    challenge: "An industrial equipment manufacturer was known for only part of its range. High-value product lines were missing from relevant searches.",
+    approach: "Google Search was organised around overlooked categories and buyer intent. Meta was later added to widen discovery.",
     evidenceLabel: "Google Ads campaign report",
-    evidenceNote: "The 90-day source report labels 266 configured conversions. It does not identify those actions as qualified leads, so we do not describe them as leads.",
-    metrics: [
-      { label: "Impressions", value: "25,311" },
-      { label: "Clicks", value: "4,301" },
-      { label: "Reported conversions", value: "266" },
-      { label: "Reported spend", value: "₹203,060.06" },
-      { label: "Average CPC", value: "₹47.21" },
-    ],
-    evidence: [{
-      src: "/assets/performance-evidence/industrial-search-report.png",
-      alt: "Anonymized Google Ads dashboard showing a 90-day industrial search campaign summary",
-      platform: "Google Ads",
-      period: "15 Jul–12 Oct 2026",
-      width: 2048,
-      height: 620,
-      caption: "Account identity and contact details are permanently redacted. The dashboard retains the original platform labels and reporting period.",
-    }],
-  },
-  {
-    category: "Consumer technology / ecommerce",
-    headline: "Make measurement reliable before scaling.",
-    challenge: "A growing consumer technology program needed clearer website tracking and a coordinated channel mix in a competitive category.",
-    approach: "Tracking improvements came first, followed by search across Google and Microsoft Advertising, marketplace advertising, and awareness activity.",
-    evidenceLabel: "Google Ads + Amazon Ads reporting",
-    evidenceNote: "The source dashboards use platform-defined conversions, conversion value, purchases, sales, ACOS, and ROAS. These are platform-reported figures, not independently audited revenue or profit.",
-    metrics: [
-      { label: "Google Ads impressions", value: "839,418" },
-      { label: "Google Ads conversions", value: "5,836.63" },
-      { label: "Google Ads cost", value: "₹2,750,711.36" },
-      { label: "Amazon Ads purchases", value: "43,623" },
-      { label: "Amazon Ads ROAS", value: "9.80" },
-    ],
-    evidence: [
-      {
-        src: "/assets/performance-evidence/consumer-search-report.png",
-        alt: "Anonymized Google Ads dashboard showing a consumer technology campaign summary",
+    evidenceNote: "90-day platform report. Conversion actions are tracked, not verified sales or qualified leads.",
+    resultGroups: [{
+      title: "The reported results",
+      headline: "₹203,060 spent. 266 tracked conversions. 90 days.",
+      period: "90-day reporting period",
+      metrics: [
+        { label: "Google Ads spend", value: "₹203K" },
+        { label: "Impressions", value: "25.3K" },
+        { label: "Clicks", value: "4.3K" },
+        { label: "Average CPC", value: "₹47.21" },
+        { label: "Tracked conversions", value: "266" },
+        { label: "Cost / tracked conversion", value: "₹763.38" },
+      ],
+      explanation: "The campaign recorded meaningful search activity and tracked conversion actions around previously underrepresented product categories.",
+      evidence: {
+        src: "/assets/performance-evidence/industrial-search-report.png",
+        alt: "Anonymized Google Ads dashboard showing a 90-day industrial search campaign summary",
         platform: "Google Ads",
         period: "15 Jul–12 Oct 2026",
         width: 2048,
-        height: 560,
-        caption: "Platform-reported cost, conversions, conversion value, impressions, and average CPC for the stated 90-day period.",
+        height: 620,
+        caption: "Industrial B2B Google Ads report, 90 days. ₹203,060.06 spend, 4,301 clicks, and 266 platform-tracked conversions.",
       },
-      {
-        src: "/assets/performance-evidence/consumer-marketplace-report.png",
-        alt: "Anonymized Amazon Ads dashboard showing marketplace campaign reporting",
-        platform: "Amazon Ads",
-        period: "13 Oct 2025–13 Oct 2026",
-        width: 2048,
-        height: 973,
-        caption: "Client, campaign, and account identifiers are permanently redacted; platform totals and column labels remain visible.",
-      },
-    ],
+    }],
+    whyItMatters: "When a business offers more than its customers know about, targeted search campaigns can give underrepresented services or product categories a clearer route to relevant demand.",
+    cta: "Discuss a B2B Search Campaign",
   },
   {
-    category: "Residential real estate",
-    headline: "Focus on the inquiries that matter.",
-    challenge: "A high-consideration residential campaign prioritized marketing-qualified inquiries at a controlled acquisition cost.",
-    approach: "High-intent Google Search supported by paid social advertising to balance active demand with broader discovery.",
-    evidenceLabel: "Campaign approach",
-    evidenceNote: "No result screenshot or verified outcome was supplied for this example, so this is presented as an approach rather than a performance claim.",
+    category: "Consumer software company / Search + Ecommerce",
+    headline: "Connect the channels. Understand the returns.",
+    challenge: "A consumer software company was scaling across search and marketplaces, but inconsistent tracking made channel decisions harder.",
+    approach: "Tracking was corrected first. Google, Microsoft, and Amazon campaigns were then evaluated against channel-specific actions and value.",
+    evidenceLabel: "Google Ads + Amazon Ads reporting",
+    evidenceNote: "Google and Amazon use separate reporting periods. Their figures are never combined into one return calculation.",
+    resultGroups: [
+      {
+        title: "Google Ads performance",
+        headline: "₹11.86 million in conversion value.",
+        period: "90-day reporting period",
+        metrics: [
+          { label: "Advertising spend", value: "₹2.75 million" },
+          { label: "Impressions", value: "839K" },
+          { label: "Tracked conversions", value: "5.84K" },
+          { label: "Conversion value", value: "₹11.86 million" },
+          { label: "Average CPC", value: "₹7.92" },
+          { label: "Value / cost ratio", value: "4.31x" },
+        ],
+        explanation: "The report recorded conversion activity and associated value alongside campaign spending, giving the team a clearer basis for evaluating paid search.",
+        evidence: {
+          src: "/assets/performance-evidence/consumer-search-report.png",
+          alt: "Google Ads campaign dashboard with the account identity permanently redacted",
+          platform: "Google Ads",
+          period: "15 Jul–12 Oct 2026",
+          width: 2048,
+          height: 1150,
+          caption: "Google Ads report, 90 days. ₹2.75 million spend and ₹11.86 million in platform-recorded conversion value.",
+        },
+      },
+      {
+        title: "Amazon Ads performance",
+        headline: "9.80x reported ROAS across more than 43,000 attributed purchases.",
+        period: "13 October 2025 to 13 October 2026",
+        metrics: [
+          { label: "Advertising spend", value: "₹5.55 million" },
+          { label: "Clicks", value: "366K" },
+          { label: "Average CPC", value: "₹15.14" },
+          { label: "Attributed purchases", value: "43.6K" },
+          { label: "Reported sales", value: "₹54.34 million" },
+          { label: "ROAS", value: "9.80x" },
+        ],
+        explanation: "The marketplace report shows substantial attributed purchase activity relative to advertising spend. ROAS compares attributed sales with media spend; it is not the same as profit or ROI.",
+        evidence: {
+          src: "/assets/performance-evidence/consumer-marketplace-report.png",
+          alt: "Anonymized Amazon Ads dashboard showing marketplace campaign reporting",
+          platform: "Amazon Ads",
+          period: "13 Oct 2025–13 Oct 2026",
+          width: 2048,
+          height: 973,
+          caption: "Amazon Ads report, October 2025 to October 2026. 43,623 attributed purchases and 9.80x ROAS.",
+        },
+      },
+    ],
+    whyItMatters: "More channels mean more decisions. Addressing tracking first makes it easier to understand each channel's contribution and keep campaign decisions connected to the commercial objective.",
+    cta: "Build a More Accountable Media Plan",
   },
 ];
 
 const related = [
-  { label: "Website & Landing Pages", href: "/services#build" },
-  { label: "SEO & Content", href: "/services#grow" },
-  { label: "Creative Production", href: "/creative-production" },
-  { label: "Video & Ad Creative", href: "/services/video-production-editing" },
-  { label: "Social Media Management", href: "/services/social-media-management" },
-  { label: "Analytics & Conversion Optimization", href: "/services#improve" },
+  { number: "01", label: "Website & Landing Pages", note: "Turn paid attention into a clear next step.", href: "/services#build" },
+  { number: "02", label: "Creative Production", note: "Give campaigns stronger visual material.", href: "/creative-production" },
+  { number: "03", label: "SEO & Content Strategy", note: "Build demand beyond the paid click.", href: "/services#grow" },
+  { number: "04", label: "CRM & Integrations", note: "Carry captured demand into follow-up.", href: "/services#connect" },
 ];
 
 const faqs = [
-  { question: "What is performance marketing?", answer: "Performance marketing uses paid campaigns and measurable actions to evaluate advertising activity against business goals. It can include search advertising, paid social, conversion tracking, reporting, and ongoing optimization." },
-  { question: "How do you decide which advertising channels to use?", answer: "Channel decisions start with the audience, the offer, the type of demand, the available budget, and the actions the business needs to measure." },
-  { question: "Do you guarantee a return on ad spend?", answer: "No. Advertising results depend on the offer, competition, audience, budget, tracking quality, and market conditions. We focus on clear goals, reporting, and informed decisions." },
-  { question: "Can you work with an existing ad account?", answer: "Existing accounts can be considered after reviewing access, campaign setup, measurement, and the project scope." },
-  { question: "Can paid campaigns be connected to a website or landing page?", answer: "Yes. Campaign planning can be coordinated with website design, landing-page improvements, creative assets, and conversion tracking where relevant." },
+  { question: "What is performance marketing?", answer: "Performance marketing uses paid channels, tracking, and ongoing campaign improvements to pursue measurable actions such as inquiries, purchases, or other defined conversions. The exact metrics depend on the business and its goals." },
+  { question: "Which advertising platforms can you help with?", answer: "Our available experience includes Google Ads, Microsoft Advertising, Meta, and marketplace advertising. The right platform and service scope are confirmed around each project." },
+  { question: "How much should I spend on paid advertising?", answer: "There is no single budget that fits every business. The starting point depends on the market, audience, competition, goals, and the information available from existing campaigns." },
+  { question: "What is the difference between ROAS and ROI?", answer: "ROAS compares attributed advertising sales with media spend. ROI requires a broader view of costs and returns, which may include product costs, fees, margins, and other expenses." },
+  { question: "Can you help improve an existing campaign?", answer: "Existing campaign data, tracking, account structure, and landing pages can be reviewed to identify potential improvements. The scope of the review is agreed before work begins." },
+  { question: "Do you guarantee a certain number of leads or a specific ROAS?", answer: "Campaign results depend on many factors, including the offer, market, competition, budget, and customer journey. We focus on setting useful objectives, establishing appropriate measurement, and making evidence-informed improvements." },
+  { question: "How will I know what the campaigns are achieving?", answer: "The reporting approach should be agreed around the business goal. That may include campaign spend, tracked conversions, conversion cost, attributed value, and the limitations of the available data." },
 ];
 
 function PerformanceMarketingSchema() {
@@ -144,20 +161,52 @@ function PerformanceMarketingPage() {
       <PageTransition />
       <PerformanceMarketingSchema />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader frostFromSelector=".scroll63-story" />
+      <SiteHeader frostFromSelector=".performance-results-strip" />
       <main id="main">
         <section className="service-detail-hero" aria-labelledby="performance-title">
           <div className="service-detail-hero-copy">
             <p className="eyebrow">Performance Marketing</p>
-            <h1 id="performance-title">Performance marketing with a clearer purpose.</h1>
-            <p>Put your budget behind a defined goal. Connect the right audience, useful creative, reliable tracking, and practical optimization so every campaign has a reason to run.</p>
+            <h1 id="performance-title">Turn ad spend into measurable growth.</h1>
+            <p>Paid search, social advertising, marketplace campaigns, tracking, and creative built around one goal: connecting the right audience with meaningful business actions.</p>
             <div className="service-detail-actions">
-              <TransitionLink className="primary-btn" href="/#contact">Discuss Paid Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink>
-              <a className="story-link" href="#approach">See Our Approach <ArrowDown size={16} weight="light" /></a>
+              <TransitionLink className="primary-btn" href="/#contact">Discuss Your Growth Goals <ArrowUpRight size={17} weight="light" /></TransitionLink>
+              <a className="story-link" href="#results">See Campaign Results <ArrowDown size={16} weight="light" /></a>
             </div>
+            <p className="performance-hero-proof">Selected campaign experience across industrial B2B, consumer technology, ecommerce, and high-consideration services.</p>
           </div>
           <figure className="service-detail-hero-media"><img src="/assets/world/poster.webp" alt="Abstract metallic composition representing connected campaign planning" width="1200" height="1200" /></figure>
         </section>
+
+        <section className="performance-results-strip section-pad" aria-labelledby="headline-results-title">
+          <header>
+            <p className="eyebrow">Selected campaign results</p>
+            <h2 id="headline-results-title">One headline result. Three useful signals.</h2>
+            <p>Evidence is easier to trust when its source, time period, and definition travel with the number.</p>
+          </header>
+          <div className="performance-results-stage">
+            <article className="performance-results-feature">
+              <div className="performance-results-feature-orbit" aria-hidden="true"><i /><i /><i /><b /></div>
+              <div className="performance-results-feature-brand"><img src="/assets/platforms/amazon-ads-logo.webp" alt="Amazon Ads" width="4730" height="1220" /><span>Marketplace campaign / 12 months</span></div>
+              <strong>9.80x</strong>
+              <h3>Reported return on ad spend</h3>
+              <p>₹54.34 million in platform-reported sales from an anonymized consumer software marketplace campaign.</p>
+            </article>
+            <div className="performance-results-support">
+              <article><span>01 / Marketplace</span><strong>43,623</strong><h3>Attributed purchases</h3><p>13 Oct 2025–13 Oct 2026</p></article>
+              <article className="performance-results-google"><span>02 / B2B search</span><img src="/assets/platforms/google-ads-logo.webp" alt="Google Ads" width="512" height="256" /><strong>266</strong><h3>Tracked conversions</h3><p>Industrial equipment campaign / 90 days</p></article>
+              <article><span>03 / B2B search</span><strong>₹47.21</strong><h3>Average cost per click</h3><p>4,301 clicks / 25,311 impressions</p></article>
+            </div>
+          </div>
+          <div className="performance-results-footer">
+            <a href="#results">See the source reports <ArrowDown size={16} weight="light" /></a>
+            <small>Figures reflect anonymized platform reports from selected specialist-led campaigns. Google Ads and Amazon Ads results cover different reporting periods. Platform attribution does not establish incremental sales or net profit.</small>
+          </div>
+        </section>
+
+        <PerformanceProofCards
+          items={campaignEvidence}
+          disclosure="Selected campaign examples from specialists supporting Better Found Online. Figures are shown in Indian rupees (INR), the original reporting currency. Platform-reported metrics reflect the stated reporting periods and are not guarantees of future performance."
+        />
 
         <InformationScrollStory
           id="approach"
@@ -165,56 +214,67 @@ function PerformanceMarketingPage() {
           foregroundAlt="Abstract metallic form representing performance marketing strategy"
           foregroundHeading="Better decisions before bigger budgets."
           leftTitle="Before the first click"
-          leftBody="What's the goal? Who needs to see the offer? What counts as a meaningful result? We answer those questions before building a media plan."
+          leftBody="Understand the offer, the audience, and the action worth measuring. Those questions come before channel selection, media planning, and creative."
           rightTitle="Campaigns with a job to do"
-          rightBody="Start with the audience, offer, business goal, and meaningful action. Then connect media, creative, landing pages, tracking, and reporting around that purpose."
+          rightBody="Match the message, channel, and destination to the customer's intent. Use the evidence to decide what to adjust, maintain, or expand."
           outroImages={[
             { src: "/assets/macro.webp", alt: "Abstract metallic detail representing careful campaign measurement" },
             { src: "/assets/connect.webp", alt: "Connected metallic forms representing coordinated media and creative" },
           ]}
           outroHeading="Spend with a plan."
-          outroCtaLabel="Discuss Paid Marketing"
+          outroBody="Because a bigger budget is only useful when the campaign has a clear job to do."
+          outroCtaLabel="Discuss Your Campaign Strategy"
           outroCtaHref="/#contact"
-          afterHeading="Campaigns with a job to do."
-          afterBody="Paid media works best when the audience, offer, channel, destination, and measurement plan support the same business goal."
         />
 
         <section className="performance-capabilities section-pad" aria-labelledby="campaign-work-title">
-          <div className="performance-section-heading"><p className="eyebrow">What we work on</p><h2 id="campaign-work-title">Campaigns with a job to do.</h2></div>
+          <header className="performance-capabilities-intro">
+            <p className="eyebrow">What we connect</p>
+            <h2 id="campaign-work-title">One campaign.<br />Five connected decisions.</h2>
+            <p>Audience, offer, media, measurement, and the experience after the click. Each part has a job.</p>
+            <div className="performance-capabilities-sequence" aria-hidden="true"><span>Find</span><i /><span>Persuade</span><i /><span>Measure</span></div>
+          </header>
           <div className="performance-capability-grid">
-            {campaignCapabilities.map((capability) => <article key={capability.title}><span>{capability.number}</span><h3>{capability.title}</h3><p>{capability.copy}</p></article>)}
+            {campaignCapabilities.map((capability) => <article key={capability.title}><span>{capability.number}</span><div><small>{capability.label}</small><h3>{capability.title}</h3></div><p>{capability.copy}</p><small>{capability.detail}</small></article>)}
           </div>
         </section>
 
-        <section className="performance-evidence-standard section-pad" aria-labelledby="evidence-title">
-          <div><p className="eyebrow">Evidence before claims</p><h2 id="evidence-title">Measure what the business can use.</h2></div>
-          <div><p>A dashboard can show reported activity. It does not automatically prove qualified leads, verified revenue, profit, or incremental growth.</p><p>We define the meaningful action, check the tracking context, and explain what the available reporting does and does not show before making optimization decisions.</p></div>
-        </section>
-
-        <PerformanceProofCards
-          items={campaignEvidence}
-          disclosure="Anonymous campaign examples from prior specialist experience, shown at the website owner’s direction. Platform-reported metrics reflect the stated reporting periods, depend on each account’s tracking configuration, and are not guarantees of future performance."
-        />
-
-        <section className="performance-process section-pad" aria-labelledby="performance-process-title">
-          <div className="performance-section-heading"><p className="eyebrow">Our process</p><h2 id="performance-process-title">Clarity in. Better decisions out.</h2></div>
-          <ol>{process.map((step) => <li key={step.number}><span>{step.number}</span><h3>{step.title}</h3><p>{step.copy}</p></li>)}</ol>
-        </section>
-
-        <section className="service-detail-related section-pad" aria-labelledby="related-title">
-          <p className="eyebrow">Related services</p><h2 id="related-title">Better paid media needs more than ads.</h2>
-          <nav aria-label="Related performance marketing services">{related.map((item) => <TransitionLink href={item.href} key={item.label}>{item.label}<ArrowUpRight size={18} weight="light" /></TransitionLink>)}</nav>
+        <section className="performance-approach-feature section-pad" aria-labelledby="real-estate-title">
+          <div>
+            <p className="eyebrow">Another campaign approach</p>
+            <span>Residential real estate / Google + Meta</span>
+            <div className="performance-approach-signal" aria-hidden="true">
+              <i><b>Intent</b></i><i><b>Discovery</b></i><i><b>Inquiry</b></i>
+            </div>
+          </div>
+          <article>
+            <h2 id="real-estate-title">Reaching buyers who are ready to explore.</h2>
+            <div><h3>The challenge</h3><p>A premium residential development needed to generate marketing-qualified inquiries while maintaining control over acquisition costs.</p></div>
+            <div><h3>The approach</h3><p>Google Search was used to reach people expressing relevant purchase intent, with Meta advertising supporting broader audience discovery and consideration.</p></div>
+            <div><h3>Why this approach matters</h3><p>High-consideration purchases often involve multiple interactions. Search and social advertising can play different roles in the decision journey.</p></div>
+            <small>Campaign approach only. No verified results or acquisition-cost figures have been supplied for this example.</small>
+          </article>
         </section>
 
         <section className="service-detail-faq section-pad" aria-labelledby="faq-title">
-          <div><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">Before you spend.</h2></div>
+          <div><p className="eyebrow">Good questions, clear answers</p><h2 id="faq-title">What should you know before spending more?</h2></div>
           <div>{faqs.map((item) => <details key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
         </section>
 
-        <section className="performance-closing section-pad">
-          <p className="eyebrow">Start with the goal</p><h2>Spend with a plan.<br />Start with a conversation.</h2>
-          <p>Tell us what you sell, who you want to reach, and what isn&apos;t working yet.</p>
-          <TransitionLink href="/#contact">Discuss Paid Marketing <ArrowUpRight size={28} weight="light" /></TransitionLink>
+        <section className="performance-closing performance-closing--connected section-pad" aria-labelledby="closing-title">
+          <p className="eyebrow">Have a growth goal in mind?</p>
+          <div className="performance-closing-message">
+            <h2 id="closing-title">Let&apos;s make your next budget<br /><span>easier to defend.</span></h2>
+            <p>Tell us what you sell, who you need to reach, and what your advertising is doing today. We&apos;ll start with the commercial problem worth solving.</p>
+            <TransitionLink href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={28} weight="light" /></TransitionLink>
+          </div>
+          <nav className="performance-closing-links" aria-label="Services connected to performance marketing">
+            {related.map((item) => (
+              <TransitionLink href={item.href} key={item.label}>
+                <span>{item.number}</span><strong>{item.label}</strong><ArrowUpRight size={15} weight="light" />
+              </TransitionLink>
+            ))}
+          </nav>
         </section>
       </main>
       <SiteFooter />

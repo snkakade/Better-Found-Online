@@ -18,7 +18,7 @@ function WorkPage() {
       <PageTransition />
       <PageSchema name="Website & Digital Projects | Better Found Online" path="/work" description="The proposed portfolio features website projects involving clear service positioning, customer-focused navigation, responsive development, and distinctive visual design. Project attribution must be confirmed before publication." />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader />
+      <SiteHeader frostFromSelector="#cases" />
       <main id="main">
         <section className="interior-hero work-hero">
           <div className="interior-hero-copy">

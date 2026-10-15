@@ -21,7 +21,7 @@ function StudioPage() {
       <StudioKineticTransition />
       <PageSchema name="Our Digital Studio | Better Found Online" path="/studio" description="Better Found Online approaches digital projects by understanding the audience and business problem, clarifying the offer, building the experience, and identifying opportunities for improvement." />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader />
+      <SiteHeader frostFromSelector=".kinetic-band" />
       <main id="main">
         <section className="interior-hero studio-hero">
           <div className="studio-words" aria-hidden="true"><span>Think</span><span>Shape</span><span>Connect</span></div>

@@ -211,7 +211,7 @@ section[id] {
   pointer-events: none;
   background: linear-gradient(90deg, var(--brand-surface) 0 72%, transparent 100%);
   filter: blur(8px);
-  opacity: 0.72;
+  opacity: 0;
   transition: background 0.28s ease, opacity 0.28s ease;
 }
 
@@ -1413,6 +1413,25 @@ section[id] {
 
 .contact-form input { min-height: 48px; }
 .contact-form textarea { min-height: 120px; padding: 12px 0; resize: vertical; }
+.contact-form .contact-marketing-consent {
+  display: flex;
+  grid-template-columns: none;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.contact-form .contact-marketing-consent input {
+  flex: 0 0 auto;
+  width: 16px;
+  min-height: 16px;
+  margin-top: 1px;
+  accent-color: var(--rose);
+}
 .contact-form input:focus,
 .contact-form select:focus,
 .contact-form textarea:focus { border-color: var(--rose); }
@@ -2581,4 +2600,22 @@ section[id] {
     min-height: auto;
     background: var(--deep);
   }
+}
+
+/* Privacy and cookie notice */
+.privacy-page { min-height: 100vh; background: #120d0f; color: #f2ece8; }
+.privacy-content { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 170px 0 120px; }
+.privacy-content > h1 { max-width: 900px; margin: 24px 0 38px; font-size: clamp(64px, 10vw, 150px); font-weight: 400; line-height: .82; letter-spacing: -.065em; }
+.privacy-lead { max-width: 660px; margin: 0 0 90px auto; color: rgb(242 236 232 / .7); font-size: clamp(18px, 2vw, 26px); line-height: 1.35; }
+.privacy-content section { display: grid; grid-template-columns: minmax(180px, .7fr) minmax(0, 1.4fr); gap: 48px; padding: 36px 0; border-top: 1px solid rgb(242 236 232 / .16); }
+.privacy-content section h2 { margin: 0; font-size: 18px; font-weight: 500; }
+.privacy-content section p { max-width: 680px; margin: 0 0 18px; color: rgb(242 236 232 / .7); line-height: 1.65; }
+.privacy-content section a { color: #f2ece8; text-underline-offset: 4px; }
+.privacy-content .cookie-settings { width: max-content; padding-bottom: 6px; border-bottom: 1px solid #caa693; color: #f2ece8; }
+.privacy-updated { font: 500 10px/1.4 monospace; letter-spacing: .12em; text-transform: uppercase; }
+@media (max-width: 720px) {
+  .privacy-content { width: min(100% - 28px, 1120px); padding: 130px 0 80px; }
+  .privacy-content > h1 { font-size: clamp(56px, 19vw, 90px); }
+  .privacy-lead { margin-bottom: 58px; }
+  .privacy-content section { grid-template-columns: 1fr; gap: 16px; }
 }

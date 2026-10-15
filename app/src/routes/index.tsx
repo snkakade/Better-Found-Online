@@ -11,15 +11,14 @@ import { KineticBand } from "@/components/kinetic-band";
 import { ProjectReel } from "@/components/project-reel";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
-import { MaintenancePage } from "@/components/maintenance-page";
 
 export const Route = createFileRoute("/")({
-  component: MaintenancePage,
+  component: Index,
   head: () => ({
     meta: [
-      { title: "Something Better Is Coming | Better Found Online" },
-      { name: "description", content: "Better Found Online is getting a fresh coat of pixels. Contact us while the new website is under construction." },
-      { name: "robots", content: "noindex, nofollow" },
+      { title: "Better Found Online | Websites, SEO & Performance Marketing" },
+      { name: "description", content: "Better Found Online helps businesses get found, understood, and chosen through strategy, websites, SEO, performance marketing, and creative production." },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
     ],
     links: [{ rel: "canonical", href: "https://betterfoundonline.com/" }],
   }),
@@ -152,9 +151,11 @@ function Index() {
       "Hi Better Found Online, I'd like to discuss a project.",
       `Name: ${data.get("name")}`,
       `Email: ${data.get("email")}`,
+      `Phone: ${data.get("phone")}`,
       data.get("company") ? `Company or Website: ${data.get("company")}` : "",
       `What I'm working on: ${data.get("projectType")}`,
       `Project details: ${data.get("details")}`,
+      `Marketing follow-up: ${data.get("marketingConsent") === "yes" ? "Yes — email or text is okay" : "No"}`,
     ].filter(Boolean).join("\n");
     window.open(`https://wa.me/15707077078?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
     setInquiryReady(true);
@@ -362,7 +363,7 @@ function Index() {
       <a className="skip-link" href="#main">
         Skip to Content
       </a>
-      <SiteHeader />
+      <SiteHeader frostFromSelector=".story-intro" />
 
       <main id="main">
         <div className="tunnel-journey">
@@ -573,9 +574,11 @@ function Index() {
           <form className="contact-form" onSubmit={handleInquiry}>
             <label>Your Name<input name="name" autoComplete="name" required /></label>
             <label>Your Email<input name="email" type="email" autoComplete="email" required /></label>
+            <label>Your Phone<input name="phone" type="tel" autoComplete="tel" inputMode="tel" required /></label>
             <label>Company or Website (Optional)<input name="company" autoComplete="organization" /></label>
             <label>What Are You Working On?<select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>SEO &amp; Search Visibility</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
             <label className="contact-form-wide">Tell Us a Little About Your Project<textarea name="details" rows={5} required /></label>
+            <label className="contact-form-wide contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Yes, Better Found Online may email or text me about relevant services and updates. Consent is optional and not required to submit.</span></label>
             <button type="submit">Send Your Inquiry <span aria-hidden="true">↗</span></button>
             {inquiryReady && <p className="contact-form-status" role="status">Your message is ready to review in WhatsApp. Nothing has been sent yet.</p>}
           </form>

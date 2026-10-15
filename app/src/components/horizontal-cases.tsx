@@ -30,9 +30,9 @@ const cases = [
     headline: "Stand out in a market full of sameness.",
     text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates.",
     devices: [
-      { kind: "macbook", src: "/assets/work/tech-sales-desktop.webm", label: "Tech Sales Sourced desktop website preview" },
-      { kind: "tablet", src: "/assets/work/tech-sales-tablet.webm", label: "Tech Sales Sourced tablet website preview" },
-      { kind: "phone", src: "/assets/work/tech-sales-mobile.webm", label: "Tech Sales Sourced mobile website preview" },
+      { kind: "macbook", src: "/assets/work/tech-sales-desktop-smooth.webm", label: "Tech Sales Sourced desktop website preview" },
+      { kind: "tablet", src: "/assets/work/tech-sales-tablet-smooth.webm", label: "Tech Sales Sourced tablet website preview" },
+      { kind: "phone", src: "/assets/work/tech-sales-mobile-smooth.webm", label: "Tech Sales Sourced mobile website preview" },
     ],
   },
 ] as const;
@@ -41,7 +41,7 @@ type CaseDevice = (typeof cases)[number]["devices"][number];
 
 function DevicePreview({ device, registerVideo, synchronized = false }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; synchronized?: boolean }) {
   const video = (
-    <video ref={registerVideo} autoPlay={!synchronized} loop muted playsInline preload="auto" aria-label={device.label}>
+    <video ref={registerVideo} loop muted playsInline preload="auto" aria-label={device.label}>
       <source src={device.src} type="video/webm" />
     </video>
   );
@@ -58,15 +58,15 @@ function DevicePreview({ device, registerVideo, synchronized = false }: { device
 }
 
 function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
+  const root = useRef<HTMLDivElement>(null);
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
   const synchronized = devices.length > 1;
 
   useEffect(() => {
-    if (!synchronized) return;
-
-    const basePlaybackRate = 0.44;
+    const basePlaybackRate = synchronized ? 0.72 : 0.78;
     let readyTimer = 0;
     let syncTimer = 0;
+    let hasEntered = false;
     const media = videos.current.filter((video): video is HTMLVideoElement => Boolean(video));
 
     const startTogether = () => {
@@ -78,6 +78,14 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
       });
       void Promise.all(media.map((video) => video.play().catch(() => undefined)));
       return true;
+    };
+
+    const startWhenReady = () => {
+      window.clearInterval(readyTimer);
+      if (startTogether()) return;
+      readyTimer = window.setInterval(() => {
+        if (startTogether()) window.clearInterval(readyTimer);
+      }, 80);
     };
 
     const keepTogether = () => {
@@ -103,23 +111,36 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
       });
     };
 
-    if (!startTogether()) {
-      readyTimer = window.setInterval(() => {
-        if (startTogether()) window.clearInterval(readyTimer);
-      }, 100);
-    }
-    syncTimer = window.setInterval(keepTogether, 500);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (!hasEntered) {
+          hasEntered = true;
+          startWhenReady();
+        } else {
+          media.forEach((video) => void video.play().catch(() => undefined));
+        }
+      } else {
+        media.forEach((video) => video.pause());
+      }
+    // Start the next panel's preview before the horizontal track brings it on screen.
+    // The generous horizontal margin prevents a late first frame without keeping
+    // every off-screen video running for the entire page visit.
+    }, { rootMargin: "80% 1000%", threshold: 0.01 });
+
+    if (root.current) observer.observe(root.current);
+    if (synchronized) syncTimer = window.setInterval(keepTogether, 250);
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       window.clearInterval(readyTimer);
       window.clearInterval(syncTimer);
+      observer.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [devices.length, synchronized]);
 
   return (
-    <div className="case-device-stage">
+    <div className="case-device-stage" ref={root}>
       {devices.map((device, index) => (
         <DevicePreview
           device={device}
@@ -146,7 +167,7 @@ export function HorizontalCases() {
           gsap.to(track.current, {
             xPercent: -100 * (panels.length - 1) / panels.length,
             ease: "none",
-            scrollTrigger: { trigger: root.current, start: "top top", end: () => `+=${window.innerWidth * 2}`, pin: true, scrub: 1, invalidateOnRefresh: true },
+            scrollTrigger: { trigger: root.current, start: "top top", end: () => `+=${window.innerWidth * 4.5}`, pin: true, scrub: 1.35, invalidateOnRefresh: true },
           });
         },
       });

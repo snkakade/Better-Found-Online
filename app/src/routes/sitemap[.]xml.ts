@@ -19,6 +19,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/work",
           "/studio",
           "/insights",
+          "/privacy",
         ];
         const xml = [
           '<?xml version="1.0" encoding="UTF-8"?>',

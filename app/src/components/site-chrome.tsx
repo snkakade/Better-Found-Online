@@ -2,6 +2,7 @@ import { ArrowUpRight } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { CookieSettingsButton } from "@/components/analytics-consent";
 
 const navigation = [
   ["Work", "/work"],
@@ -324,14 +325,6 @@ export function SiteHeader({
 export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: boolean; onMotionToggle?: () => void }) {
   return (
     <footer id="site-footer" className="footer">
-      <div className="footer-lead">
-        <p className="eyebrow">Have a project in mind?</p>
-        <h2>Let&apos;s make your business<br /><em>easier to choose.</em></h2>
-        <TransitionLink href="/#contact" className="footer-project-link">
-          Let&apos;s Talk About Your Project <ArrowUpRight size={32} weight="light" />
-        </TransitionLink>
-      </div>
-
       <div className="footer-directory">
         <div className="footer-brand-block">
           <Brand large />
@@ -362,13 +355,15 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
         </div>
       </div>
 
+      <div className="footer-wordmark" aria-hidden="true">BFO</div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Better Found Online</span>
         <span>Found. Understood. Chosen.</span>
+        <TransitionLink href="/privacy">Privacy</TransitionLink>
+        <CookieSettingsButton />
         {onMotionToggle && <button onClick={onMotionToggle} aria-pressed={motionPaused}>Motion {motionPaused ? "Off" : "On"}</button>}
         <a href="#main">Back to top ↑</a>
       </div>
-      <div className="footer-wordmark" aria-hidden="true">BFO</div>
     </footer>
   );
 }
