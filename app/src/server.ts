@@ -8,6 +8,14 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
+type AssetBinding = {
+  fetch: (request: Request) => Promise<Response> | Response;
+};
+
+type RuntimeEnv = {
+  ASSETS?: AssetBinding;
+};
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -39,8 +47,21 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 }
 
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown) {
+  async fetch(request: Request, env: RuntimeEnv, ctx: unknown) {
     try {
+      // Cloudflare Pages advanced mode sends every request through this worker.
+      // Let its asset binding serve fingerprinted JS/CSS, fonts and media while
+      // keeping document requests in TanStack Start for server-rendered SEO.
+      const { pathname } = new URL(request.url);
+      const isStaticAsset =
+        pathname.startsWith("/assets/") ||
+        pathname.startsWith("/presets/") ||
+        /\.[a-zA-Z0-9]{2,8}$/.test(pathname);
+
+      if ((request.method === "GET" || request.method === "HEAD") && isStaticAsset && env.ASSETS) {
+        return applySecurityHeaders(await env.ASSETS.fetch(request));
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return applySecurityHeaders(await normalizeCatastrophicSsrResponse(response));
