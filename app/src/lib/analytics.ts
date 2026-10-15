@@ -36,6 +36,7 @@ export function readConsent(): ConsentPreferences | null {
 }
 
 export function saveConsent(preferences: Pick<ConsentPreferences, "analytics" | "advertising" | "personalization">) {
+  const previous = readConsent();
   const value: ConsentPreferences = { version: 1, ...preferences, updatedAt: new Date().toISOString() };
   try {
     window.localStorage?.setItem(CONSENT_STORAGE_KEY, JSON.stringify(value));
@@ -44,6 +45,12 @@ export function saveConsent(preferences: Pick<ConsentPreferences, "analytics" | 
     // current page without breaking the visitor's controls.
   }
   applyConsent(value);
+  // The initial page view may have been queued while analytics storage was
+  // denied. Send a fresh page view as soon as analytics consent is granted so
+  // the accepted visit appears in GA4 Realtime without requiring a reload.
+  if (value.analytics && !previous?.analytics) {
+    window.setTimeout(trackPageView, 100);
+  }
   window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: value }));
   return value;
 }
