@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { CookieSettingsButton } from "@/components/analytics-consent";
 
 const navigation = [
@@ -222,9 +222,13 @@ export function SiteHeader({
 
   const wordmark = "BFO";
   const headerBrandTone: BrandTone = open ? "light" : scrolled ? "dark" : resolvedBrandTone;
+  const glassStyle = scrolled && !open ? {
+    backdropFilter: "blur(26px) saturate(1.28)",
+    WebkitBackdropFilter: "blur(26px) saturate(1.28)",
+  } as CSSProperties : undefined;
 
   return (
-    <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`}>
+    <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`} style={glassStyle}>
       <Brand tone={headerBrandTone} />
       <button
         ref={toggleRef}
