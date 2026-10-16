@@ -8,7 +8,7 @@ const cases = [
     service: "Website Strategy / Design / SEO",
     headline: "Make specialist expertise easier to trust.",
     text: "A carefully structured dental practice website that brings clarity to treatment information, communicates professional expertise, and makes the consultation path easier to follow.",
-    devices: [{ kind: "macbook", src: "/assets/work/dr-shweta-desktop.webm", label: "Dr Shweta Valunj website preview on a MacBook" }],
+    devices: [{ kind: "macbook", src: "/assets/work/dr-shweta-desktop.webm", label: "Dr Shweta Valunj desktop website preview on a MacBook", urlLabel: "drshwetavalunj.in" }],
   },
   {
     name: "Say Vanilla",
@@ -30,7 +30,7 @@ const cases = [
     headline: "Stand out in a market full of sameness.",
     text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates.",
     devices: [
-      { kind: "macbook", src: "/assets/work/tech-sales-desktop-smooth.webm", label: "Tech Sales Sourced desktop website preview" },
+      { kind: "macbook", src: "/assets/work/tech-sales-desktop-smooth.webm", label: "Tech Sales Sourced desktop website preview", urlLabel: "techsalessourced.net" },
       { kind: "tablet", src: "/assets/work/tech-sales-tablet-smooth.webm", label: "Tech Sales Sourced tablet website preview" },
       { kind: "phone", src: "/assets/work/tech-sales-mobile-smooth.webm", label: "Tech Sales Sourced mobile website preview" },
     ],
@@ -54,7 +54,7 @@ function DevicePreview({ device, registerVideo, synchronized = false }: { device
     return <div className="case-device case-device-tablet"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-tablet-screen">{video}</div></div>;
   }
 
-  return <div className="case-device case-device-macbook"><div className="case-device-macbook-lid"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-macbook-screen">{video}</div></div><span className="case-device-macbook-base" aria-hidden="true" /></div>;
+  return <div className="case-device case-device-macbook"><div className="case-device-macbook-lid"><span className="case-device-camera" aria-hidden="true" /><div className="case-device-macbook-screen"><div className="case-browser-bar" aria-hidden="true"><span className="case-browser-controls"><i /><i /><i /></span><span className="case-browser-address">{device.urlLabel}</span><span className="case-browser-menu">•••</span></div><div className="case-browser-viewport">{video}</div></div></div><span className="case-device-macbook-base" aria-hidden="true" /></div>;
 }
 
 function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
