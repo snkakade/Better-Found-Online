@@ -6,9 +6,12 @@ import { CookieSettingsButton } from "@/components/analytics-consent";
 
 const navigation = [
   ["Work", "/work"],
-  ["Performance Marketing", "/services/performance-marketing"],
-  ["Website", "/services"],
-  ["Creative", "/creative-production"],
+  ["Paid Ads", "/services/performance-marketing"],
+  ["SEO & AI Search", "/services#grow"],
+  ["Websites", "/services#build"],
+  ["Creative Production", "/creative-production"],
+  ["Social Media", "/services/social-media-management"],
+  ["All Services", "/services"],
 ];
 
 type BrandTone = "light" | "dark" | "wine" | "rose" | "badge";
