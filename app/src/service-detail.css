@@ -1852,6 +1852,24 @@
 .performance-evidence-mask,
 .performance-evidence-media--amazon::before { display: none; }
 
+/*
+ * Laptop layout: the editorial desktop inset leaves too little room for the
+ * nested campaign narrative at common 13–14 inch viewport widths. Keep the
+ * two-panel composition, but use the full section width and place the source
+ * note beneath the challenge/approach pair.
+ */
+@media (min-width: 1101px) and (max-width: 1500px) {
+  .performance-proof-story--source { width: 100%; }
+  .performance-consumer-source { grid-template-columns: minmax(0, 1.15fr) minmax(440px, .85fr); }
+  .performance-consumer-visual .performance-proof-narrative { grid-template-columns: 1fr; }
+  .performance-consumer-visual .performance-proof-narrative dl { gap: clamp(28px, 3vw, 48px); }
+  .performance-consumer-visual .performance-proof-status {
+    padding: 20px 0 0;
+    border-left: 0;
+  }
+  .performance-consumer-source > aside { padding: clamp(28px, 2.5vw, 40px); }
+}
+
 .performance-marketing-page .performance-related {
   display: grid;
   min-height: min(74svh, 700px) !important;
