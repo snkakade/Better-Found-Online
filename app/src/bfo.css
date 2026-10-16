@@ -324,7 +324,7 @@ section[id] {
   box-shadow: 0 10px 28px rgba(23, 17, 19, 0.22);
   color: var(--deep);
   transform-origin: right center;
-  transition: width 0.5s cubic-bezier(0.075, 0.82, 0.165, 1), border-color 0.35s ease;
+  transition: transform 0.45s cubic-bezier(0.075, 0.82, 0.165, 1), border-color 0.35s ease, box-shadow 0.45s ease;
 }
 
 .header::before {
@@ -344,10 +344,12 @@ section[id] {
 
 .menu-toggle:hover {
   border-color: var(--silver);
+  box-shadow: 0 14px 34px rgba(23, 17, 19, 0.28);
+  transform: translateY(-2px) scale(1.025);
 }
 
 .menu-toggle.opened {
-  width: 56px;
+  width: 138px;
 }
 
 .menu-toggle:disabled {
@@ -361,7 +363,7 @@ section[id] {
   z-index: 1;
   color: var(--deep);
   font-family: Plex, monospace;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -370,11 +372,12 @@ section[id] {
 }
 
 .menu-toggle:hover .menu-copy {
-  left: 18px;
+  left: 20px;
+  letter-spacing: 0.16em;
 }
 
 .menu-toggle.opened .menu-copy {
-  opacity: 0;
+  opacity: 1;
 }
 
 .menu-toggle-icon {
@@ -388,26 +391,27 @@ section[id] {
   overflow: hidden;
   border-radius: 50%;
   background: var(--deep);
-  clip-path: circle(10% at 50% 50%);
+  clip-path: circle(38% at 50% 50%);
   transition: clip-path 0.5s cubic-bezier(0.075, 0.82, 0.165, 1), transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .menu-toggle:hover .menu-toggle-icon {
-  clip-path: circle(35% at 50% 50%);
+  clip-path: circle(44% at 50% 50%);
+  transform: rotate(8deg) scale(1.04);
 }
 
 .menu-toggle.opened .menu-toggle-icon {
-  clip-path: circle(50% at 50% 50%);
-  transform: scale(1.125);
+  clip-path: circle(44% at 50% 50%);
+  transform: rotate(90deg) scale(1.04);
 }
 
 .hamburger {
   position: absolute;
-  top: 60%;
+  top: 50%;
   left: 50%;
   width: 30px;
   height: 30px;
-  opacity: 0;
+  opacity: 1;
   transform: translate(-50%, -50%);
   transition: top 1s cubic-bezier(0.075, 0.82, 0.165, 1), opacity 0.35s ease;
 }
@@ -416,6 +420,14 @@ section[id] {
 .menu-toggle.opened .hamburger {
   top: 50%;
   opacity: 1;
+}
+
+.menu-toggle:hover .hamburger i[data-position="top"] {
+  transform: translate(-50%, -5px) scaleX(1.25);
+}
+
+.menu-toggle:hover .hamburger i[data-position="bottom"] {
+  transform: translate(-50%, 4px) scaleX(.72);
 }
 
 .hamburger i {
@@ -1765,7 +1777,7 @@ section[id] {
   }
 
   .menu-toggle.opened {
-    width: 52px;
+    width: 108px;
   }
 
   .menu-toggle-icon {
