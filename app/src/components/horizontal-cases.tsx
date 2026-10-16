@@ -41,7 +41,8 @@ type CaseDevice = (typeof cases)[number]["devices"][number];
 
 function DevicePreview({ device, registerVideo, synchronized = false }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; synchronized?: boolean }) {
   const video = (
-    <video ref={registerVideo} loop muted playsInline preload="auto" aria-label={device.label}>
+    <video ref={registerVideo} autoPlay loop muted playsInline preload="auto" aria-label={device.label}>
+      {device.kind === "macbook" && <source src={device.src.replace(/\.webm$/, ".mp4")} type="video/mp4" />}
       <source src={device.src} type="video/webm" />
     </video>
   );
@@ -82,6 +83,11 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
 
     const startWhenReady = () => {
       window.clearInterval(readyTimer);
+      media.forEach((video) => {
+        video.playbackRate = basePlaybackRate;
+        video.load();
+        void video.play().catch(() => undefined);
+      });
       if (startTogether()) return;
       readyTimer = window.setInterval(() => {
         if (startTogether()) window.clearInterval(readyTimer);
