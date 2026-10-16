@@ -28,8 +28,8 @@ const services = [
     items: ["Website Strategy & Positioning", "Website Design & Development", "User Experience & Conversion", "Interactive Digital Experiences"],
     result: "A distinctive digital presence that gives visitors a clear reason to stay, explore, and take action.",
     cardLine: "Websites / Digital Experience",
-    cta: "Discuss a Website",
-    href: "/#contact",
+    cta: "Explore Website Design",
+    href: "/services/websites",
     image: "/assets/portals.webp",
   },
   {
@@ -56,8 +56,10 @@ const services = [
     items: ["SEO & Search Visibility", "Performance Marketing", "Social Media Management", "Campaign Measurement"],
     result: "A clearer path from visibility to informed campaign decisions and meaningful customer action.",
     cardLine: "Search / Paid Media / Social",
-    cta: "Explore Performance Marketing",
-    href: "/services/performance-marketing",
+    cta: "Explore SEO & AI Search",
+    href: "/services/seo-ai-search",
+    secondaryCta: "Explore Performance Marketing",
+    secondaryHref: "/services/performance-marketing",
     image: "/assets/macro.webp",
   },
   {

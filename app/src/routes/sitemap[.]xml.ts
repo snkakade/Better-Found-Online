@@ -9,6 +9,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         const pages = [
           "/",
           "/services",
+          "/services/websites",
+          "/services/seo-ai-search",
           "/creative-production",
           "/services/video-production-editing",
           "/services/3d-cgi-rendering",

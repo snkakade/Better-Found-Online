@@ -127,9 +127,9 @@ const campaignEvidence: PerformanceProofCard[] = [
 ];
 
 const related = [
-  { number: "01", label: "Website & Landing Pages", note: "Turn paid attention into a clear next step.", href: "/services#build" },
+  { number: "01", label: "Website & Landing Pages", note: "Turn paid attention into a clear next step.", href: "/services/websites" },
   { number: "02", label: "Creative Production", note: "Give campaigns stronger visual material.", href: "/creative-production" },
-  { number: "03", label: "SEO & Content Strategy", note: "Build demand beyond the paid click.", href: "/services#grow" },
+  { number: "03", label: "SEO & AI Search", note: "Build demand beyond the paid click.", href: "/services/seo-ai-search" },
   { number: "04", label: "CRM & Integrations", note: "Carry captured demand into follow-up.", href: "/services#connect" },
 ];
 

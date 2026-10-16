@@ -7,8 +7,8 @@ import { CookieSettingsButton } from "@/components/analytics-consent";
 const navigation = [
   ["Work", "/work"],
   ["Paid Ads", "/services/performance-marketing"],
-  ["SEO & AI Search", "/services#grow"],
-  ["Websites", "/services#build"],
+  ["SEO & AI Search", "/services/seo-ai-search"],
+  ["Websites", "/services/websites"],
   ["Creative Production", "/creative-production"],
   ["Social Media", "/services/social-media-management"],
   ["All Services", "/services"],
@@ -341,9 +341,9 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
         </nav>
         <div>
           <p className="footer-label">Services</p>
-          <TransitionLink href="/services">Website Design</TransitionLink>
+          <TransitionLink href="/services/websites">Website Design</TransitionLink>
           <TransitionLink href="/creative-production">Creative Production</TransitionLink>
-          <TransitionLink href="/services">SEO &amp; Content</TransitionLink>
+          <TransitionLink href="/services/seo-ai-search">SEO &amp; AI Search</TransitionLink>
           <TransitionLink href="/services/performance-marketing">Performance Marketing</TransitionLink>
           <TransitionLink href="/services/social-media-management">Social Media Management</TransitionLink>
           <TransitionLink href="/services">CRM &amp; Integrations</TransitionLink>

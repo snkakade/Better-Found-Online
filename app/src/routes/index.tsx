@@ -66,7 +66,7 @@ const services = [
       "Distinctive, easy-to-use websites that present your business clearly, build confidence, and make the next step feel natural.",
     items: ["Website Design & Development", "UX & Digital Experiences", "Landing Pages & Conversion"],
     cta: "Explore Web Services",
-    href: "/services#build",
+    href: "/services/websites",
   },
   {
     name: "Create",
@@ -86,7 +86,7 @@ const services = [
       "SEO, paid media, content, and social management connected to the customers you want to reach and the actions that matter to your business.",
     items: ["SEO & Search Visibility", "Performance Marketing", "Social Media Management", "Campaign Measurement"],
     cta: "Explore Growth Services",
-    href: "/services#grow",
+    href: "/services/seo-ai-search",
   },
   {
     name: "Connect",
@@ -482,7 +482,7 @@ function Index() {
                   <p>{service.body}</p>
                   <ul>
                     {service.items.map((item) => (
-                      <li key={item}>{service.name === "Grow" && item === "Performance Marketing" ? <TransitionLink href="/services/performance-marketing">{item}</TransitionLink> : item}</li>
+                      <li key={item}>{service.name === "Grow" && item === "Performance Marketing" ? <TransitionLink href="/services/performance-marketing">{item}</TransitionLink> : service.name === "Grow" && item === "SEO & Search Visibility" ? <TransitionLink href="/services/seo-ai-search">{item}</TransitionLink> : service.name === "Build" && item === "Website Design & Development" ? <TransitionLink href="/services/websites">{item}</TransitionLink> : item}</li>
                     ))}
                   </ul>
                   <TransitionLink href={service.href}>
@@ -576,7 +576,7 @@ function Index() {
             <label>Your Email<input name="email" type="email" autoComplete="email" required /></label>
             <label>Your Phone<input name="phone" type="tel" autoComplete="tel" inputMode="tel" required /></label>
             <label>Company or Website (Optional)<input name="company" autoComplete="organization" /></label>
-            <label>What Are You Working On?<select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>SEO &amp; Search Visibility</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
+            <label>What Are You Working On?<select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>Website Redesign</option><option>Landing Page</option><option>Ecommerce Website</option><option>SEO &amp; Search Visibility</option><option>Technical SEO</option><option>AI Search &amp; GEO</option><option>Content Strategy</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
             <label className="contact-form-wide">Tell Us a Little About Your Project<textarea name="details" rows={5} required /></label>
             <label className="contact-form-wide contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Yes, Better Found Online may email or text me about relevant services and updates. Consent is optional and not required to submit.</span></label>
             <button type="submit">Send Your Inquiry <span aria-hidden="true">↗</span></button>
