@@ -177,18 +177,18 @@ section[id] {
   transition: background-color 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease;
 }
 
-.header:not(.menu-active) {
-  border-bottom: 1px solid rgba(241, 236, 231, 0.1);
-  background: linear-gradient(180deg, rgba(18, 14, 16, 0.88), rgba(18, 14, 16, 0.76));
-  box-shadow: 0 12px 36px rgba(5, 3, 4, 0.14);
-  backdrop-filter: blur(30px) saturate(1.4);
-  -webkit-backdrop-filter: blur(30px) saturate(1.4);
+.header.scrolled:not(.menu-active) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(246, 241, 236, 0.56);
+  box-shadow: 0 12px 36px rgba(30, 24, 26, 0.08);
+  backdrop-filter: blur(26px) saturate(1.28);
+  -webkit-backdrop-filter: blur(26px) saturate(1.28);
 }
 
-.header.brand-dark:not(.menu-active) {
+.header.scrolled.brand-dark:not(.menu-active) {
   border-bottom-color: rgba(18, 14, 16, 0.1);
-  background: linear-gradient(180deg, rgba(231, 224, 218, 0.9), rgba(231, 224, 218, 0.78));
-  box-shadow: 0 12px 36px rgba(18, 14, 16, 0.1);
+  background: rgba(246, 241, 236, 0.56);
+  box-shadow: 0 12px 36px rgba(18, 14, 16, 0.08);
 }
 
 .brand {
