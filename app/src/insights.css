@@ -185,7 +185,7 @@
 }
 
 .insights-story-intro h2 em,
-.insights-closing h2 em { color: var(--insights-accent); font-style: normal; font-weight: 300; }
+.insights-closing h2 em { color: inherit; font-style: normal; font-weight: inherit; }
 .insights-story-intro p { max-width: 280px; color: var(--insights-muted); line-height: 1.65; }
 .insights-story-rows { margin-top: 120px; border-top: 1px solid var(--insights-line); }
 

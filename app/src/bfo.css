@@ -1533,7 +1533,7 @@ section[id] {
 }
 
 .footer-lead h2 em {
-  color: var(--rose);
+  color: inherit;
   font-style: normal;
 }
 

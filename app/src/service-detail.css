@@ -2090,7 +2090,7 @@
   line-height: .86;
   letter-spacing: -.072em;
 }
-.performance-closing--connected h2 span { color: var(--rose); }
+.performance-closing--connected h2 span { color: inherit; }
 .performance-closing--connected .performance-closing-message > p {
   max-width: 42rem;
   margin: clamp(28px, 4vh, 42px) 0 0;

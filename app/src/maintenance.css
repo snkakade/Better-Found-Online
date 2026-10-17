@@ -138,7 +138,7 @@ a { text-decoration: none; }
 }
 
 .maintenance h1 em {
-  color: var(--rose);
+  color: inherit;
   font-style: italic;
   font-weight: 400;
   white-space: nowrap;
