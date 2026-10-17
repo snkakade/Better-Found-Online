@@ -131,7 +131,7 @@ section[id] {
 }
 
 .section-pad {
-  padding: 112px max(5vw, 24px);
+  padding: clamp(72px, 7vw, 112px) max(5vw, 24px);
 }
 
 .eyebrow,
@@ -1044,14 +1044,14 @@ section[id] {
 .section-heading h2,
 .about h2,
 .static-chapter h2 {
-  font-size: clamp(2.5rem, 4.7vw, 4.9rem);
-  line-height: 1.03;
+  font-size: clamp(2.5rem, 4vw, 4.6rem);
+  line-height: 1;
   letter-spacing: -0.045em;
 }
 
 .section-heading h2 span,
 .about h2 span {
-  color: var(--muted);
+  color: inherit;
 }
 
 .section-heading > p:not(.eyebrow) {
@@ -2389,8 +2389,8 @@ section[id] {
 .hero h1 {
   max-width: 650px;
   color: #f2efec;
-  font-size: clamp(4rem, 6.3vw, 7.2rem);
-  line-height: 0.86;
+  font-size: clamp(3.25rem, 4.65vw, 5.65rem);
+  line-height: 0.92;
   letter-spacing: -0.068em;
   text-wrap: balance;
 }
@@ -2401,9 +2401,9 @@ section[id] {
   margin-top: 0.08em;
   color: #f2efec;
   font-family: Outfit, sans-serif;
-  font-size: 0.78em;
+  font-size: 1em;
   font-style: normal;
-  font-weight: 220;
+  font-weight: inherit;
   letter-spacing: -0.06em;
 }
 
