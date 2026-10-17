@@ -1625,11 +1625,12 @@ section[id] {
 }
 
 .footer-wordmark {
-  height: clamp(130px, 25vw, 400px);
+  height: auto;
+  margin-bottom: clamp(28px, 4vw, 64px);
   color: var(--silver);
-  font-size: clamp(11rem, 31vw, 38rem);
+  font-size: clamp(8.8rem, 24.8vw, 30.4rem);
   font-weight: 650;
-  line-height: 0.72;
+  line-height: 0.76;
   letter-spacing: -0.09em;
   white-space: nowrap;
 }
@@ -2037,10 +2038,11 @@ section[id] {
   }
 
   .footer-wordmark {
-    height: 120px;
+    height: auto;
     margin-top: 28px;
-    font-size: 11rem;
-    line-height: 0.7;
+    margin-bottom: 28px;
+    font-size: 8.8rem;
+    line-height: 0.76;
   }
 
   .story-sequence {

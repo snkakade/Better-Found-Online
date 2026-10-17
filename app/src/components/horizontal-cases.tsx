@@ -8,7 +8,7 @@ const cases = [
     service: "Website Strategy / Design / SEO",
     headline: "Make specialist expertise easier to trust.",
     text: "A carefully structured dental practice website that brings clarity to treatment information, communicates professional expertise, and makes the consultation path easier to follow.",
-    devices: [{ kind: "macbook", src: "/assets/work/dr-shweta-desktop.webm", label: "Dr Shweta Valunj desktop website preview on a MacBook", urlLabel: "drshwetavalunj.in" }],
+    devices: [{ kind: "macbook", src: "/assets/service-pages/websites/dr-shweta.webm", playbackRate: 0.64, label: "Dr Shweta Valunj desktop website preview on a MacBook", urlLabel: "drshwetavalunj.in" }],
   },
   {
     name: "Say Vanilla",
@@ -64,7 +64,8 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
   const synchronized = devices.length > 1;
 
   useEffect(() => {
-    const basePlaybackRate = synchronized ? 0.72 : 0.78;
+    const requestedRate = "playbackRate" in devices[0] ? devices[0].playbackRate : undefined;
+    const basePlaybackRate = requestedRate ?? (synchronized ? 0.72 : 0.78);
     let readyTimer = 0;
     let syncTimer = 0;
     let hasEntered = false;
