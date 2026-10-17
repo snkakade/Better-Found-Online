@@ -29,7 +29,7 @@ export function ProjectReel() {
     const region = section.current;
     const root = track.current;
     if (!region || !root) return;
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const finePointer = window.matchMedia("(min-width: 801px) and (hover: hover) and (pointer: fine)");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!finePointer.matches || reduceMotion.matches) return;
 

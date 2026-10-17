@@ -146,7 +146,7 @@
 .reel-card {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
-  height: clamp(360px, 46vh, 480px);
+  height: clamp(400px, 48vh, 500px);
   min-height: 0;
   background: var(--deep);
   scroll-snap-align: start;
@@ -168,7 +168,8 @@
   display: flex;
   flex-direction: column;
   justify-content: end;
-  padding: 44px;
+  min-width: 0;
+  padding: clamp(28px, 3vw, 40px);
 }
 
 .reel-copy > span {
@@ -197,16 +198,65 @@
 
 .reel-copy h3 {
   margin-top: 16px;
-  font-size: clamp(2rem, 3.4vw, 4rem);
-  line-height: 0.98;
+  font-size: clamp(2rem, 3vw, 3.35rem);
+  line-height: 1;
   letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
 }
 
 .reel-copy p {
-  margin-top: 22px;
+  margin-top: 18px;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 801px) and (max-height: 820px) {
+  .work-reel[data-scroll-driven="true"] .reel-pin {
+    padding-top: 82px;
+    padding-bottom: 24px;
+  }
+
+  .reel-heading {
+    margin-bottom: 20px;
+  }
+
+  .reel-heading .eyebrow {
+    margin-bottom: 10px;
+  }
+
+  .reel-heading h2 {
+    font-size: clamp(2.5rem, 4.2vw, 4rem);
+  }
+
+  .reel-intro {
+    margin-top: 12px;
+    line-height: 1.45;
+  }
+
+  .reel-card {
+    height: clamp(360px, 47vh, 400px);
+  }
+
+  .reel-copy {
+    padding: 26px 30px;
+  }
+
+  .reel-copy h3 {
+    margin-top: 12px;
+    font-size: clamp(1.9rem, 2.75vw, 3rem);
+  }
+
+  .reel-copy p {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .reel-all {
+    margin-top: 20px;
+  }
 }
 
 .reel-all,

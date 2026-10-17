@@ -4,8 +4,6 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollScrub } from "@/components/scroll-scrub/scroll-scrub";
-import { scrollScrubScenes, scrollScrubTheme } from "@/scroll-scrub-scenes";
 import { BrandTunnel } from "@/components/brand-tunnel";
 import { KineticBand } from "@/components/kinetic-band";
 import { ProjectReel } from "@/components/project-reel";
@@ -524,8 +522,6 @@ function Index() {
               </div>
             </div>
           </div>
-
-          {!motionPaused ? <ScrollScrub scenes={scrollScrubScenes} theme={scrollScrubTheme} /> : <div className="static-chapter section-pad"><p className="eyebrow">Our approach</p><h2>Better together.</h2><p>Your brand, website, marketing, and digital tools shouldn't pull in different directions. We bring the right pieces together to create a more connected experience for your customers and your business.</p></div>}
         </section>
 
         <section className="insights section-pad" id="insights" aria-labelledby="insights-title">

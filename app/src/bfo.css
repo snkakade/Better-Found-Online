@@ -2638,7 +2638,7 @@ section[id] {
 .privacy-updated { font: 500 10px/1.4 monospace; letter-spacing: .12em; text-transform: uppercase; }
 @media (max-width: 720px) {
   .privacy-content { width: min(100% - 28px, 1120px); padding: 130px 0 80px; }
-  .privacy-content > h1 { font-size: clamp(56px, 19vw, 90px); }
+  .privacy-content > h1 { max-width: 100%; font-size: clamp(46px, 14.5vw, 72px); line-height: .9; letter-spacing: -.055em; }
   .privacy-lead { margin-bottom: 58px; }
   .privacy-content section { grid-template-columns: 1fr; gap: 16px; }
 }
