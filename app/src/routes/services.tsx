@@ -137,11 +137,6 @@ function ServicesPage() {
         "chars",
         "services-char",
       );
-      const navSplit = splitText(
-        ".services-page .nav a",
-        "words",
-        "services-nav-word",
-      );
       const heroHeaderSplit = splitText(
         ".services-hero-title",
         "chars",
@@ -163,7 +158,7 @@ function ServicesPage() {
       if (reduceMotion) {
         gsap.set(".services-preloader", { display: "none" });
         gsap.set(
-          [...heroHeaderSplit.chars, ...navSplit.words, ...footerSplit.words, ...supportingTargets],
+          [...heroHeaderSplit.chars, ...footerSplit.words, ...supportingTargets],
           { y: "0%", autoAlpha: 1 },
         );
         gsap.set(".services-hero-card", { y: 0, scale: 1, rotate: 0, autoAlpha: 1 });
@@ -173,7 +168,6 @@ function ServicesPage() {
         gsap.set(supportingTargets, { y: 22, autoAlpha: 0 });
         gsap.set(preloaderHeaderSplit.chars, { y: "100%" });
         gsap.set(heroHeaderSplit.chars, { y: "100%" });
-        gsap.set(navSplit.words, { y: "100%" });
         gsap.set(footerSplit.words, { y: "100%" });
         gsap.set(".services-hero-card", { y: 56, scale: 0.96, rotate: 0, autoAlpha: 0 });
 
@@ -238,12 +232,6 @@ function ServicesPage() {
           ease: "servicesHop",
           stagger: { each: 0.075, from: "random" },
         }, 4.65);
-        timeline.to(navSplit.words, {
-          y: "0%",
-          duration: 1,
-          ease: "servicesHop",
-          stagger: 0.075,
-        }, 4.75);
         timeline.to(supportingTargets, {
           y: 0,
           autoAlpha: 1,

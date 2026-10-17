@@ -125,8 +125,15 @@ export function SiteHeader({
     const video = menu.querySelector<HTMLElement>(".site-menu-video");
     const letters = menu.querySelectorAll<HTMLElement>(".site-menu-wordmark span");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const animationTargets: gsap.TweenTarget[] = [
+      menu,
+      ...Array.from(links),
+      ...Array.from(socialLines),
+      ...Array.from(letters),
+      ...(video ? [video] : []),
+    ];
 
-    gsap.killTweensOf([menu, links, socialLines, video, letters]);
+    gsap.killTweensOf(animationTargets);
 
     if (previousOpen.current === null) {
       previousOpen.current = open;
@@ -198,7 +205,7 @@ export function SiteHeader({
       });
     }
 
-    return () => gsap.killTweensOf([menu, links, socialLines, video, letters]);
+    return () => gsap.killTweensOf(animationTargets);
   }, [open]);
 
   useEffect(() => () => {
