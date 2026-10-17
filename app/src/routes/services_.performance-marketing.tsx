@@ -24,14 +24,6 @@ export const Route = createFileRoute("/services_/performance-marketing")({
   }),
 });
 
-const campaignCapabilities = [
-  { number: "01", title: "Capture existing demand.", label: "Paid Search", copy: "Meet people already looking for what you sell.", detail: "Google Ads / Microsoft Advertising / Search Intent" },
-  { number: "02", title: "Create demand earlier.", label: "Paid Social", copy: "Introduce the offer before the customer starts searching.", detail: "Audience Strategy / Paid Social / Campaign Creative" },
-  { number: "03", title: "Measure meaningful action.", label: "Tracking & Attribution", copy: "Separate useful business signals from dashboard noise.", detail: "Conversion Tracking / Attribution / Reporting" },
-  { number: "04", title: "Direct the budget.", label: "Media Planning", copy: "Put spend behind the channels and decisions with a clear job.", detail: "Channel Mix / Budget Allocation / Optimization" },
-  { number: "05", title: "Make the click count.", label: "Creative & Landing Pages", copy: "Connect the ad to a message and destination that make sense.", detail: "Ad Creative / Landing Pages / Conversion Journeys" },
-];
-
 const campaignEvidence: PerformanceProofCard[] = [
   {
     category: "Industrial equipment manufacturer / B2B search",
@@ -226,18 +218,6 @@ function PerformanceMarketingPage() {
           outroCtaLabel="Discuss Your Campaign Strategy"
           outroCtaHref="/#contact"
         />
-
-        <section className="performance-capabilities section-pad" aria-labelledby="campaign-work-title">
-          <header className="performance-capabilities-intro">
-            <p className="eyebrow">What we connect</p>
-            <h2 id="campaign-work-title">One campaign.<br />Five connected decisions.</h2>
-            <p>Audience, offer, media, measurement, and the experience after the click. Each part has a job.</p>
-            <div className="performance-capabilities-sequence" aria-hidden="true"><span>Find</span><i /><span>Persuade</span><i /><span>Measure</span></div>
-          </header>
-          <div className="performance-capability-grid">
-            {campaignCapabilities.map((capability) => <article key={capability.title}><span>{capability.number}</span><div><small>{capability.label}</small><h3>{capability.title}</h3></div><p>{capability.copy}</p><small>{capability.detail}</small></article>)}
-          </div>
-        </section>
 
         <section className="performance-approach-feature section-pad" aria-labelledby="real-estate-title">
           <div>
