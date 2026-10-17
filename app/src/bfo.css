@@ -1772,13 +1772,20 @@ section[id] {
     top: 9px;
     right: 18px;
     display: block;
-    width: 108px;
+    width: 118px;
     height: 52px;
     padding: 0;
   }
 
   .menu-toggle.opened {
-    width: 108px;
+    width: 118px;
+  }
+
+  .menu-copy,
+  .menu-toggle:hover .menu-copy {
+    left: 16px;
+    font-size: 12px;
+    letter-spacing: .08em;
   }
 
   .menu-toggle-icon {

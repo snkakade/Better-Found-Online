@@ -10,7 +10,7 @@
   background: radial-gradient(circle at 76% 42%, rgba(113, 42, 58, .34), transparent 36rem), var(--deep);
 }
 
-.service-detail-hero-copy { position: relative; z-index: 2; align-self: center; max-width: 930px; }
+.service-detail-hero-copy { position: relative; z-index: 2; min-width: 0; align-self: center; max-width: 930px; }
 .service-detail-hero h1 { max-width: 820px; margin-top: 20px; font-size: clamp(3.25rem, 4.65vw, 5.65rem); line-height: .92; letter-spacing: -.06em; }
 .service-detail-hero-copy > p:not(.eyebrow) { max-width: 650px; margin-top: 26px; color: var(--muted); font-size: clamp(.98rem, 1.05vw, 1.1rem); line-height: 1.55; }
 .service-detail-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 28px; margin-top: 42px; }
@@ -971,7 +971,8 @@
   }
 
   .creative-step-rail {
-    margin-right: -1.25rem;
+    width: 100%;
+    margin-right: 0;
   }
 
   .creative-process-focus {
