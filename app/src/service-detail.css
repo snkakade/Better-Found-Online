@@ -1857,6 +1857,47 @@
 .performance-result-group > header div .performance-platform-amazon { margin-bottom: 20px; }
 .performance-results-feature-brand img { width: clamp(150px, 12vw, 184px); height: 46px; padding: 0; background: transparent; filter: brightness(0) invert(.94); }
 .performance-results-google > img { width: 154px; height: 46px; padding: 0; background: transparent; filter: none; }
+
+/* Keep the campaign-results story inside the usable desktop viewport. */
+@media (min-width: 1101px) {
+  .performance-marketing-page .performance-results-strip {
+    display: grid;
+    height: calc(100svh - 90px);
+    min-height: 650px;
+    max-height: 860px;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(16px, 2.2vh, 24px);
+    padding-block: clamp(34px, 4.5vh, 48px);
+    overflow: hidden;
+  }
+  .performance-marketing-page .performance-results-strip > header {
+    grid-template-columns: minmax(170px, .3fr) minmax(0, 1fr);
+    gap: 12px 5vw;
+  }
+  .performance-marketing-page .performance-results-strip > header h2 {
+    max-width: 19ch;
+    font-size: clamp(2.8rem, 4vw, 4.8rem);
+    line-height: .94;
+  }
+  .performance-marketing-page .performance-results-strip > header > p:last-child {
+    max-width: 42rem;
+    font-size: clamp(.9rem, 1vw, 1.05rem);
+    line-height: 1.5;
+  }
+  .performance-results-stage {
+    min-height: 0;
+    margin-top: 0;
+  }
+  .performance-results-feature { padding: clamp(20px, 2.5vw, 36px); }
+  .performance-results-feature > strong { font-size: clamp(5.5rem, 8.2vw, 9rem); }
+  .performance-results-feature h3 { margin-top: 18px; font-size: clamp(1.35rem, 1.75vw, 2rem); }
+  .performance-results-feature > p { margin-top: 12px; font-size: .86rem; line-height: 1.45; }
+  .performance-results-support article { padding: clamp(14px, 1.6vw, 24px); }
+  .performance-results-support strong { font-size: clamp(2.35rem, 3.25vw, 3.8rem); }
+  .performance-results-support h3 { font-size: clamp(.9rem, 1vw, 1.08rem); }
+  .performance-results-footer { gap: 16px 5vw; margin-top: 0; }
+  .performance-results-footer > small { line-height: 1.45; }
+}
 .performance-evidence-mask,
 .performance-evidence-media--amazon::before { display: none; }
 
