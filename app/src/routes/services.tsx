@@ -30,7 +30,7 @@ const services = [
     cardLine: "Websites / Digital Experience",
     cta: "Explore Website Design",
     href: "/services/websites",
-    image: "/assets/portals.webp",
+    image: "/assets/service-cards/build.jpg",
   },
   {
     number: "02",
@@ -45,7 +45,7 @@ const services = [
     href: "/creative-production",
     secondaryCta: "Discuss a Creative Project",
     secondaryHref: "/#contact",
-    image: "/assets/connect.webp",
+    image: "/assets/service-cards/create.jpg",
   },
   {
     number: "03",
@@ -60,7 +60,7 @@ const services = [
     href: "/services/seo-ai-search",
     secondaryCta: "Explore Performance Marketing",
     secondaryHref: "/services/performance-marketing",
-    image: "/assets/macro.webp",
+    image: "/assets/service-cards/grow.jpg",
   },
   {
     number: "04",
@@ -73,7 +73,7 @@ const services = [
     cardLine: "CRM / Integrations / Automation",
     cta: "Discuss Integrations",
     href: "/#contact",
-    image: "/assets/connect.webp",
+    image: "/assets/service-cards/connect.jpg",
   },
   {
     number: "05",
@@ -86,7 +86,7 @@ const services = [
     cardLine: "Performance / Reporting / Process",
     cta: "Discuss Improvements",
     href: "/#contact",
-    image: "/assets/world/poster.webp",
+    image: "/assets/service-cards/improve.jpg",
   },
 ];
 
