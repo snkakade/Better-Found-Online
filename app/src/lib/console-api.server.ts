@@ -35,6 +35,7 @@ type AuthenticatedUser = Pick<ConsoleUserRow, "id" | "username" | "role"> & {
 
 const encoder = new TextEncoder();
 const E164 = /^\+[1-9]\d{7,14}$/;
+const PASSWORD_HASH_ITERATIONS = 100000;
 const roles = ["agent", "manager", "admin"] as const;
 const permissionsByRole = {
   agent: ["send_messages", "place_calls", "view_contacts"],
@@ -262,7 +263,7 @@ async function handleBootstrap(request: Request, env: ConsoleEnv) {
     return json({ error: "Use a valid username, display name, and a password of at least 12 characters" }, 400);
   }
   const salt = randomToken(18);
-  const iterations = 120000;
+  const iterations = PASSWORD_HASH_ITERATIONS;
   await db.prepare("INSERT INTO console_users (username, display_name, email, role, password_salt, password_hash, password_iterations) VALUES (?, ?, ?, 'admin', ?, ?, ?)")
     .bind(username, name, email, salt, await hashPassword(password, salt, iterations), iterations).run();
   return json({ ok: true, username }, 201);
@@ -286,7 +287,7 @@ async function handleUsers(request: Request, env: ConsoleEnv, actor: Authenticat
       return json({ error: "Invalid user details" }, 400);
     }
     const salt = randomToken(18);
-    const iterations = 120000;
+    const iterations = PASSWORD_HASH_ITERATIONS;
     try {
       const result = await db.prepare("INSERT INTO console_users (username, display_name, email, role, password_salt, password_hash, password_iterations) VALUES (?, ?, ?, ?, ?, ?, ?)")
         .bind(username, name, email, role, salt, await hashPassword(password, salt, iterations), iterations).run();
@@ -304,7 +305,7 @@ async function handleUsers(request: Request, env: ConsoleEnv, actor: Authenticat
     if (active !== null) await db.prepare("UPDATE console_users SET active = ?, updated_at = datetime('now') WHERE id = ?").bind(active, id).run();
     if (typeof body?.password === "string" && body.password.length >= 12) {
       const salt = randomToken(18);
-      const iterations = 120000;
+      const iterations = PASSWORD_HASH_ITERATIONS;
       await db.prepare("UPDATE console_users SET password_salt = ?, password_hash = ?, password_iterations = ?, updated_at = datetime('now') WHERE id = ?")
         .bind(salt, await hashPassword(body.password, salt, iterations), iterations, id).run();
       await db.prepare("DELETE FROM console_sessions WHERE user_id = ?").bind(id).run();
