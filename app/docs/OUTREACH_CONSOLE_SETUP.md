@@ -15,7 +15,7 @@ Every outbound SMS and browser call is written to `outreach_events` with the aut
 - D1 database: `better-found-online-db`
 - D1 ID: `b8dbe9b8-9739-483a-b497-670398ef08c4`
 - Worker binding: `DB`
-- Migration: `migrations/0002_outreach_console.sql`
+- Migrations: `migrations/0002_outreach_console.sql` and `migrations/0003_console_crm.sql`
 
 Bind the production D1 database to the `better-found-online` Pages project as `DB` for both Production and Preview.
 
@@ -53,6 +53,7 @@ Afterward, sign in and use **Team access** to create Agent, Manager, or Administ
 Configure the existing Twilio number and TwiML App with HTTPS `POST` requests:
 
 - Incoming message webhook: `https://console.betterfoundonline.com/api/console/sms-webhook`
+- Incoming voice webhook: `https://console.betterfoundonline.com/api/console/incoming-voice-webhook`
 - TwiML App voice request URL: `https://console.betterfoundonline.com/api/console/voice-webhook`
 
 The application supplies these callbacks automatically for console-created activity:
@@ -61,6 +62,19 @@ The application supplies these callbacks automatically for console-created activ
 - Call progress callback: `/api/console/call-status-webhook`
 
 All Twilio webhooks validate `X-Twilio-Signature`; unsigned or altered requests are rejected.
+
+The incoming voice webhook rings active console users whose browsers have reported themselves available in the preceding 90 seconds. If nobody is online, Twilio asks the caller to leave a short recording rather than silently dropping the call.
+
+## Daily workflow
+
+- **Inbox** keeps two-way SMS history together.
+- **Leads** is the shared pipeline from new through won or lost, with ownership and priority.
+- **Calls** provides the browser dialer, incoming calls, call history, outcomes, tags, notes, and next follow-ups.
+- **Tasks & scheduled** combines follow-up work and Twilio scheduled messages.
+- **Team performance** attributes calls, talk time, messages, and replies to the authenticated user.
+- **Settings** contains workspace preferences, templates, compliance, phone-number routing, usage and billing, and team access.
+
+When credentials are present, the console reads the Twilio account balance, number capabilities and webhook configuration, recent call and message state, failures, and daily usage categories. D1 remains the attribution source of truth for BFO outreach.
 
 ## Go-live verification
 

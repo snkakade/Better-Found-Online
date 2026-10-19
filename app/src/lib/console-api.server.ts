@@ -178,6 +178,7 @@ function normalizeMessage(row: Record<string, unknown>, ownNumber: string) {
     createdAt: row.created_at || row.date_created,
     userId: row.user_id || null,
     sentBy: row.display_name || null,
+    scheduledAt: row.scheduled_at || null,
   };
 }
 
@@ -321,11 +322,18 @@ async function handleStatus(env: ConsoleEnv) {
   let accountStatus = configured ? "configured" : "configuration_required";
   let balance: number | null = null;
   let currency = "USD";
+  let numberDetails: Record<string, unknown> | null = null;
+  let twilioActivity: Record<string, unknown> = { recentCalls: 0, recentMessages: 0, usageRecords: [] };
   if (configured) {
     try {
-      const [accountResponse, balanceResponse] = await Promise.all([
+      const phoneQuery = encodeURIComponent(env.TWILIO_CALLER_ID || "");
+      const [accountResponse, balanceResponse, numberResponse, callsResponse, messagesResponse, usageResponse] = await Promise.all([
         twilioRequest(env, ".json"),
         fetch(`https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Balance.json`, { headers: { authorization: twilioAuth(env) } }),
+        twilioRequest(env, `/IncomingPhoneNumbers.json?PhoneNumber=${phoneQuery}&PageSize=1`),
+        twilioRequest(env, "/Calls.json?PageSize=20"),
+        twilioRequest(env, "/Messages.json?PageSize=20"),
+        twilioRequest(env, "/Usage/Records/Today.json?PageSize=50"),
       ]);
       accountStatus = accountResponse.ok ? String((await accountResponse.json() as { status?: string }).status || "active") : "unavailable";
       if (balanceResponse.ok) {
@@ -333,12 +341,27 @@ async function handleStatus(env: ConsoleEnv) {
         balance = Number(value.balance);
         currency = value.currency || "USD";
       }
+      if (numberResponse.ok) {
+        const value = await numberResponse.json() as { incoming_phone_numbers?: Record<string, unknown>[] };
+        const number = value.incoming_phone_numbers?.[0];
+        if (number) numberDetails = { sid: number.sid, friendlyName: number.friendly_name, capabilities: number.capabilities, voiceUrl: number.voice_url, smsUrl: number.sms_url, statusCallback: number.status_callback };
+      }
+      const calls = callsResponse.ok ? await callsResponse.json() as { calls?: Record<string, unknown>[] } : {};
+      const messages = messagesResponse.ok ? await messagesResponse.json() as { messages?: Record<string, unknown>[] } : {};
+      const usage = usageResponse.ok ? await usageResponse.json() as { usage_records?: Record<string, unknown>[] } : {};
+      twilioActivity = {
+        recentCalls: calls.calls?.length || 0,
+        recentMessages: messages.messages?.length || 0,
+        missedCalls: calls.calls?.filter((call) => ["no-answer", "busy", "failed"].includes(String(call.status))).length || 0,
+        failedMessages: messages.messages?.filter((message) => ["failed", "undelivered"].includes(String(message.status))).length || 0,
+        usageRecords: (usage.usage_records || []).filter((record) => ["calls", "sms", "mms", "recordings"].some((value) => String(record.category || "").includes(value))).slice(0, 12),
+      };
     } catch { accountStatus = "unavailable"; }
   }
   return json({
     checkedAt,
     account: { configured, status: accountStatus },
-    number: { phoneNumber: env.TWILIO_CALLER_ID || null, capabilities: { sms: true, mms: true, voice: true } },
+    number: { phoneNumber: env.TWILIO_CALLER_ID || null, capabilities: numberDetails?.capabilities || { sms: true, mms: true, voice: true }, details: numberDetails },
     messaging: {
       enabled: configured && enabled,
       state: !configured ? "configuration_required" : enabled ? "ready" : "setup_required",
@@ -349,6 +372,7 @@ async function handleStatus(env: ConsoleEnv) {
     },
     voice: { enabled: Boolean(configured && env.TWILIO_API_KEY && env.TWILIO_API_SECRET && env.TWILIO_TWIML_APP_SID) },
     usage: { balance: Number.isFinite(balance) ? balance : null, currency },
+    streams: twilioActivity,
   });
 }
 
@@ -394,8 +418,8 @@ async function handleMessages(request: Request, env: ConsoleEnv, user: Authentic
     const data = await response.json() as Record<string, unknown>;
     if (!response.ok) return json({ error: data.message || "Twilio rejected the message", code: data.code }, response.status);
     await db.prepare(
-      "INSERT INTO outreach_events (id, user_id, channel, direction, counterpart, twilio_sid, status, body_preview, created_at) VALUES (?, ?, 'sms', 'outbound', ?, ?, ?, ?, datetime('now'))",
-    ).bind(crypto.randomUUID(), user.id, to, data.sid, data.status || "queued", messageBody,).run();
+      "INSERT INTO outreach_events (id, user_id, channel, direction, counterpart, twilio_sid, status, body_preview, scheduled_at, created_at) VALUES (?, ?, 'sms', 'outbound', ?, ?, ?, ?, ?, datetime('now'))",
+    ).bind(crypto.randomUUID(), user.id, to, data.sid, data.status || "queued", messageBody, body?.scheduledAt ? String(body.scheduledAt) : null).run();
     return json({ message: { ...normalizeMessage(data, env.TWILIO_CALLER_ID || ""), userId: user.id, sentBy: user.name } }, 201);
   }
   if (request.method === "PATCH") {
@@ -432,7 +456,126 @@ async function handleVoiceToken(env: ConsoleEnv, user: AuthenticatedUser) {
   const required = ["TWILIO_ACCOUNT_SID", "TWILIO_API_KEY", "TWILIO_API_SECRET", "TWILIO_TWIML_APP_SID"] as const;
   const missing = required.filter((key) => !env[key]);
   if (missing.length) return json({ error: "Voice service is not configured", missing }, 503);
-  return json({ token: await generateVoiceToken(env, `bfo_user_${user.id}`) });
+  return json({ token: await generateVoiceToken(env, `bfo_user_${user.id}`), identity: `bfo_user_${user.id}` });
+}
+
+async function handlePresence(request: Request, env: ConsoleEnv, user: AuthenticatedUser) {
+  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const body = await readJson(request);
+  const available = body?.available === false ? 0 : 1;
+  await requireDb(env).prepare(
+    `INSERT INTO console_presence (user_id, voice_identity, available, last_seen_at)
+     VALUES (?, ?, ?, datetime('now'))
+     ON CONFLICT(user_id) DO UPDATE SET available=excluded.available, last_seen_at=datetime('now')`,
+  ).bind(user.id, `bfo_user_${user.id}`, available).run();
+  return json({ ok: true, available: Boolean(available) });
+}
+
+async function handleIncomingVoiceWebhook(request: Request, env: ConsoleEnv) {
+  const form = await verifiedForm(request, env);
+  if (!form) return new Response("Invalid Twilio signature", { status: 403 });
+  const from = cleanPhone(form.get("From"));
+  const sid = String(form.get("CallSid") || "") || null;
+  const db = requireDb(env);
+  const prior = await db.prepare("SELECT owner_user_id, id FROM console_leads WHERE phone = ? LIMIT 1").bind(from).first<{ owner_user_id: number | null; id: string }>();
+  await db.prepare(
+    "INSERT OR IGNORE INTO outreach_events (id, user_id, lead_id, channel, direction, counterpart, twilio_sid, status) VALUES (?, ?, ?, 'call', 'inbound', ?, ?, 'ringing')",
+  ).bind(crypto.randomUUID(), prior?.owner_user_id || null, prior?.id || null, from, sid).run();
+  const agents = await db.prepare(
+    `SELECT p.voice_identity FROM console_presence p JOIN console_users u ON u.id=p.user_id
+     WHERE p.available=1 AND u.active=1 AND p.last_seen_at >= datetime('now','-90 seconds') ORDER BY p.last_seen_at DESC LIMIT 10`,
+  ).all<{ voice_identity: string }>();
+  if (!agents.results.length) return xml("<Response><Say>Thank you for calling Better Found Online. No team member is available right now. Please leave a message after the tone.</Say><Record maxLength=120 playBeep=true /><Hangup /></Response>");
+  const clients = agents.results.map((agent) => `<Client>${escapeXml(agent.voice_identity)}</Client>`).join("");
+  const callback = `${new URL(request.url).origin}/api/console/call-status-webhook`;
+  return xml(`<Response><Dial timeout="25" answerOnBridge="true" action="${escapeXml(callback)}" method="POST">${clients}</Dial></Response>`);
+}
+
+async function handleContacts(request: Request, env: ConsoleEnv, user: AuthenticatedUser) {
+  const db = requireDb(env);
+  if (request.method === "GET") {
+    const result = await db.prepare(`SELECT c.*, MAX(e.created_at) AS last_activity FROM console_contacts c LEFT JOIN outreach_events e ON e.counterpart=c.phone GROUP BY c.id ORDER BY c.updated_at DESC`).all();
+    return json({ contacts: result.results });
+  }
+  if (request.method === "POST") {
+    const body = await readJson(request);
+    const phone = cleanPhone(body?.phone);
+    if (!E164.test(phone) || !String(body?.firstName || "").trim()) return json({ error: "A name and valid international phone number are required" }, 400);
+    const id = crypto.randomUUID();
+    try {
+      await db.prepare(`INSERT INTO console_contacts (id,first_name,last_name,company,phone,consent_status,consent_source,tags_json,created_by) VALUES (?,?,?,?,?,?,?,?,?)`)
+        .bind(id, String(body?.firstName).trim(), String(body?.lastName || "").trim(), String(body?.company || "").trim(), phone, String(body?.consent || "pending"), "console", JSON.stringify(body?.tags || ["Contact"]), user.id).run();
+      return json({ id }, 201);
+    } catch { return json({ error: "That phone number already exists" }, 409); }
+  }
+  return json({ error: "Method not allowed" }, 405);
+}
+
+async function handleLeads(request: Request, env: ConsoleEnv, user: AuthenticatedUser) {
+  const db = requireDb(env);
+  const url = new URL(request.url);
+  const id = url.pathname.match(/^\/api\/console\/leads\/([^/]+)$/)?.[1];
+  if (request.method === "GET") {
+    const result = await db.prepare(`SELECT l.*, u.display_name AS owner_name,
+      (SELECT MAX(created_at) FROM outreach_events e WHERE e.lead_id=l.id OR e.counterpart=l.phone) AS last_activity
+      FROM console_leads l LEFT JOIN console_users u ON u.id=l.owner_user_id ORDER BY l.updated_at DESC`).all();
+    return json({ leads: result.results });
+  }
+  if (request.method === "POST") {
+    const body = await readJson(request); const phone = cleanPhone(body?.phone);
+    if (!E164.test(phone) || !String(body?.firstName || "").trim()) return json({ error: "A lead name and valid international phone number are required" }, 400);
+    const leadId = crypto.randomUUID();
+    try {
+      await db.prepare(`INSERT INTO console_leads (id,first_name,last_name,company,phone,email,source,stage,priority,owner_user_id,next_follow_up_at,notes,tags_json,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+        .bind(leadId, String(body?.firstName).trim(), String(body?.lastName || "").trim(), String(body?.company || "").trim(), phone, String(body?.email || "").trim(), String(body?.source || "manual"), String(body?.stage || "new"), String(body?.priority || "normal"), Number(body?.ownerUserId || user.id), body?.nextFollowUpAt || null, String(body?.notes || "").trim(), JSON.stringify(body?.tags || []), user.id).run();
+      return json({ id: leadId }, 201);
+    } catch { return json({ error: "That lead phone number already exists" }, 409); }
+  }
+  if (request.method === "PATCH" && id) {
+    const body = await readJson(request);
+    const allowedStages = ["new","contacted","qualified","proposal","won","lost"];
+    const stage = allowedStages.includes(String(body?.stage)) ? String(body?.stage) : null;
+    await db.prepare(`UPDATE console_leads SET stage=COALESCE(?,stage), priority=COALESCE(?,priority), owner_user_id=COALESCE(?,owner_user_id), next_follow_up_at=COALESCE(?,next_follow_up_at), notes=COALESCE(?,notes), updated_at=datetime('now') WHERE id=?`)
+      .bind(stage, body?.priority || null, body?.ownerUserId || null, body?.nextFollowUpAt || null, body?.notes ?? null, id).run();
+    return json({ ok: true });
+  }
+  return json({ error: "Method not allowed" }, 405);
+}
+
+async function handleCalls(request: Request, env: ConsoleEnv) {
+  const db = requireDb(env); const url = new URL(request.url);
+  const id = url.pathname.match(/^\/api\/console\/calls\/([^/]+)$/)?.[1];
+  if (request.method === "GET") {
+    const result = await db.prepare(`SELECT e.*, u.display_name, l.first_name, l.last_name, l.company FROM outreach_events e LEFT JOIN console_users u ON u.id=e.user_id LEFT JOIN console_leads l ON l.id=e.lead_id WHERE e.channel='call' ORDER BY e.created_at DESC LIMIT 200`).all();
+    return json({ calls: result.results });
+  }
+  if (request.method === "PATCH" && id) {
+    const body = await readJson(request);
+    await db.prepare(`UPDATE outreach_events SET disposition=?, notes=?, tags_json=?, lead_id=COALESCE(?,lead_id), updated_at=datetime('now') WHERE id=? AND channel='call'`)
+      .bind(String(body?.disposition || ""), String(body?.notes || ""), JSON.stringify(body?.tags || []), body?.leadId || null, id).run();
+    if (body?.nextFollowUpAt && body?.leadId) await db.prepare(`INSERT INTO console_tasks (id,lead_id,assigned_to,created_by,title,due_at) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(), body.leadId, body?.assignedTo || null, body?.assignedTo || null, "Follow up after call", body.nextFollowUpAt).run();
+    return json({ ok: true });
+  }
+  return json({ error: "Method not allowed" }, 405);
+}
+
+async function handleTasks(request: Request, env: ConsoleEnv, user: AuthenticatedUser) {
+  const db = requireDb(env);
+  if (request.method === "GET") {
+    const result = await db.prepare(`SELECT t.*, l.first_name, l.last_name, l.phone, u.display_name AS assigned_name FROM console_tasks t LEFT JOIN console_leads l ON l.id=t.lead_id LEFT JOIN console_users u ON u.id=t.assigned_to ORDER BY CASE WHEN t.status='open' THEN 0 ELSE 1 END, t.due_at`).all();
+    return json({ tasks: result.results });
+  }
+  if (request.method === "POST") {
+    const body = await readJson(request); const id = crypto.randomUUID();
+    await db.prepare(`INSERT INTO console_tasks (id,lead_id,assigned_to,created_by,title,due_at) VALUES (?,?,?,?,?,?)`).bind(id, body?.leadId || null, body?.assignedTo || user.id, user.id, String(body?.title || "Follow up").trim(), body?.dueAt || null).run();
+    return json({ id }, 201);
+  }
+  if (request.method === "PATCH") {
+    const body = await readJson(request);
+    await db.prepare(`UPDATE console_tasks SET status=?, updated_at=datetime('now') WHERE id=?`).bind(body?.status === "done" ? "done" : "open", body?.id).run();
+    return json({ ok: true });
+  }
+  return json({ error: "Method not allowed" }, 405);
 }
 
 async function handleVoiceWebhook(request: Request, env: ConsoleEnv) {
@@ -520,12 +663,18 @@ export async function handleConsoleApi(request: Request, env: ConsoleEnv) {
     if (pathname === "/api/console/sms-status-webhook") return await handleStatusWebhook(request, env, "sms");
     if (pathname === "/api/console/call-status-webhook") return await handleStatusWebhook(request, env, "call");
     if (pathname === "/api/console/voice-webhook") return await handleVoiceWebhook(request, env);
+    if (pathname === "/api/console/incoming-voice-webhook") return await handleIncomingVoiceWebhook(request, env);
     const user = await authenticate(request, env);
     if (!user) return json({ error: "Authentication required" }, 401);
     if (request.method !== "GET" && request.method !== "HEAD" && !sameOrigin(request)) return json({ error: "Cross-site request rejected" }, 403);
     if (pathname === "/api/console/status") return await handleStatus(env);
     if (pathname === "/api/console/messages") return await handleMessages(request, env, user);
     if (pathname === "/api/console/voice-token" && request.method === "POST") return await handleVoiceToken(env, user);
+    if (pathname === "/api/console/presence") return await handlePresence(request, env, user);
+    if (pathname === "/api/console/contacts") return await handleContacts(request, env, user);
+    if (pathname === "/api/console/leads" || pathname.startsWith("/api/console/leads/")) return await handleLeads(request, env, user);
+    if (pathname === "/api/console/calls" || pathname.startsWith("/api/console/calls/")) return await handleCalls(request, env);
+    if (pathname === "/api/console/tasks") return await handleTasks(request, env, user);
     if (pathname === "/api/console/performance") return await handlePerformance(request, env, user);
     if (pathname === "/api/console/users") return await handleUsers(request, env, user);
     return json({ error: "Console endpoint not found" }, 404);

@@ -1,4 +1,4 @@
-const CACHE_NAME = "bfo-outreach-console-v2";
+const CACHE_NAME = "bfo-outreach-console-v3";
 const STATIC_ASSETS = [
   "/console/assets/css/admin.css",
   "/console/assets/js/admin.js",

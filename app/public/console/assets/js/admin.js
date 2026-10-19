@@ -31,6 +31,9 @@
     smsStatus: null,
     messages: [],
     contacts: load(CONTACTS_KEY, seedContacts),
+    leads: [],
+    calls: [],
+    tasks: [],
     templates: load(TEMPLATES_KEY, seedTemplates),
     schedules: load(SCHEDULES_KEY, []),
     suppressions: load(SUPPRESSIONS_KEY, []),
@@ -40,7 +43,7 @@
     contactPage: 1,
     scheduleFilter: "upcoming",
     deferredInstall: null,
-    voice: { device: null, call: null, timer: null, startedAt: null }
+    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null }
   };
 
   function haptic(duration = 12) {
@@ -109,6 +112,7 @@
     routeTo(location.hash.slice(1) || "overview", false);
     renderAll();
     refreshData();
+    initVoice();
   }
 
   function showLogin() {
@@ -161,17 +165,24 @@
     if (notify) toast("success", "Signed out");
   }
 
-  const routes = new Set(["overview", "conversations", "contacts", "scheduled", "templates", "voice", "performance", "team", "compliance", "numbers", "usage", "settings"]);
+  const routes = new Set(["overview", "conversations", "leads", "contacts", "scheduled", "templates", "voice", "performance", "team", "compliance", "numbers", "usage", "settings"]);
   function routeTo(route, updateHash = true) {
     const target = routes.has(route) ? route : "overview";
     $$(".page").forEach((page) => page.classList.toggle("active", page.dataset.page === target));
     $$(".nav-item[data-route]").forEach((item) => item.classList.toggle("active", item.dataset.route === target));
+    $$("[data-settings-route]").forEach((item) => item.classList.toggle("active", item.dataset.settingsRoute === target));
+    const settingsRoutes = ["settings", "compliance", "numbers", "usage", "team", "templates"];
+    const settingsNav = $(".nav-item[data-route='settings']");
+    if (settingsNav) settingsNav.classList.toggle("active", settingsRoutes.includes(target));
     if (updateHash && location.hash !== `#${target}`) history.pushState(null, "", `#${target}`);
     document.title = `${target[0].toUpperCase()}${target.slice(1)} | Better Found Online Console`;
     closeSidebar();
     $("#main-content").focus({ preventScroll: true });
     window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     if (target === "voice") initVoice();
+    if (target === "voice") loadCalls();
+    if (target === "leads") loadLeads();
+    if (target === "scheduled") loadTasks();
     if (target === "performance") loadPerformance();
     if (target === "team") loadTeam();
   }
@@ -262,9 +273,13 @@
     refresh?.classList.add("ph-spin");
     $("#main-content")?.setAttribute("aria-busy", "true");
     try {
-      const [statusResult, messagesResult] = await Promise.allSettled([
+      const [statusResult, messagesResult, contactsResult, leadsResult, callsResult, tasksResult] = await Promise.allSettled([
         api("/api/console/status"),
-        api("/api/console/messages?pageSize=100")
+        api("/api/console/messages?pageSize=100"),
+        api("/api/console/contacts"),
+        api("/api/console/leads"),
+        api("/api/console/calls"),
+        api("/api/console/tasks")
       ]);
       if (statusResult.status === "fulfilled") state.smsStatus = statusResult.value;
       else state.smsStatus = {
@@ -275,10 +290,19 @@
         usage: { balance: null, currency: "USD" }
       };
       state.messages = messagesResult.status === "fulfilled" ? messagesResult.value.messages || [] : [];
+      state.schedules = state.messages.filter((message) => message.scheduledAt).map((message) => ({ id: message.sid, sid: message.sid, to: message.counterpart, body: message.body, scheduledAt: message.scheduledAt, status: message.status === "canceled" ? "cancelled" : message.status, createdAt: message.createdAt, createdBy: message.sentBy }));
+      if (contactsResult.status === "fulfilled") state.contacts = (contactsResult.value.contacts || []).map(normalizeContact);
+      if (leadsResult.status === "fulfilled") state.leads = leadsResult.value.leads || [];
+      if (callsResult.status === "fulfilled") state.calls = callsResult.value.calls || [];
+      if (tasksResult.status === "fulfilled") state.tasks = tasksResult.value.tasks || [];
       syncOptOuts();
       updateStatusUI();
       renderMessages();
       renderOverview();
+      renderContacts();
+      renderLeads();
+      renderCalls();
+      renderTasks();
     } finally {
       refresh?.classList.remove("ph-spin");
       $("#main-content")?.removeAttribute("aria-busy");
@@ -310,6 +334,84 @@
 
   function contactForPhone(phone) {
     return state.contacts.find((contact) => contact.phone === phone);
+  }
+
+  function normalizeContact(contact) {
+    return {
+      id: contact.id,
+      firstName: contact.first_name || contact.firstName || "",
+      lastName: contact.last_name || contact.lastName || "",
+      company: contact.company || "",
+      phone: contact.phone,
+      consent: contact.consent_status || contact.consent || "pending",
+      tags: Array.isArray(contact.tags) ? contact.tags : JSON.parse(contact.tags_json || "[]"),
+      createdAt: contact.created_at || contact.createdAt,
+      lastActivity: contact.last_activity || contact.lastActivity
+    };
+  }
+
+  const leadStages = [
+    ["new", "New"], ["contacted", "Contacted"], ["qualified", "Qualified"],
+    ["proposal", "Proposal"], ["won", "Won"], ["lost", "Lost"]
+  ];
+
+  async function loadLeads() {
+    try { const result = await api("/api/console/leads"); state.leads = result.leads || []; renderLeads(); }
+    catch (error) { toast("error", "Could not load leads", error.message); }
+  }
+
+  function renderLeads() {
+    const board = $("#pipeline-board");
+    if (!board) return;
+    const query = $("#lead-search")?.value.trim().toLowerCase() || "";
+    const owner = $("#lead-owner-filter")?.value || "all";
+    const priority = $("#lead-priority-filter")?.value || "all";
+    const filtered = state.leads.filter((lead) => {
+      const haystack = `${lead.first_name} ${lead.last_name} ${lead.company} ${lead.phone}`.toLowerCase();
+      return (!query || haystack.includes(query)) && (owner !== "mine" || Number(lead.owner_user_id) === Number(state.user?.id)) && (priority === "all" || lead.priority === priority);
+    });
+    $("#nav-lead-count").textContent = state.leads.filter((lead) => !["won", "lost"].includes(lead.stage)).length;
+    $("#pipeline-summary").innerHTML = leadStages.slice(0, 5).map(([stage, label]) => `<article><span>${label}</span><strong>${state.leads.filter((lead) => lead.stage === stage).length}</strong></article>`).join("");
+    board.innerHTML = leadStages.map(([stage, label]) => {
+      const items = filtered.filter((lead) => lead.stage === stage);
+      return `<section class="pipeline-column" data-stage="${stage}"><header><span>${label}</span><strong>${items.length}</strong></header><div>${items.map((lead) => `<article class="lead-card" data-lead-id="${lead.id}"><div><span class="priority-dot ${lead.priority}" aria-label="${lead.priority} priority"></span><strong>${escapeHtml(`${lead.first_name} ${lead.last_name}`.trim())}</strong></div><p>${escapeHtml(lead.company || formatPhone(lead.phone))}</p><footer><span>${escapeHtml(lead.owner_name || "Unassigned")}</span><select data-lead-stage="${lead.id}" aria-label="Move ${escapeHtml(lead.first_name)}"><option value="">Move</option>${leadStages.filter(([value]) => value !== stage).map(([value, text]) => `<option value="${value}">${text}</option>`).join("")}</select></footer><div class="lead-quick-actions"><button data-lead-call="${escapeHtml(lead.phone)}" aria-label="Call"><i class="ph ph-phone"></i></button><button data-lead-message="${escapeHtml(lead.phone)}" aria-label="Message"><i class="ph ph-chat-circle-text"></i></button></div></article>`).join("") || '<p class="column-empty">No leads</p>'}</div></section>`;
+    }).join("");
+  }
+
+  async function loadCalls() {
+    try { const result = await api("/api/console/calls"); state.calls = result.calls || []; renderCalls(); }
+    catch (error) { toast("error", "Could not load calls", error.message); }
+  }
+
+  function renderCalls() {
+    const body = $("#call-history-body"); if (!body) return;
+    $("#call-history-empty").hidden = state.calls.length > 0;
+    body.innerHTML = state.calls.map((call) => `<tr><td><strong>${escapeHtml(call.first_name ? `${call.first_name} ${call.last_name || ""}` : formatPhone(call.counterpart))}</strong><small>${escapeHtml(call.company || call.counterpart)}</small></td><td>${call.direction === "inbound" ? "Inbound" : "Outbound"}</td><td>${escapeHtml(call.display_name || "Unassigned")}</td><td>${messageStatusBadge(call.status)}</td><td>${Math.floor(Number(call.duration_seconds || 0) / 60)}m ${Number(call.duration_seconds || 0) % 60}s</td><td>${escapeHtml((call.disposition || "Not tagged").replaceAll("_", " "))}</td><td><button class="icon-button" data-tag-call="${call.id}" aria-label="Tag call"><i class="ph ph-tag"></i></button></td></tr>`).join("");
+  }
+
+  async function loadTasks() {
+    try { const result = await api("/api/console/tasks"); state.tasks = result.tasks || []; renderTasks(); }
+    catch (error) { toast("error", "Could not load tasks", error.message); }
+  }
+
+  function renderTasks() {
+    const strip = $("#task-strip"); if (!strip) return;
+    const open = state.tasks.filter((task) => task.status === "open");
+    strip.innerHTML = open.length ? open.slice(0, 8).map((task) => `<article class="task-card ${task.due_at && new Date(task.due_at) < new Date() ? "overdue" : ""}"><button data-complete-task="${task.id}" aria-label="Complete task"><i class="ph ph-circle"></i></button><div><strong>${escapeHtml(task.title)}</strong><span>${escapeHtml(task.first_name ? `${task.first_name} ${task.last_name || ""}` : "General task")} · ${task.due_at ? fullDate(task.due_at) : "No due date"}</span></div><small>${escapeHtml(task.assigned_name || "Unassigned")}</small></article>`).join("") : '<div class="empty-inline"><i class="ph ph-check-circle"></i><span>No open follow-up tasks.</span></div>';
+  }
+
+  function populateLeadSelects() {
+    const options = state.leads.map((lead) => `<option value="${lead.id}">${escapeHtml(`${lead.first_name} ${lead.last_name}`.trim())} · ${escapeHtml(lead.company || lead.phone)}</option>`).join("");
+    [$("#task-lead"), $("#call-lead")].forEach((select) => { if (select) select.innerHTML = `<option value="">No linked lead</option>${options}`; });
+  }
+
+  function setupSettingsTabs() {
+    const source = $(".settings-tabs");
+    if (!source) return;
+    ["compliance", "numbers", "usage", "team", "templates"].forEach((route) => {
+      const page = $(`.page[data-page='${route}']`);
+      if (page && !page.querySelector(".settings-tabs")) page.querySelector(".page-header")?.insertAdjacentElement("afterend", source.cloneNode(true));
+    });
   }
 
   function syncOptOuts() {
@@ -544,6 +646,9 @@
     renderSuppressions();
     renderMessages();
     renderOverview();
+    renderLeads();
+    renderCalls();
+    renderTasks();
   }
 
   function openDialog(dialog) {
@@ -621,7 +726,7 @@
     } finally { button.disabled = !state.smsStatus?.messaging?.enabled; }
   }
 
-  function handleAddContact(event) {
+  async function handleAddContact(event) {
     event.preventDefault();
     const contact = {
       id: crypto.randomUUID(),
@@ -636,12 +741,46 @@
     };
     if (!/^\+[1-9]\d{7,14}$/.test(contact.phone)) return toast("error", "Enter a valid international phone number");
     if (state.contacts.some((item) => item.phone === contact.phone)) return toast("warning", "This phone number already exists");
-    state.contacts.unshift(contact);
-    save(CONTACTS_KEY, state.contacts);
-    renderContacts();
-    $("#contact-dialog").close();
-    event.currentTarget.reset();
-    toast("success", "Contact added", `${contact.firstName} is ready for messaging.`);
+    try {
+      await api("/api/console/contacts", { method: "POST", body: JSON.stringify(contact) });
+      const result = await api("/api/console/contacts");
+      state.contacts = (result.contacts || []).map(normalizeContact);
+      renderContacts(); $("#contact-dialog").close(); event.currentTarget.reset();
+      toast("success", "Contact added", `${contact.firstName} is ready for messaging.`);
+    } catch (error) { toast("error", "Could not add contact", error.message); }
+  }
+
+  async function handleAddLead(event) {
+    event.preventDefault();
+    try {
+      await api("/api/console/leads", { method: "POST", body: JSON.stringify({
+        firstName: $("#lead-first-name").value.trim(), lastName: $("#lead-last-name").value.trim(), company: $("#lead-company").value.trim(),
+        phone: $("#lead-phone").value.trim(), email: $("#lead-email").value.trim(), source: $("#lead-source").value,
+        priority: $("#lead-priority").value, notes: $("#lead-notes").value.trim()
+      }) });
+      event.currentTarget.reset(); $("#lead-dialog").close(); await loadLeads(); populateLeadSelects(); toast("success", "Lead added");
+    } catch (error) { toast("error", "Could not add lead", error.message); }
+  }
+
+  async function handleAddTask(event) {
+    event.preventDefault();
+    try {
+      const due = $("#task-due").value ? new Date($("#task-due").value).toISOString() : null;
+      await api("/api/console/tasks", { method: "POST", body: JSON.stringify({ title: $("#task-title").value.trim(), leadId: $("#task-lead").value || null, dueAt: due }) });
+      event.currentTarget.reset(); $("#task-dialog").close(); await loadTasks(); toast("success", "Follow-up task added");
+    } catch (error) { toast("error", "Could not add task", error.message); }
+  }
+
+  async function handleCallOutcome(event) {
+    event.preventDefault(); const id = $("#call-event-id").value;
+    try {
+      await api(`/api/console/calls/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({
+        disposition: $("#call-disposition").value, leadId: $("#call-lead").value || null,
+        tags: $("#call-tags").value.split(",").map((tag) => tag.trim()).filter(Boolean), notes: $("#call-notes").value.trim(),
+        nextFollowUpAt: $("#call-follow-up").value ? new Date($("#call-follow-up").value).toISOString() : null, assignedTo: state.user?.id
+      }) });
+      $("#call-outcome-dialog").close(); event.currentTarget.reset(); await Promise.all([loadCalls(), loadTasks()]); toast("success", "Call outcome saved");
+    } catch (error) { toast("error", "Could not save call outcome", error.message); }
   }
 
   function handleAddTemplate(event) {
@@ -675,7 +814,18 @@
       device.on("registered", () => { chip.className = "integration-chip success"; chip.innerHTML = '<span class="status-indicator"></span><span>Voice ready</span>'; });
       device.on("error", (error) => { chip.className = "integration-chip warning"; chip.innerHTML = '<span class="status-indicator status-warning"></span><span>Voice unavailable</span>'; toast("error", "Voice connection failed", error.message); });
       device.on("tokenWillExpire", async () => { const refresh = await api("/api/console/voice-token", { method: "POST" }); device.updateToken(refresh.token); });
+      device.on("incoming", (call) => {
+        state.voice.incoming = call;
+        $("#incoming-call-number").textContent = formatPhone(call.parameters?.From || "Unknown number");
+        $("#incoming-call-dialog").showModal();
+        call.on("cancel", () => { state.voice.incoming = null; $("#incoming-call-dialog").close(); loadCalls(); });
+        call.on("disconnect", () => { state.voice.incoming = null; $("#incoming-call-dialog").close(); loadCalls(); });
+      });
       await device.register();
+      const heartbeat = () => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: $("#receive-calls-toggle")?.checked !== false }) }).catch(() => {});
+      heartbeat();
+      clearInterval(state.voice.presenceTimer);
+      state.voice.presenceTimer = window.setInterval(heartbeat, 30000);
     } catch (error) {
       chip.className = "integration-chip warning";
       chip.innerHTML = '<span class="status-indicator status-warning"></span><span>Voice unavailable</span>';
@@ -729,6 +879,11 @@
     $("#call-timer").textContent = "00:00";
     updateCallButton();
     haptic(18);
+    window.setTimeout(async () => {
+      await loadCalls();
+      const recent = state.calls.find((call) => call.direction === "outbound" && call.counterpart === normalizedDialNumber() && !call.disposition);
+      if (recent) { populateLeadSelects(); $("#call-event-id").value = recent.id; openDialog($("#call-outcome-dialog")); }
+    }, 1200);
   }
 
   function registerEvents() {
@@ -748,6 +903,7 @@
     $("#refresh-team").addEventListener("click", loadTeam);
     $("#new-team-user").addEventListener("click", () => openDialog($("#team-user-dialog")));
     $("#team-user-form").addEventListener("submit", handleCreateTeamUser);
+    $$("[data-settings-route]").forEach((button) => button.addEventListener("click", () => routeTo(button.dataset.settingsRoute)));
     $("#open-composer").addEventListener("click", () => openComposer());
     $$('[data-open-composer]').forEach((button) => button.addEventListener("click", () => openComposer({ schedule: button.dataset.schedule === "true" })));
     $$('[data-close-dialog]').forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
@@ -758,6 +914,30 @@
     $("#insert-template").addEventListener("click", () => { const template = state.templates[0]; if (!template) return toast("warning", "No templates available"); $("#message-body").value = template.body; updateComposerCount(); toast("success", `Inserted ${template.name}`); });
     $("#add-contact-button").addEventListener("click", () => openDialog($("#contact-dialog")));
     $("#contact-form").addEventListener("submit", handleAddContact);
+    $("#add-lead-button").addEventListener("click", () => openDialog($("#lead-dialog")));
+    $("#lead-form").addEventListener("submit", handleAddLead);
+    $("#lead-search").addEventListener("input", renderLeads);
+    $("#lead-owner-filter").addEventListener("change", renderLeads);
+    $("#lead-priority-filter").addEventListener("change", renderLeads);
+    $("#pipeline-board").addEventListener("change", async (event) => {
+      if (!event.target.matches("[data-lead-stage]") || !event.target.value) return;
+      await api(`/api/console/leads/${event.target.dataset.leadStage}`, { method: "PATCH", body: JSON.stringify({ stage: event.target.value }) });
+      await loadLeads(); toast("success", "Lead stage updated");
+    });
+    $("#pipeline-board").addEventListener("click", (event) => {
+      const call = event.target.closest("[data-lead-call]"); const message = event.target.closest("[data-lead-message]");
+      if (call) { $("#phone-input").value = call.dataset.leadCall; routeTo("voice"); updateCallButton(); }
+      if (message) openComposer({ to: message.dataset.leadMessage });
+    });
+    $("#add-task-button").addEventListener("click", () => { populateLeadSelects(); openDialog($("#task-dialog")); });
+    $("#task-form").addEventListener("submit", handleAddTask);
+    $("#task-strip").addEventListener("click", async (event) => { const button = event.target.closest("[data-complete-task]"); if (!button) return; await api("/api/console/tasks", { method: "PATCH", body: JSON.stringify({ id: button.dataset.completeTask, status: "done" }) }); await loadTasks(); });
+    $("#refresh-calls").addEventListener("click", loadCalls);
+    $("#call-history-body").addEventListener("click", (event) => { const button = event.target.closest("[data-tag-call]"); if (!button) return; populateLeadSelects(); $("#call-event-id").value = button.dataset.tagCall; openDialog($("#call-outcome-dialog")); });
+    $("#call-outcome-form").addEventListener("submit", handleCallOutcome);
+    $("#receive-calls-toggle").addEventListener("change", (event) => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: event.target.checked }) }).then(() => toast("success", event.target.checked ? "Browser calls enabled" : "Browser calls paused")).catch((error) => toast("error", "Could not update availability", error.message)));
+    $("#answer-call").addEventListener("click", () => { state.voice.incoming?.accept(); $("#incoming-call-dialog").close(); routeTo("voice"); });
+    $("#decline-call").addEventListener("click", () => { state.voice.incoming?.reject(); state.voice.incoming = null; $("#incoming-call-dialog").close(); });
     $("#new-template-button").addEventListener("click", () => openDialog($("#template-dialog")));
     $("#template-form").addEventListener("submit", handleAddTemplate);
     $("#add-suppression").addEventListener("click", addSuppression);
@@ -807,6 +987,7 @@
   }
 
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("/console/sw.js", { scope: "/console/" }).catch(() => {});
+  setupSettingsTabs();
   registerEvents();
   verifySession();
 })();
