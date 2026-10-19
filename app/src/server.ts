@@ -80,7 +80,7 @@ export default {
         const consoleHost = url.hostname === "console.betterfoundonline.com";
         if (pathname === "/console/" || (consoleHost && (pathname === "/" || pathname === "/index.html"))) {
           const assetUrl = new URL(request.url);
-          assetUrl.pathname = "/console/index.html";
+          assetUrl.pathname = "/console/shell.html";
           const response = await env.ASSETS.fetch(new Request(assetUrl, request));
           const headers = new Headers(response.headers);
           headers.set("cache-control", "no-store");
