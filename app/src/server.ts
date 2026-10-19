@@ -3,6 +3,8 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applySecurityHeaders } from "./lib/security-headers.server";
+import { handleConsoleApi } from "./lib/console-api.server";
+import type { D1Database } from "@cloudflare/workers-types";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -14,6 +16,18 @@ type AssetBinding = {
 
 type RuntimeEnv = {
   ASSETS?: AssetBinding;
+  DB?: D1Database;
+  CONSOLE_BOOTSTRAP_TOKEN?: string;
+  TWILIO_ACCOUNT_SID?: string;
+  TWILIO_AUTH_TOKEN?: string;
+  TWILIO_API_KEY?: string;
+  TWILIO_API_SECRET?: string;
+  TWILIO_CALLER_ID?: string;
+  TWILIO_TWIML_APP_SID?: string;
+  TWILIO_MESSAGING_SERVICE_SID?: string;
+  TWILIO_SMS_ENABLED?: string;
+  TWILIO_A2P_BRAND_STATUS?: string;
+  TWILIO_A2P_CAMPAIGN_STATUS?: string;
 };
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
@@ -52,9 +66,32 @@ export default {
       // Cloudflare Pages advanced mode sends every request through this worker.
       // Let its asset binding serve fingerprinted JS/CSS, fonts and media while
       // keeping document requests in TanStack Start for server-rendered SEO.
-      const { pathname } = new URL(request.url);
+      const url = new URL(request.url);
+      const { pathname } = url;
+
+      if (pathname.startsWith("/api/console/")) {
+        return applySecurityHeaders(await handleConsoleApi(request, env));
+      }
+
+      if ((request.method === "GET" || request.method === "HEAD") && env.ASSETS) {
+        if (pathname === "/console") {
+          return new Response(null, { status: 308, headers: { location: "/console/" } });
+        }
+        const consoleHost = url.hostname === "console.betterfoundonline.com";
+        if (pathname === "/console/" || (consoleHost && (pathname === "/" || pathname === "/index.html"))) {
+          const assetUrl = new URL(request.url);
+          assetUrl.pathname = "/console/index.html";
+          const response = await env.ASSETS.fetch(new Request(assetUrl, request));
+          const headers = new Headers(response.headers);
+          headers.set("cache-control", "no-store");
+          headers.set("x-robots-tag", "noindex, nofollow");
+          return applySecurityHeaders(new Response(response.body, { status: response.status, statusText: response.statusText, headers }), { allowMicrophone: true });
+        }
+      }
+
       const isStaticAsset =
         pathname.startsWith("/assets/") ||
+        pathname.startsWith("/console/") ||
         pathname.startsWith("/presets/") ||
         /\.[a-zA-Z0-9]{2,8}$/.test(pathname);
 

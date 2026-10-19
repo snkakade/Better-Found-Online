@@ -48,10 +48,10 @@
   // D1 — app.manifest.json "db": true → env.DB. ONE database SHARED by preview +
   // prod (HF_ENV splits CODE, not DATA — a destructive preview migration hits
   // prod data). Schema in migrations/000N_*.sql (additive).
-  //   "d1_databases": [
-  //     { "binding": "DB", "database_name": "app-slug-placeholder-db",
-  //       "database_id": "00000000-0000-0000-0000-000000000000" }
-  //   ],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "better-found-online-db",
+      "database_id": "b8dbe9b8-9739-483a-b497-670398ef08c4" }
+  ],
   //
   // R2 — app.manifest.json "r2": true → env.STORAGE. Shared by preview + prod.
   //   "r2_buckets": [
