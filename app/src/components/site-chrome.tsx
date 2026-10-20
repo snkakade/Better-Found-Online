@@ -206,7 +206,7 @@ export function SiteHeader({
   };
 
   const wordmark = "BFO";
-  const headerBrandTone: BrandTone = open ? "light" : scrolled ? "dark" : brandTone;
+  const headerBrandTone: BrandTone = open ? "light" : scrolled ? "light" : brandTone;
 
   return (
     <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`}>

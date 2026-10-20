@@ -2744,11 +2744,11 @@ section[id] {
 
 .header.scrolled:not(.menu-active),
 .header.scrolled.brand-dark:not(.menu-active) {
-  border-bottom: 1px solid rgba(23, 17, 19, 0.1);
-  background: rgba(248, 246, 244, 0.88);
-  box-shadow: 0 10px 30px rgba(23, 17, 19, 0.07);
-  backdrop-filter: blur(22px) saturate(1.18);
-  -webkit-backdrop-filter: blur(22px) saturate(1.18);
+  border-bottom: 1px solid rgba(241, 236, 231, 0.08);
+  background: rgba(72, 49, 57, 0.48);
+  box-shadow: 0 6px 18px rgba(12, 9, 10, 0.12);
+  backdrop-filter: blur(24px) saturate(1.06);
+  -webkit-backdrop-filter: blur(24px) saturate(1.06);
 }
 
 .header > .brand {
