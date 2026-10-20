@@ -124,7 +124,7 @@ export function SiteHeader({
     const socialLines = menu.querySelectorAll<HTMLElement>(".site-menu-meta p, .site-menu-meta a");
     const video = menu.querySelector<HTMLElement>(".site-menu-video");
     const letters = menu.querySelectorAll<HTMLElement>(".site-menu-wordmark span");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 760px)").matches;
     const animationTargets: gsap.TweenTarget[] = [
       menu,
       ...Array.from(links),
@@ -284,10 +284,12 @@ export function SiteHeader({
             </div>
           </div>
           <div className="site-menu-video">
-            <video autoPlay muted loop playsInline poster="/assets/world/poster.webp">
-              <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
-              <source src="/assets/world/hero.mp4" type="video/mp4" />
-            </video>
+            {open && (
+              <video autoPlay muted loop playsInline preload="metadata" poster="/assets/world/poster.webp">
+                <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
+                <source src="/assets/world/hero.mp4" type="video/mp4" />
+              </video>
+            )}
             <div className="site-menu-video-index" aria-hidden="true">
               <span><b>1</b><small>Find</small></span>
               <span><b>2</b><small>Build</small></span>

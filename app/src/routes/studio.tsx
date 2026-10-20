@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
 import { ImageAccordion } from "@/components/image-accordion";
 import { KineticBand } from "@/components/kinetic-band";
 import { ProcessPath } from "@/components/process-path";
@@ -14,6 +15,28 @@ export const Route = createFileRoute("/studio")({
     { name: "description", content: "Discover Better Found Online's approach to digital strategy, website design, SEO, and connected experiences. Clear thinking before execution." },
   ], links: [{ rel: "canonical", href: "https://betterfoundonline.com/studio" }] }),
 });
+
+function StudioBeliefVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) void video.play().catch(() => undefined);
+      else video.pause();
+    }, { rootMargin: "25% 0px", threshold: 0.08 });
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video ref={videoRef} muted loop playsInline preload="none" poster="/assets/world/poster.webp">
+      <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
+      <source src="/assets/world/hero.mp4" type="video/mp4" />
+    </video>
+  );
+}
 
 function StudioPage() {
   return (
@@ -44,7 +67,7 @@ function StudioPage() {
         <ImageAccordion />
 
         <section className="studio-belief section-pad">
-          <div className="belief-media"><video autoPlay muted loop playsInline poster="/assets/world/poster.webp"><source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" /><source src="/assets/world/hero.mp4" type="video/mp4" /></video></div>
+          <div className="belief-media"><StudioBeliefVideo /></div>
           <div className="belief-copy"><p className="eyebrow">Why connected thinking matters</p><h2>Different skills.<br />One business goal.</h2><p>Good digital work rarely fits inside one discipline. The message, visual direction, experience, and channel all shape what people understand.</p><p>We start with the problem, bring in the right skills, and carry the idea through to execution without forcing every project into the same process.</p><TransitionLink href="/creative-production" className="text-link">Explore Creative Production <ArrowUpRight size={18} weight="light" /></TransitionLink></div>
         </section>
 

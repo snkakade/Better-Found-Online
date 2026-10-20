@@ -93,7 +93,7 @@ export default {
         pathname.startsWith("/assets/") ||
         pathname.startsWith("/console/") ||
         pathname.startsWith("/presets/") ||
-        /\.[a-zA-Z0-9]{2,8}$/.test(pathname);
+        /\.[a-zA-Z0-9]{2,16}$/.test(pathname);
 
       if ((request.method === "GET" || request.method === "HEAD") && isStaticAsset && env.ASSETS) {
         return applySecurityHeaders(await env.ASSETS.fetch(request));

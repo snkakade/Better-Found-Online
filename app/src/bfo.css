@@ -26,10 +26,14 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 90px;
   background: var(--deep);
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  max-width: 100%;
+  overflow-x: clip;
   background: var(--deep);
   color: var(--silver);
   font-family: Outfit, sans-serif;
@@ -75,6 +79,12 @@ summary:active {
 
 img {
   display: block;
+  max-width: 100%;
+}
+
+video,
+canvas,
+svg {
   max-width: 100%;
 }
 
@@ -2648,4 +2658,67 @@ section[id] {
   .privacy-content > h1 { max-width: 100%; font-size: clamp(46px, 14.5vw, 72px); line-height: .9; letter-spacing: -.055em; }
   .privacy-lead { margin-bottom: 58px; }
   .privacy-content section { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* Mobile production pass: stable controls, readable wrapping and generous
+ * touch areas on narrow screens. */
+@media (max-width: 760px) {
+  p,
+  li,
+  dd,
+  figcaption {
+    overflow-wrap: anywhere;
+  }
+
+  .footer-directory a,
+  .footer-bottom a,
+  .footer-bottom button,
+  .story-link,
+  .project-copy a,
+  .project-notes summary,
+  .insights-card-body a,
+  .privacy-content a,
+  .privacy-content button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .footer-directory a,
+  .footer-bottom a,
+  .footer-bottom button {
+    min-width: 44px;
+  }
+
+  .footer-wordmark {
+    max-width: 100%;
+    font-size: clamp(7rem, 38vw, 8.8rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    padding-inline: 16px;
+  }
+
+  .header > .brand > span:last-child {
+    display: none;
+  }
+
+  .header > .brand .brand-mark {
+    width: 40px;
+    height: 44px;
+  }
+
+  .menu-toggle,
+  .menu-toggle.opened {
+    right: 12px;
+    width: 112px;
+  }
+
+  .menu-copy,
+  .menu-toggle:hover .menu-copy {
+    left: 15px;
+    font-size: 11px;
+  }
 }

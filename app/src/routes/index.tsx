@@ -195,11 +195,12 @@ function Index() {
     if (reduced || motionPaused) return;
     gsap.registerPlugin(ScrollTrigger);
 
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-    lenis.on("scroll", ScrollTrigger.update);
+    const smoothScroll = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)").matches;
+    const lenis = smoothScroll ? new Lenis({ duration: 1.1, smoothWheel: true }) : null;
+    lenis?.on("scroll", ScrollTrigger.update);
 
-    const tick = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
+    const tick = (time: number) => lenis?.raf(time * 1000);
+    if (lenis) gsap.ticker.add(tick);
     const tunnelElement = root.current?.querySelector<HTMLElement>(".brand-tunnel");
     let tunnelRevealCall: gsap.core.Tween | null = null;
 
@@ -349,8 +350,8 @@ function Index() {
       ctx.revert();
       tunnelRevealCall?.kill();
       tunnelElement?.removeAttribute("data-story-assets");
-      gsap.ticker.remove(tick);
-      lenis.destroy();
+      if (lenis) gsap.ticker.remove(tick);
+      lenis?.destroy();
     };
   }, [reduced, motionPaused]);
 

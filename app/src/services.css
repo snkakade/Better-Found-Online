@@ -759,9 +759,7 @@
     font-size: clamp(3.4rem, 17vw, 5rem);
   }
 
-  .services-hero-title {
-    font-size: clamp(3.4rem, 13.4vw, 5.2rem);
-  }
+  .services-hero-title { font-size: clamp(2rem, 10.5vw, 3.2rem); letter-spacing: -.07em; }
 
   .services-hero {
     gap: 14px;

@@ -24,7 +24,8 @@ export function StudioKineticTransition() {
     const layer = overlay.current;
     if (!layer) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      || window.matchMedia("(max-width: 800px)").matches;
     const root = layer.closest<HTMLElement>(".studio-page");
     const header = root?.querySelector<HTMLElement>(".header");
     const content = root?.querySelectorAll<HTMLElement>(
@@ -44,6 +45,8 @@ export function StudioKineticTransition() {
 
     if (reduceMotion) {
       gsap.set(layer, { display: "none" });
+      gsap.set(content, { clearProps: "opacity,transform" });
+      gsap.set([signalWrap, signal, header], { clearProps: "opacity,transform,pointerEvents" });
       return;
     }
 

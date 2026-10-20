@@ -31,7 +31,11 @@
 .cookie-settings { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-transform: inherit; cursor: pointer; }
 .cookie-settings:hover, .cookie-settings:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 720px) {
-  .consent-panel { right: 10px; bottom: 10px; width: calc(100vw - 20px); gap: 12px; padding: 16px; }
+  .consent-panel { right: 8px; bottom: 8px; width: calc(100vw - 16px); gap: 10px; padding: 13px 14px; }
+  .consent-copy h2 { margin-bottom: 4px; font-size: 18px; }
+  .consent-copy > p:not(.consent-eyebrow) { font-size: 10px; line-height: 1.38; }
+  .consent-copy a { min-height: 28px; margin-top: 2px; padding-block: 7px; }
   .consent-actions { grid-template-columns: 1fr 1fr; min-width: 0; }
+  .consent-actions button { min-height: 44px; }
 }
 

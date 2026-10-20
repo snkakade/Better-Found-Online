@@ -413,13 +413,14 @@
   .insights-story-row small { right: 0; left: auto; transform: none; }
   .insights-library { padding-block: 75px 100px; }
   .insights-filters { gap: 3px; margin-bottom: 35px; }
-  .insights-filters button { margin-right: 13px; font-size: 12px; }
+  .insights-filters button { min-height: 44px; margin-right: 13px; padding-block: 11px; font-size: 12px; }
   .insights-count { width: 100%; margin-top: 13px; margin-left: 0; }
   .insights-grid { grid-template-columns: 1fr; gap: 75px; }
   .insights-card-meta { display: block; }
   .insights-reading-time { display: block; margin-top: 14px; }
   .insights-closing { padding-block: 75px; }
-  .insights-closing > a { margin-top: 28px; }
+  .insights-closing > a { min-height: 44px; margin-top: 28px; }
+  .insights-card-body a { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

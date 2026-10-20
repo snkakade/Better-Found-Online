@@ -117,8 +117,9 @@ function ServicesPage() {
     CustomEase.create("servicesHop2", "0.9, 0, 0.1, 1");
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const compactMotion = reduceMotion || window.matchMedia("(max-width: 800px)").matches;
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = reduceMotion ? previousOverflow : "hidden";
+    document.body.style.overflow = compactMotion ? previousOverflow : "hidden";
 
     const context = gsap.context(() => {
       const splitText = (
@@ -155,7 +156,7 @@ function ServicesPage() {
         ".services-page .brand, .services-page .menu-toggle, .services-hero-action",
       );
 
-      if (reduceMotion) {
+      if (compactMotion) {
         gsap.set(".services-preloader", { display: "none" });
         gsap.set(
           [...heroHeaderSplit.chars, ...footerSplit.words, ...supportingTargets],
@@ -251,7 +252,7 @@ function ServicesPage() {
         }, 4.82);
       }
 
-      if (!reduceMotion) {
+      if (!compactMotion) {
         gsap.utils.toArray<HTMLElement>(".service-chapter").forEach((chapter) => {
           const image = chapter.querySelector(".service-chapter-image");
           const copy = chapter.querySelectorAll(".service-chapter-copy > *");

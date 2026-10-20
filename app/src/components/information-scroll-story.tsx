@@ -50,13 +50,14 @@ export function InformationScrollStory({
 
     gsap.registerPlugin(ScrollTrigger, SplitText);
     const element = root.current;
-    const ticker = (time: number) => lenis.raf(time * 1000);
-    const lenis = new Lenis();
+    const smoothScroll = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)").matches;
+    const lenis = smoothScroll ? new Lenis() : null;
+    const ticker = (time: number) => lenis?.raf(time * 1000);
     const onLenisScroll = () => ScrollTrigger.update();
     let outroSplit: SplitText | undefined;
 
-    lenis.on("scroll", onLenisScroll);
-    gsap.ticker.add(ticker);
+    lenis?.on("scroll", onLenisScroll);
+    if (lenis) gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
 
     const context = gsap.context(() => {
@@ -146,9 +147,9 @@ export function InformationScrollStory({
     return () => {
       context.revert();
       outroSplit?.revert();
-      gsap.ticker.remove(ticker);
-      lenis.off("scroll", onLenisScroll);
-      lenis.destroy();
+      if (lenis) gsap.ticker.remove(ticker);
+      lenis?.off("scroll", onLenisScroll);
+      lenis?.destroy();
     };
   }, []);
 
