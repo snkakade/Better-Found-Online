@@ -62,3 +62,19 @@
   .growth-service-page .primary-btn{padding:12px 15px}
   .growth-hero small{display:none}
 }
+
+@media(min-width:761px){
+  .growth-service-page .growth-closing{
+    padding-block:clamp(30px,4vh,42px)
+  }
+  .growth-closing h2{
+    margin:14px 0;
+    font-size:clamp(3rem,4.1vw,5rem)
+  }
+  .growth-closing .growth-actions{
+    margin-top:20px
+  }
+  .growth-closing>small{
+    margin-top:16px
+  }
+}

@@ -859,3 +859,19 @@
     transform: none;
   }
 }
+
+@media (min-width: 761px) {
+  .services-closing {
+    min-height: 46svh;
+    padding-block: clamp(40px, 5vh, 56px);
+  }
+
+  .services-closing h2 {
+    margin-top: clamp(24px, 4vh, 40px);
+    font-size: clamp(3.5rem, 6.2vw, 7.2rem);
+  }
+
+  .services-closing a {
+    margin-top: 34px;
+  }
+}

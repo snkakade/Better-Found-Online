@@ -2203,3 +2203,61 @@
   .performance-closing-links a:nth-child(2),
   .performance-closing-links a:nth-child(-n+2) { padding-inline: 0; border-right: 0; border-bottom: 1px solid var(--line); }
 }
+
+/* Closing sections should leave room for the footer in the same viewport. */
+@media (min-width: 761px) {
+  .service-detail-closing {
+    min-height: 46svh;
+    padding-block: clamp(28px, 3.8vh, 40px);
+  }
+
+  .service-detail-closing h2 {
+    margin-top: clamp(16px, 2.5vh, 24px);
+    font-size: clamp(3.25rem, 5vw, 6rem);
+  }
+
+  .service-detail-closing a {
+    margin-top: 24px;
+  }
+
+  .creative-closing-copy {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .performance-marketing-page .performance-closing--connected {
+    min-height: 46svh;
+    grid-template-rows: auto auto;
+    gap: clamp(18px, 2.5vh, 28px) clamp(36px, 5vw, 76px);
+    align-items: start;
+    padding-top: clamp(34px, 4.5vh, 48px);
+    padding-bottom: clamp(18px, 2.5vh, 28px);
+  }
+
+  .performance-closing--connected > .eyebrow {
+    margin-top: 6px;
+  }
+
+  .performance-marketing-page .performance-closing--connected h2 {
+    max-width: none;
+    font-size: clamp(3.2rem, 4.1vw, 5rem);
+    line-height: 0.88;
+  }
+
+  .performance-closing--connected .performance-closing-message > p {
+    margin-top: clamp(16px, 2vh, 22px);
+    font-size: clamp(0.92rem, 1vw, 1.05rem);
+    line-height: 1.5;
+  }
+
+  .performance-closing--connected .performance-closing-message > a {
+    margin-top: clamp(18px, 2.4vh, 26px);
+    padding: 12px 0;
+  }
+
+  .performance-closing-links a {
+    min-height: 54px;
+    padding-block: 8px;
+  }
+}
