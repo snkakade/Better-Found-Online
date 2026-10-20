@@ -8,6 +8,9 @@
   const TEMPLATES_KEY = "bfo_console_templates_v2";
   const SCHEDULES_KEY = "bfo_console_schedules_v2";
   const SUPPRESSIONS_KEY = "bfo_console_suppressions_v2";
+  const AUDIO_INPUT_KEY = "bfo_console_audio_input";
+  const AUDIO_OUTPUT_KEY = "bfo_console_audio_output";
+  const LAST_DIALLED_KEY = "bfo_console_last_dialled";
 
   const seedContacts = [];
   const seedTemplates = [
@@ -43,7 +46,7 @@
     contactPage: 1,
     scheduleFilter: "upcoming",
     deferredInstall: null,
-    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null }
+    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null, muted: false, micStream: null, micFrame: null, hiddenRecents: false }
   };
 
   function haptic(duration = 12) {
@@ -313,14 +316,10 @@
     const status = state.smsStatus;
     if (!status) return;
     const enabled = Boolean(status.messaging?.enabled);
-    const chip = $("#integration-chip");
-    chip.classList.toggle("warning", !enabled);
-    chip.classList.toggle("success", enabled);
-    chip.innerHTML = enabled ? '<i class="ph-bold ph-check-circle"></i><span>SMS connected</span>' : '<i class="ph ph-warning-circle"></i><span>SMS setup required</span>';
-    $("#sidebar-status-copy").textContent = enabled ? "Connected" : "Action required";
-    $(".line-summary .status-indicator").classList.toggle("status-warning", !enabled);
-    $("#sms-setup-alert").hidden = enabled;
-    $("#composer-disabled-note").hidden = enabled;
+    $(".nav-alert").hidden = enabled;
+    $("#settings-messaging-dot").classList.toggle("status-warning", !enabled);
+    $("#settings-messaging-status").textContent = enabled ? "Connected" : "Action required";
+    if ($("#composer-disabled-note")) $("#composer-disabled-note").hidden = enabled;
     $("#send-message-button").disabled = !enabled;
     $("#last-updated").textContent = `Checked ${relativeTime(status.checkedAt)}`;
     const balance = status.usage?.balance;
@@ -385,8 +384,76 @@
 
   function renderCalls() {
     const body = $("#call-history-body"); if (!body) return;
-    $("#call-history-empty").hidden = state.calls.length > 0;
-    body.innerHTML = state.calls.map((call) => `<tr><td><strong>${escapeHtml(call.first_name ? `${call.first_name} ${call.last_name || ""}` : formatPhone(call.counterpart))}</strong><small>${escapeHtml(call.company || call.counterpart)}</small></td><td>${call.direction === "inbound" ? "Inbound" : "Outbound"}</td><td>${escapeHtml(call.display_name || "Unassigned")}</td><td>${messageStatusBadge(call.status)}</td><td>${Math.floor(Number(call.duration_seconds || 0) / 60)}m ${Number(call.duration_seconds || 0) % 60}s</td><td>${escapeHtml((call.disposition || "Not tagged").replaceAll("_", " "))}</td><td><button class="icon-button" data-tag-call="${call.id}" aria-label="Tag call"><i class="ph ph-tag"></i></button></td></tr>`).join("");
+    const calls = filteredCalls();
+    $("#call-history-empty").hidden = calls.length > 0;
+    $("#call-result-count").textContent = `${calls.length} ${calls.length === 1 ? "call" : "calls"}`;
+    body.innerHTML = calls.map((call) => {
+      const name = call.first_name ? `${call.first_name} ${call.last_name || ""}`.trim() : formatPhone(call.counterpart);
+      const seconds = Number(call.duration_seconds || 0);
+      return `<tr><td>${escapeHtml(shortCallDate(call.created_at))}</td><td><strong>${escapeHtml(name)}</strong><small>${escapeHtml(call.company || call.counterpart)}</small></td><td>${call.direction === "inbound" ? "Inbound" : "Outbound"}</td><td>${escapeHtml(call.display_name || "Unassigned")}</td><td>${messageStatusBadge(call.status)}</td><td>${Math.floor(seconds / 60)}m ${String(seconds % 60).padStart(2, "0")}s</td><td>${escapeHtml((call.disposition || "Untagged").replaceAll("_", " "))}</td><td><div class="call-row-actions"><button data-call-back="${escapeHtml(call.counterpart)}" aria-label="Call back"><i class="ph ph-phone"></i></button><button data-copy-number="${escapeHtml(call.counterpart)}" aria-label="Copy number"><i class="ph ph-copy"></i></button><button data-tag-call="${call.id}" aria-label="Tag call"><i class="ph ph-tag"></i></button></div></td></tr>`;
+    }).join("");
+    renderCallMetrics();
+    renderQuickCalls();
+    renderDialContacts();
+    syncCallOwnerFilter();
+  }
+
+  function callTimestamp(call) {
+    const value = String(call?.created_at || "");
+    return new Date(value && !value.includes("T") ? `${value.replace(" ", "T")}Z` : value);
+  }
+
+  function shortCallDate(value) {
+    if (!value) return "—";
+    const date = callTimestamp({ created_at: value });
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(date);
+  }
+
+  function filteredCalls() {
+    const query = $("#call-search")?.value.trim().toLowerCase() || "";
+    const direction = $("#call-direction-filter")?.value || "all";
+    const outcome = $("#call-outcome-filter")?.value || "all";
+    const owner = $("#call-owner-filter")?.value || "all";
+    const days = $("#call-date-filter")?.value || "30";
+    const cutoff = days === "all" ? 0 : Date.now() - Number(days) * 86400000;
+    return state.calls.filter((call) => {
+      const haystack = `${call.first_name || ""} ${call.last_name || ""} ${call.company || ""} ${call.counterpart || ""} ${call.display_name || ""}`.toLowerCase();
+      const callOutcome = call.disposition || "untagged";
+      return (!query || haystack.includes(query)) && (direction === "all" || call.direction === direction) && (outcome === "all" || callOutcome === outcome) && (owner === "all" || String(call.user_id || "unassigned") === owner) && (!cutoff || callTimestamp(call).getTime() >= cutoff);
+    });
+  }
+
+  function renderCallMetrics() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const todaysCalls = state.calls.filter((call) => callTimestamp(call) >= today);
+    const connected = todaysCalls.filter((call) => ["completed", "answered", "connected"].includes(String(call.status).toLowerCase()));
+    const talkSeconds = todaysCalls.reduce((sum, call) => sum + Number(call.duration_seconds || 0), 0);
+    $("#call-stat-today").textContent = todaysCalls.length;
+    $("#call-stat-connected").textContent = connected.length;
+    $("#call-stat-talk").textContent = talkSeconds >= 3600 ? `${Math.floor(talkSeconds / 3600)}h ${Math.floor(talkSeconds % 3600 / 60)}m` : `${Math.floor(talkSeconds / 60)}m`;
+    $("#call-stat-followups").textContent = state.calls.filter((call) => call.disposition === "follow_up").length;
+  }
+
+  function syncCallOwnerFilter() {
+    const select = $("#call-owner-filter"); if (!select) return;
+    const current = select.value;
+    const owners = [...new Map(state.calls.filter((call) => call.user_id).map((call) => [String(call.user_id), call.display_name || "Team member"])).entries()];
+    select.innerHTML = '<option value="all">All owners</option><option value="unassigned">Unassigned</option>' + owners.map(([id, name]) => `<option value="${escapeHtml(id)}">${escapeHtml(name)}</option>`).join("");
+    if ([...select.options].some((option) => option.value === current)) select.value = current;
+  }
+
+  function renderDialContacts() {
+    const list = $("#dial-contact-list"); if (!list) return;
+    const entries = [...state.leads.map((lead) => ({ phone: lead.phone, name: `${lead.first_name || ""} ${lead.last_name || ""}`.trim(), company: lead.company || "" })), ...state.contacts.map((contact) => ({ phone: contact.phone, name: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(), company: contact.company || "" }))];
+    list.innerHTML = entries.filter((entry) => entry.phone).map((entry) => `<option value="${escapeHtml(entry.phone)}">${escapeHtml([entry.name, entry.company].filter(Boolean).join(" · "))}</option>`).join("");
+  }
+
+  function renderQuickCalls() {
+    const list = $("#quick-call-list"); if (!list) return;
+    if (state.voice.hiddenRecents) { list.innerHTML = '<p class="compact-empty">Shortcuts cleared</p>'; return; }
+    const unique = [...new Map(state.calls.filter((call) => call.counterpart).map((call) => [call.counterpart, call])).values()].slice(0, 5);
+    list.innerHTML = unique.length ? unique.map((call) => { const name = call.first_name ? `${call.first_name} ${call.last_name || ""}`.trim() : formatPhone(call.counterpart); return `<div class="quick-call-item"><div><strong>${escapeHtml(name)}</strong><span>${escapeHtml(call.counterpart)}</span></div><button data-call-back="${escapeHtml(call.counterpart)}" aria-label="Call ${escapeHtml(name)}"><i class="ph ph-phone"></i></button><button data-copy-number="${escapeHtml(call.counterpart)}" aria-label="Copy number"><i class="ph ph-copy"></i></button></div>`; }).join("") : '<p class="compact-empty">No recent numbers</p>';
   }
 
   async function loadTasks() {
@@ -804,6 +871,74 @@
     toast("success", "Number added to suppression list");
   }
 
+  function updateNetworkStatus() {
+    const node = $("#network-status"); if (!node) return;
+    const online = navigator.onLine;
+    node.classList.toggle("offline", !online);
+    node.innerHTML = online ? '<i class="ph ph-wifi-high"></i><span>Online</span>' : '<i class="ph ph-wifi-slash"></i><span>Offline</span>';
+  }
+
+  async function populateAudioDevices(requestPermission = false) {
+    if (!navigator.mediaDevices?.enumerateDevices) return;
+    let permissionStream = null;
+    try {
+      if (requestPermission) permissionStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const input = $("#audio-input"); const output = $("#audio-output");
+      const savedInput = localStorage.getItem(AUDIO_INPUT_KEY) || "default";
+      const savedOutput = localStorage.getItem(AUDIO_OUTPUT_KEY) || "default";
+      const microphones = devices.filter((device) => device.kind === "audioinput");
+      const speakers = devices.filter((device) => device.kind === "audiooutput");
+      input.innerHTML = '<option value="default">System default</option>' + microphones.filter((device) => device.deviceId !== "default").map((device, index) => `<option value="${escapeHtml(device.deviceId)}">${escapeHtml(device.label || `Microphone ${index + 1}`)}</option>`).join("");
+      output.innerHTML = '<option value="default">System default</option>' + speakers.filter((device) => device.deviceId !== "default").map((device, index) => `<option value="${escapeHtml(device.deviceId)}">${escapeHtml(device.label || `Speaker ${index + 1}`)}</option>`).join("");
+      if ([...input.options].some((option) => option.value === savedInput)) input.value = savedInput;
+      if ([...output.options].some((option) => option.value === savedOutput)) output.value = savedOutput;
+      output.disabled = !("setSinkId" in HTMLMediaElement.prototype);
+      await applyVoiceAudioDevices();
+    } catch (error) {
+      if (requestPermission) toast("error", "Microphone access unavailable", error.message);
+    } finally { permissionStream?.getTracks().forEach((track) => track.stop()); }
+  }
+
+  async function applyVoiceAudioDevices() {
+    const audio = state.voice.device?.audio; if (!audio) return;
+    try {
+      const inputId = $("#audio-input")?.value || "default";
+      const outputId = $("#audio-output")?.value || "default";
+      if (inputId !== "default" && audio.setInputDevice) await audio.setInputDevice(inputId);
+      else if (inputId === "default" && audio.unsetInputDevice) await audio.unsetInputDevice();
+      if (outputId !== "default" && audio.speakerDevices?.set) await audio.speakerDevices.set(outputId);
+      if (outputId !== "default" && audio.ringtoneDevices?.set) await audio.ringtoneDevices.set(outputId);
+    } catch (error) { toast("error", "Could not switch audio device", error.message); }
+  }
+
+  function stopMicrophoneTest() {
+    if (state.voice.micFrame) cancelAnimationFrame(state.voice.micFrame);
+    state.voice.micFrame = null;
+    state.voice.micStream?.getTracks().forEach((track) => track.stop());
+    state.voice.micStream = null;
+    $("#mic-level span").style.width = "0";
+    $("#test-microphone").classList.remove("testing");
+    $("#test-microphone").innerHTML = '<i class="ph ph-waveform"></i>Test microphone';
+  }
+
+  async function testMicrophone() {
+    if (state.voice.micStream) { stopMicrophoneTest(); return; }
+    try {
+      const deviceId = $("#audio-input").value;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: deviceId === "default" ? true : { deviceId: { exact: deviceId } } });
+      state.voice.micStream = stream;
+      await populateAudioDevices(false);
+      const context = new AudioContext(); const source = context.createMediaStreamSource(stream); const analyser = context.createAnalyser(); const data = new Uint8Array(analyser.frequencyBinCount);
+      source.connect(analyser); analyser.fftSize = 256;
+      $("#test-microphone").classList.add("testing");
+      $("#test-microphone").innerHTML = '<i class="ph ph-stop"></i>Stop test';
+      const draw = () => { analyser.getByteFrequencyData(data); const average = data.reduce((sum, value) => sum + value, 0) / data.length; $("#mic-level span").style.width = `${Math.min(100, average * 1.8)}%`; state.voice.micFrame = requestAnimationFrame(draw); };
+      draw();
+      window.setTimeout(async () => { if (state.voice.micStream === stream) { stopMicrophoneTest(); await context.close(); } }, 7000);
+    } catch (error) { toast("error", "Microphone test failed", error.message); }
+  }
+
   async function initVoice() {
     if (state.voice.device || !window.Twilio?.Device || !state.token) return;
     const chip = $("#voice-connection-chip");
@@ -822,6 +957,7 @@
         call.on("disconnect", () => { state.voice.incoming = null; $("#incoming-call-dialog").close(); loadCalls(); });
       });
       await device.register();
+      await populateAudioDevices(false);
       const heartbeat = () => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: $("#receive-calls-toggle")?.checked !== false }) }).catch(() => {});
       heartbeat();
       clearInterval(state.voice.presenceTimer);
@@ -839,7 +975,11 @@
   }
 
   function updateCallButton() {
-    $("#call-button").disabled = !/^\+[1-9]\d{7,14}$/.test(normalizedDialNumber());
+    const number = normalizedDialNumber();
+    $("#call-button").disabled = !/^\+[1-9]\d{7,14}$/.test(number) || Boolean(state.voice.call);
+    const match = state.leads.find((lead) => lead.phone === number) || state.contacts.find((contact) => contact.phone === number);
+    const name = match ? `${match.first_name || match.firstName || ""} ${match.last_name || match.lastName || ""}`.trim() : "";
+    $("#dial-contact-match").textContent = name ? [name, match.company].filter(Boolean).join(" · ") : "No contact selected";
   }
 
   async function placeCall() {
@@ -850,7 +990,9 @@
       haptic(20);
       const call = await state.voice.device.connect({ params: { TargetNumber: to } });
       state.voice.call = call;
+      state.voice.muted = false;
       state.voice.startedAt = Date.now();
+      localStorage.setItem(LAST_DIALLED_KEY, to);
       $("#in-call").hidden = false;
       $("#in-call-number").textContent = formatPhone(to);
       $("#in-call-status").textContent = "Connecting";
@@ -874,9 +1016,12 @@
     clearInterval(state.voice.timer);
     state.voice.timer = null;
     state.voice.call = null;
+    state.voice.muted = false;
     $("#in-call").hidden = true;
     $("#call-button").hidden = false;
     $("#call-timer").textContent = "00:00";
+    $("#mute-call").setAttribute("aria-pressed", "false");
+    $("#mute-call").innerHTML = '<i class="ph ph-microphone"></i><span>Mute</span>';
     updateCallButton();
     haptic(18);
     window.setTimeout(async () => {
@@ -884,6 +1029,36 @@
       const recent = state.calls.find((call) => call.direction === "outbound" && call.counterpart === normalizedDialNumber() && !call.disposition);
       if (recent) { populateLeadSelects(); $("#call-event-id").value = recent.id; openDialog($("#call-outcome-dialog")); }
     }, 1200);
+  }
+
+  function toggleMute() {
+    const call = state.voice.call; if (!call?.mute) return;
+    state.voice.muted = !state.voice.muted;
+    call.mute(state.voice.muted);
+    $("#mute-call").setAttribute("aria-pressed", String(state.voice.muted));
+    $("#mute-call").innerHTML = state.voice.muted ? '<i class="ph ph-microphone-slash"></i><span>Unmute</span>' : '<i class="ph ph-microphone"></i><span>Mute</span>';
+  }
+
+  function prepareCall(number) {
+    $("#phone-input").value = number || "";
+    updateCallButton();
+    routeTo("voice");
+    $("#phone-input").focus();
+  }
+
+  function exportFilteredCalls() {
+    const rows = [["date", "contact", "company", "number", "direction", "owner", "status", "duration_seconds", "outcome"], ...filteredCalls().map((call) => [call.created_at, `${call.first_name || ""} ${call.last_name || ""}`.trim(), call.company || "", call.counterpart, call.direction, call.display_name || "Unassigned", call.status, call.duration_seconds || 0, call.disposition || "untagged"])];
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const anchor = document.createElement("a"); anchor.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); anchor.download = `bfo-calls-${new Date().toISOString().slice(0, 10)}.csv`; anchor.click(); URL.revokeObjectURL(anchor.href);
+  }
+
+  function acceptIncomingCall() {
+    const call = state.voice.incoming; if (!call) return;
+    state.voice.call = call; state.voice.incoming = null; state.voice.startedAt = Date.now(); state.voice.muted = false;
+    const number = call.parameters?.From || "Unknown number";
+    $("#in-call").hidden = false; $("#in-call-number").textContent = formatPhone(number); $("#in-call-status").textContent = "Connected"; $("#call-button").hidden = true;
+    call.accept(); startCallTimer(); $("#incoming-call-dialog").close(); routeTo("voice");
+    call.on("disconnect", endCallUI); call.on("error", endCallUI);
   }
 
   function registerEvents() {
@@ -933,10 +1108,15 @@
     $("#task-form").addEventListener("submit", handleAddTask);
     $("#task-strip").addEventListener("click", async (event) => { const button = event.target.closest("[data-complete-task]"); if (!button) return; await api("/api/console/tasks", { method: "PATCH", body: JSON.stringify({ id: button.dataset.completeTask, status: "done" }) }); await loadTasks(); });
     $("#refresh-calls").addEventListener("click", loadCalls);
-    $("#call-history-body").addEventListener("click", (event) => { const button = event.target.closest("[data-tag-call]"); if (!button) return; populateLeadSelects(); $("#call-event-id").value = button.dataset.tagCall; openDialog($("#call-outcome-dialog")); });
+    $("#call-history-body").addEventListener("click", async (event) => {
+      const tag = event.target.closest("[data-tag-call]"); const callback = event.target.closest("[data-call-back]"); const copy = event.target.closest("[data-copy-number]");
+      if (tag) { populateLeadSelects(); $("#call-event-id").value = tag.dataset.tagCall; openDialog($("#call-outcome-dialog")); }
+      if (callback) prepareCall(callback.dataset.callBack);
+      if (copy) { await navigator.clipboard.writeText(copy.dataset.copyNumber); toast("success", "Number copied"); }
+    });
     $("#call-outcome-form").addEventListener("submit", handleCallOutcome);
     $("#receive-calls-toggle").addEventListener("change", (event) => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: event.target.checked }) }).then(() => toast("success", event.target.checked ? "Browser calls enabled" : "Browser calls paused")).catch((error) => toast("error", "Could not update availability", error.message)));
-    $("#answer-call").addEventListener("click", () => { state.voice.incoming?.accept(); $("#incoming-call-dialog").close(); routeTo("voice"); });
+    $("#answer-call").addEventListener("click", acceptIncomingCall);
     $("#decline-call").addEventListener("click", () => { state.voice.incoming?.reject(); state.voice.incoming = null; $("#incoming-call-dialog").close(); });
     $("#new-template-button").addEventListener("click", () => openDialog($("#template-dialog")));
     $("#template-form").addEventListener("submit", handleAddTemplate);
@@ -967,16 +1147,28 @@
       URL.revokeObjectURL(anchor.href);
     }));
     $("#global-search-input").addEventListener("input", (event) => { if (event.target.value) { routeTo("conversations"); $("#conversation-search").value = event.target.value; renderMessages(); } });
+    [$("#call-search"), $("#call-direction-filter"), $("#call-outcome-filter"), $("#call-owner-filter"), $("#call-date-filter")].forEach((control) => control.addEventListener(control.tagName === "INPUT" ? "input" : "change", renderCalls));
+    $("#export-calls").addEventListener("click", exportFilteredCalls);
+    $("#quick-call-list").addEventListener("click", async (event) => { const callback = event.target.closest("[data-call-back]"); const copy = event.target.closest("[data-copy-number]"); if (callback) prepareCall(callback.dataset.callBack); if (copy) { await navigator.clipboard.writeText(copy.dataset.copyNumber); toast("success", "Number copied"); } });
+    $("#clear-recent-calls").addEventListener("click", () => { state.voice.hiddenRecents = true; renderQuickCalls(); });
+    $("#redial-number").addEventListener("click", () => { const number = localStorage.getItem(LAST_DIALLED_KEY); if (!number) return toast("info", "No recent outbound call"); prepareCall(number); });
+    $("#paste-number").addEventListener("click", async () => { try { prepareCall(await navigator.clipboard.readText()); } catch { toast("error", "Clipboard access unavailable"); } });
+    $("#audio-input").addEventListener("change", async (event) => { localStorage.setItem(AUDIO_INPUT_KEY, event.target.value); await applyVoiceAudioDevices(); });
+    $("#audio-output").addEventListener("change", async (event) => { localStorage.setItem(AUDIO_OUTPUT_KEY, event.target.value); await applyVoiceAudioDevices(); });
+    $("#test-microphone").addEventListener("click", testMicrophone);
+    $("#mute-call").addEventListener("click", toggleMute);
+    navigator.mediaDevices?.addEventListener?.("devicechange", () => populateAudioDevices(false));
+    window.addEventListener("online", updateNetworkStatus); window.addEventListener("offline", updateNetworkStatus); updateNetworkStatus();
     document.addEventListener("keydown", (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); $("#global-search-input").focus(); }
-      if (event.key === "Escape") { $$("dialog[open]").forEach((dialog) => dialog.close()); closeSidebar(); }
+      if (event.key === "Escape") { $$("dialog[open]").forEach((dialog) => dialog.close()); closeSidebar(); if (state.voice.call) state.voice.call.disconnect(); }
       if ($(".page[data-page='voice']").classList.contains("active") && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
-        if (/^[0-9*#]$/.test(event.key)) { $("#phone-input").value += event.key; updateCallButton(); }
+        if (/^[0-9*#]$/.test(event.key)) { if (state.voice.call?.sendDigits) state.voice.call.sendDigits(event.key); else $("#phone-input").value += event.key; updateCallButton(); }
         if (event.key === "Backspace") { $("#phone-input").value = $("#phone-input").value.slice(0, -1); updateCallButton(); }
         if (event.key === "Enter" && !$("#call-button").disabled) placeCall();
       }
     });
-    $$("#keypad [data-digit]").forEach((button) => button.addEventListener("click", () => { const digit = button.dataset.digit; $("#phone-input").value += digit; updateCallButton(); haptic(8); }));
+    $$("#keypad [data-digit]").forEach((button) => button.addEventListener("click", () => { const digit = button.dataset.digit; if (state.voice.call?.sendDigits) state.voice.call.sendDigits(digit); else $("#phone-input").value += digit; updateCallButton(); haptic(8); }));
     $("#phone-input").addEventListener("input", updateCallButton);
     $("#clear-number").addEventListener("click", () => { $("#phone-input").value = ""; updateCallButton(); });
     $("#backspace-number").addEventListener("click", () => { $("#phone-input").value = $("#phone-input").value.slice(0, -1); updateCallButton(); });

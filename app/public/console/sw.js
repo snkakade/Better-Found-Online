@@ -1,4 +1,4 @@
-const CACHE_NAME = "bfo-outreach-console-v3";
+const CACHE_NAME = "bfo-console-v4";
 const STATIC_ASSETS = [
   "/console/assets/css/admin.css",
   "/console/assets/js/admin.js",
@@ -8,6 +8,9 @@ const STATIC_ASSETS = [
   "/console/assets/vendor/phosphor/bold/style.css",
   "/console/assets/vendor/phosphor/bold/Phosphor-Bold.woff2",
   "/assets/fonts/Outfit.ttf",
+  "/assets/fonts/Mono.ttf",
+  "/console/assets/images/favicon-32.png",
+  "/console/assets/images/apple-touch-icon.png",
   "/console/assets/images/icon-192.png",
   "/console/assets/images/icon-512.png"
 ];
