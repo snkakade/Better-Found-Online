@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { CookieSettingsButton } from "@/components/analytics-consent";
 
 const navigation = [
@@ -52,17 +52,12 @@ export function PageTransition() {
 
 export function SiteHeader({
   brandTone = "light",
-  adaptiveBrand = false,
-  frostFromSelector = ".work-reel",
 }: {
   brandTone?: BrandTone;
-  adaptiveBrand?: boolean;
-  frostFromSelector?: string;
 } = {}) {
   const [open, setOpen] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [resolvedBrandTone, setResolvedBrandTone] = useState<BrandTone>(brandTone);
   const menuRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const previousOverflow = useRef("");
@@ -78,9 +73,14 @@ export function SiteHeader({
 
   useEffect(() => {
     const updateHeader = () => {
-      const frostStart = document.querySelector<HTMLElement>(frostFromSelector);
-      const headerHeight = document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 78;
-      setScrolled(Boolean(frostStart && frostStart.getBoundingClientRect().top <= headerHeight));
+      const hero = document.querySelector<HTMLElement>(
+        "main .hero, main .services-hero, main .growth-hero, main .service-detail-hero, main .creative-hero, main .insights-hero, main .interior-hero",
+      );
+      const headerHeight = document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 76;
+      const passedHero = hero
+        ? hero.getBoundingClientRect().bottom <= headerHeight
+        : window.scrollY >= Math.min(window.innerHeight * 0.72, 640);
+      setScrolled(passedHero);
     };
     updateHeader();
     window.addEventListener("scroll", updateHeader, { passive: true });
@@ -89,29 +89,7 @@ export function SiteHeader({
       window.removeEventListener("scroll", updateHeader);
       window.removeEventListener("resize", updateHeader);
     };
-  }, [frostFromSelector]);
-
-  useEffect(() => {
-    if (!adaptiveBrand) {
-      setResolvedBrandTone(brandTone);
-      return;
-    }
-
-    const updateBrandTone = () => {
-      const lightHero = document.querySelector<HTMLElement>(".services-hero");
-      const headerHeight = document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 82;
-      const isOverLightSurface = Boolean(lightHero && lightHero.getBoundingClientRect().bottom > headerHeight);
-      setResolvedBrandTone(isOverLightSurface ? "dark" : "light");
-    };
-
-    updateBrandTone();
-    window.addEventListener("scroll", updateBrandTone, { passive: true });
-    window.addEventListener("resize", updateBrandTone);
-    return () => {
-      window.removeEventListener("scroll", updateBrandTone);
-      window.removeEventListener("resize", updateBrandTone);
-    };
-  }, [adaptiveBrand, brandTone]);
+  }, []);
 
   useLayoutEffect(() => {
     const menu = menuRef.current;
@@ -228,14 +206,10 @@ export function SiteHeader({
   };
 
   const wordmark = "BFO";
-  const headerBrandTone: BrandTone = open ? "light" : scrolled ? "dark" : resolvedBrandTone;
-  const glassStyle = scrolled && !open ? {
-    backdropFilter: "blur(26px) saturate(1.28)",
-    WebkitBackdropFilter: "blur(26px) saturate(1.28)",
-  } as CSSProperties : undefined;
+  const headerBrandTone: BrandTone = open ? "light" : scrolled ? "dark" : brandTone;
 
   return (
-    <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`} style={glassStyle}>
+    <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`}>
       <Brand tone={headerBrandTone} />
       <button
         ref={toggleRef}

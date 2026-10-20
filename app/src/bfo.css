@@ -2722,3 +2722,182 @@ section[id] {
     font-size: 11px;
   }
 }
+
+/* Unified site navigation --------------------------------------------------
+ * The header is intentionally transparent over every opening hero. Once the
+ * first hero clears it, one neutral frosted surface is used on every route. */
+.header {
+  --nav-height: 76px;
+  height: var(--nav-height);
+  padding: 0 clamp(24px, 4vw, 64px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition:
+    background-color 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    backdrop-filter 280ms ease;
+}
+
+.header.scrolled:not(.menu-active),
+.header.scrolled.brand-dark:not(.menu-active) {
+  border-bottom: 1px solid rgba(23, 17, 19, 0.1);
+  background: rgba(248, 246, 244, 0.88);
+  box-shadow: 0 10px 30px rgba(23, 17, 19, 0.07);
+  backdrop-filter: blur(22px) saturate(1.18);
+  -webkit-backdrop-filter: blur(22px) saturate(1.18);
+}
+
+.header > .brand {
+  gap: 12px;
+  color: inherit;
+  font-size: 18px;
+  font-weight: 560;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.header > .brand::before {
+  display: none;
+}
+
+.header > .brand .brand-mark {
+  width: 46px;
+  height: 50px;
+}
+
+.header > .brand > span:last-child > span {
+  display: inline;
+  margin-left: 0.22em;
+}
+
+.menu-toggle,
+.menu-toggle.opened {
+  top: 11px;
+  right: clamp(20px, 3vw, 48px);
+  width: 132px;
+  height: 54px;
+  border: 1px solid rgba(23, 17, 19, 0.14);
+  border-radius: 999px;
+  background: var(--rose);
+  box-shadow: 0 8px 24px rgba(23, 17, 19, 0.15);
+  color: var(--deep);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms ease,
+    border-color 320ms ease;
+}
+
+.menu-toggle::after {
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.menu-toggle:hover {
+  border-color: rgba(23, 17, 19, 0.24);
+  box-shadow: 0 12px 28px rgba(23, 17, 19, 0.2);
+  transform: translateY(-2px);
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--silver);
+  outline-offset: 3px;
+}
+
+.menu-copy,
+.menu-toggle:hover .menu-copy {
+  left: 21px;
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.menu-toggle-icon {
+  top: 4px;
+  right: 4px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--deep);
+  clip-path: none;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), background-color 280ms ease;
+}
+
+.menu-toggle:hover .menu-toggle-icon {
+  clip-path: none;
+  transform: rotate(12deg) scale(0.94);
+}
+
+.menu-toggle.opened .menu-toggle-icon {
+  clip-path: none;
+  transform: rotate(90deg) scale(0.94);
+}
+
+.hamburger {
+  width: 26px;
+  height: 26px;
+}
+
+.hamburger i {
+  width: 14px;
+  background: var(--rose);
+}
+
+@media (max-width: 760px) {
+  .header {
+    --nav-height: 68px;
+    padding: 0 16px;
+  }
+
+  .header > .brand {
+    gap: 9px;
+    font-size: 13px;
+    line-height: 0.98;
+  }
+
+  .header > .brand .brand-mark {
+    width: 38px;
+    height: 42px;
+  }
+
+  .header > .brand > span:last-child > span {
+    display: block;
+    margin: 2px 0 0;
+  }
+
+  .menu-toggle,
+  .menu-toggle.opened {
+    top: 10px;
+    right: 12px;
+    width: 112px;
+    height: 48px;
+  }
+
+  .menu-copy,
+  .menu-toggle:hover .menu-copy {
+    left: 15px;
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+  }
+
+  .menu-toggle-icon {
+    top: 3px;
+    right: 3px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header > .brand > span:last-child {
+    display: block;
+  }
+}

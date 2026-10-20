@@ -53,7 +53,7 @@ function CreativeProductionPage() {
   const whatsapp = `https://wa.me/15707077078?text=${encodeURIComponent("Hi Better Found Online, I'd like to discuss a creative production project.")}`;
   return (
     <div className="site interior-site creative-page">
-      <PageTransition /><CreativeSchema /><a className="skip-link" href="#main">Skip to Content</a><SiteHeader frostFromSelector=".scroll63-story" />
+      <PageTransition /><CreativeSchema /><a className="skip-link" href="#main">Skip to Content</a><SiteHeader />
       <main id="main">
         <section className="creative-hero" aria-labelledby="creative-title">
           <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video production, editing, CGI, animation, and graphic design for brands that need clear ideas and distinctive visual content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project <ArrowUpRight size={17} weight="light" /></a><a className="story-link" href="#capabilities">Explore Our Services <ArrowDown size={16} weight="light" /></a></div></div>

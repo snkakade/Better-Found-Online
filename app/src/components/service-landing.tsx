@@ -64,7 +64,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
       <PageTransition />
       <ServiceStructuredData data={data} />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader frostFromSelector=".scroll63-story" />
+      <SiteHeader />
       <main id="main">
         <section className="service-detail-hero" aria-labelledby="service-detail-title">
           <div className="service-detail-hero-copy">

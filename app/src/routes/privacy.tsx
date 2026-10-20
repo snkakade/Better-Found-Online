@@ -17,7 +17,7 @@ function PrivacyPage() {
   return (
     <div className="privacy-page">
       <PageTransition />
-      <SiteHeader frostFromSelector=".privacy-content" />
+      <SiteHeader />
       <main id="main" className="privacy-content">
         <p className="eyebrow">Privacy &amp; cookies</p>
         <h1>Clear choices.<br />Useful measurement.</h1>

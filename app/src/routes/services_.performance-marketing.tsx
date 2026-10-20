@@ -153,7 +153,7 @@ function PerformanceMarketingPage() {
       <PageTransition />
       <PerformanceMarketingSchema />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader frostFromSelector=".performance-results-strip" />
+      <SiteHeader />
       <main id="main">
         <section className="service-detail-hero" aria-labelledby="performance-title">
           <div className="service-detail-hero-copy">

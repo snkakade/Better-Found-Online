@@ -140,7 +140,7 @@ function InsightsPage() {
       <PageTransition />
       <PageSchema name="Website, SEO & Marketing Insights | Better Found Online" path="/insights" description="Better Found Online shares clear thinking about website design, search engine optimization, content, and purposeful digital experiences." />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader frostFromSelector=".insights-story" />
+      <SiteHeader />
       <main id="main">
         <section
           ref={heroRef}

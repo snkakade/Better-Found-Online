@@ -317,7 +317,7 @@ function ServicesPage() {
       <PageTransition />
       <PageSchema name="Website, Creative & Marketing Services | Better Found Online" path="/services" description="Better Found Online organizes its services into Build, Create, Grow, Connect, and Improve, covering websites, creative production, marketing, integrations, and optimization." />
       <a className="skip-link" href="#main">Skip to Content</a>
-      <SiteHeader brandTone="dark" adaptiveBrand frostFromSelector=".services-opening" />
+      <SiteHeader brandTone="dark" />
 
       <div className="services-preloader" aria-hidden="true">
         <div className="services-preloader-images">

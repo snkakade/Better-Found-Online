@@ -362,7 +362,7 @@ function Index() {
       <a className="skip-link" href="#main">
         Skip to Content
       </a>
-      <SiteHeader frostFromSelector=".story-intro" />
+      <SiteHeader />
 
       <main id="main">
         <div className="tunnel-journey">

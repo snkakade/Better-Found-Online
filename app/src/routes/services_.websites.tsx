@@ -301,7 +301,7 @@ function WebsitesPage() {
       <a className="skip-link" href="#main">
         Skip to Content
       </a>
-      <SiteHeader frostFromSelector=".growth-intro" />
+      <SiteHeader />
       <main id="main">
         <section className="growth-hero websites-growth-hero">
           <div>
