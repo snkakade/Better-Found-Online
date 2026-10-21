@@ -559,33 +559,36 @@ function Index() {
         </section>
 
         <section className="contact section-pad" id="contact" aria-labelledby="contact-title">
-          <div className="contact-top">
-            <div>
-              <p id="contact-title">Have something worth<br />making better?</p>
-              <p className="contact-intro">Whether it's a website, campaign, video, or something more complex, tell us what you're working on.</p>
-            </div>
+          <div className="contact-aside">
+            <p className="contact-kicker">Start a project</p>
+            <h2 id="contact-title">Tell us what needs to work better.</h2>
+            <p className="contact-intro">Share the essentials. We&apos;ll review the context before suggesting a call, scope, or next step.</p>
+            <ol className="contact-expectations" aria-label="What to expect">
+              <li><span>01</span><div><strong>About two minutes</strong><small>Five details and a short brief.</small></div></li>
+              <li><span>02</span><div><strong>A considered reply</strong><small>Usually within one business day.</small></div></li>
+              <li><span>03</span><div><strong>No obligation</strong><small>Just a useful first conversation.</small></div></li>
+            </ol>
             <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
-              Message on WhatsApp <span aria-hidden="true">↗</span>
+              Prefer a quick message? WhatsApp us <span aria-hidden="true">↗</span>
             </a>
           </div>
           <form className="contact-form" onSubmit={handleInquiry}>
-            <label>Your Name<input name="name" autoComplete="name" required /></label>
-            <label>Your Email<input name="email" type="email" autoComplete="email" required /></label>
-            <label>Your Phone<input name="phone" type="tel" autoComplete="tel" inputMode="tel" required /></label>
-            <label>Company or Website (Optional)<input name="company" autoComplete="organization" /></label>
-            <label>What Are You Working On?<select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>Website Redesign</option><option>Landing Page</option><option>Ecommerce Website</option><option>SEO &amp; Search Visibility</option><option>Technical SEO</option><option>AI Search &amp; GEO</option><option>Content Strategy</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
-            <label className="contact-form-wide">Tell Us a Little About Your Project<textarea name="details" rows={5} required /></label>
-            <label className="contact-form-wide contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Yes, Better Found Online may email or text me about relevant services and updates. Consent is optional and not required to submit.</span></label>
-            <button type="submit">Send Your Inquiry <span aria-hidden="true">↗</span></button>
+            <header className="contact-form-head">
+              <div><span>Project enquiry</span><h3>Start with the essentials.</h3></div>
+              <small>* Required</small>
+            </header>
+            <label><span>Your name *</span><input name="name" autoComplete="name" placeholder="Jane Smith" required /></label>
+            <label><span>Your email *</span><input name="email" type="email" autoComplete="email" placeholder="jane@company.com" required /></label>
+            <label><span>Your phone *</span><input name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="+1 570 000 0000" required /></label>
+            <label><span>Company or website</span><input name="company" autoComplete="organization" placeholder="Optional" /></label>
+            <label className="contact-form-wide"><span>What are you working on? *</span><select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>Website Redesign</option><option>Landing Page</option><option>Ecommerce Website</option><option>SEO &amp; Search Visibility</option><option>Technical SEO</option><option>AI Search &amp; GEO</option><option>Content Strategy</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
+            <label className="contact-form-wide"><span>What should the finished work achieve? *</span><textarea name="details" rows={3} placeholder="A short description of the problem, goal, and timing." required /></label>
+            <div className="contact-form-actions">
+              <label className="contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Optional: email or text me about relevant services and updates.</span></label>
+              <button type="submit" data-cta>Continue to WhatsApp <span aria-hidden="true">↗</span></button>
+            </div>
             {inquiryReady && <p className="contact-form-status" role="status">Your message is ready to review in WhatsApp. Nothing has been sent yet.</p>}
           </form>
-          <a className="contact-title" href="#contact">Discuss Your Project<span aria-hidden="true">↗</span></a>
-          <div className="contact-bottom">
-            <a className="phone" href="tel:+15707077078">
-              +1 (570) 707-7078
-            </a>
-            <span>Found. Understood. Chosen.</span>
-          </div>
         </section>
       </main>
 
