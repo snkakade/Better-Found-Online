@@ -1962,6 +1962,7 @@
 .performance-related nav a > span:nth-child(2) { display: grid; gap: 4px; }
 .performance-related nav strong { font-size: clamp(1.05rem, 1.35vw, 1.3rem); font-weight: 400; }
 .performance-related nav small { color: var(--muted); font-size: .78rem; line-height: 1.4; }
+.performance-related-cta { display: inline-flex; align-items: center; gap: 8px; color: var(--rose); font: 9px/1.4 Plex, monospace; letter-spacing: .06em; text-transform: uppercase; }
 
 @media (max-width: 1100px) {
   .performance-proof-story--campaign { grid-template-columns: 1fr; }
@@ -2006,8 +2007,8 @@
 .performance-marketing-page .performance-capabilities {
   display: grid;
   min-height: calc(100svh - 90px);
-  grid-template-columns: minmax(340px, .72fr) minmax(620px, 1.28fr);
-  gap: clamp(56px, 8vw, 140px);
+  grid-template-columns: minmax(280px, .58fr) minmax(720px, 1.42fr);
+  gap: clamp(44px, 5vw, 80px);
   align-items: center;
   padding-top: clamp(48px, 6vh, 64px);
   padding-bottom: clamp(30px, 4vh, 42px);
@@ -2053,10 +2054,10 @@
 .performance-marketing-page .performance-capability-grid article:nth-child(5) {
   display: grid;
   min-height: 0;
-  grid-template-columns: 42px minmax(190px, .8fr) minmax(170px, .75fr) minmax(210px, 1fr);
-  gap: clamp(16px, 2vw, 30px);
+  grid-template-columns: 32px minmax(220px, .9fr) minmax(250px, 1.1fr) minmax(220px, .9fr);
+  gap: clamp(14px, 1.5vw, 24px);
   align-items: center;
-  padding: clamp(16px, 2vh, 21px) 0;
+  padding: clamp(12px, 1.5vh, 16px) 0;
   border: 0;
   border-bottom: 1px solid var(--line);
 }
@@ -2076,7 +2077,7 @@
 .performance-marketing-page .performance-capability-grid h3 {
   max-width: none;
   margin: 0;
-  font-size: clamp(1.25rem, 1.65vw, 1.8rem);
+  font-size: clamp(1.15rem, 1.35vw, 1.5rem);
   line-height: 1;
   letter-spacing: -.035em;
 }
@@ -2096,6 +2097,27 @@
   font: 8px/1.55 Plex, monospace;
   letter-spacing: .05em;
   text-transform: uppercase;
+}
+
+.performance-process .performance-section-heading > div { min-width: 0; }
+.performance-process .performance-section-intro { max-width: 38rem; margin: 22px 0 0; }
+
+@media (min-width: 1181px) {
+  .performance-marketing-page .performance-process {
+    min-height: calc(100svh - 90px);
+    padding-top: clamp(44px, 5.5vh, 56px);
+    padding-bottom: clamp(32px, 4vh, 42px);
+  }
+  .performance-marketing-page .performance-process .performance-section-heading h2 { font-size: clamp(3rem, 4vw, 4.8rem); }
+  .performance-marketing-page .performance-process ol { margin-top: clamp(28px, 3.5vh, 36px); }
+  .performance-marketing-page .performance-process li {
+    min-height: clamp(82px, 10.5svh, 96px);
+    grid-template-columns: 130px minmax(280px, .7fr) minmax(420px, 1fr);
+    gap: clamp(24px, 3vw, 48px);
+  }
+  .performance-marketing-page .performance-process h3 { font-size: clamp(1.5rem, 2vw, 2.25rem); }
+  .performance-marketing-page .performance-process li p { font-size: .92rem; line-height: 1.5; }
+  .performance-marketing-page .performance-process .performance-inline-cta { margin-top: 24px; }
 }
 
 .performance-marketing-page .performance-closing--connected {
@@ -2138,6 +2160,27 @@
   border-bottom: 1px solid var(--rose);
   font-size: clamp(1.05rem, 1.35vw, 1.35rem);
 }
+.performance-closing-actions {
+  display: grid;
+  width: min(100%, 720px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: clamp(26px, 4vh, 42px);
+  border-top: 1px solid var(--rose);
+  border-bottom: 1px solid var(--rose);
+}
+.performance-closing-actions > a {
+  display: flex;
+  min-height: 58px;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 18px;
+  font-size: clamp(.88rem, 1vw, 1.05rem);
+}
+.performance-closing-actions > a:first-child { padding-left: 0; border-right: 1px solid var(--line); }
+.performance-closing-actions > a:hover,
+.performance-closing-actions > a:focus-visible { color: var(--rose); }
+.performance-brand-signoff { display: block; margin-top: 18px; color: var(--rose); font: 9px Plex, monospace; letter-spacing: .1em; text-transform: uppercase; }
 .performance-closing-links {
   display: grid;
   grid-row: 2;
@@ -2174,6 +2217,30 @@
   .performance-closing-links a:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
 }
 
+@media (min-width: 901px) and (max-width: 1180px) {
+  .performance-marketing-page .performance-capabilities {
+    min-height: calc(100svh - 76px);
+    grid-template-columns: minmax(230px, .58fr) minmax(580px, 1.42fr);
+    gap: 32px;
+    padding-top: 38px;
+    padding-bottom: 30px;
+  }
+  .performance-capabilities-intro h2 { font-size: clamp(3rem, 5vw, 4.4rem); }
+  .performance-capabilities-intro > p:last-of-type { margin-top: 20px; font-size: .9rem; line-height: 1.5; }
+  .performance-capabilities-sequence { margin-top: 26px; }
+  .performance-capabilities-intro .performance-inline-cta { margin-top: 24px; }
+  .performance-marketing-page .performance-capability-grid article,
+  .performance-marketing-page .performance-capability-grid article:nth-child(4),
+  .performance-marketing-page .performance-capability-grid article:nth-child(5) {
+    grid-template-columns: 28px minmax(150px, .8fr) minmax(180px, 1fr) minmax(160px, .9fr);
+    gap: 12px;
+    padding: 9px 0;
+  }
+  .performance-marketing-page .performance-capability-grid h3 { font-size: 1.08rem; }
+  .performance-marketing-page .performance-capability-grid p { font-size: .76rem; line-height: 1.35; }
+  .performance-marketing-page .performance-capability-grid article > small { font-size: 7px; line-height: 1.4; }
+}
+
 @media (max-width: 760px) {
   .performance-marketing-page .performance-capabilities { padding: 76px 18px; }
   .performance-capabilities-intro h2 { font-size: clamp(3rem, 14vw, 4.8rem); }
@@ -2202,6 +2269,11 @@
   .performance-closing-links a,
   .performance-closing-links a:nth-child(2),
   .performance-closing-links a:nth-child(-n+2) { padding-inline: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .performance-closing-actions { grid-template-columns: 1fr; }
+  .performance-closing-actions > a { padding-inline: 0; }
+  .performance-closing-actions > a:first-child { border-right: 0; border-bottom: 1px solid var(--line); }
+  .performance-related-cta { justify-self: end; font-size: 0; }
+  .performance-related-cta svg { width: 18px; height: 18px; }
 }
 
 /* Closing sections should leave room for the footer in the same viewport. */

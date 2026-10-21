@@ -73,8 +73,8 @@ export function PerformanceProofCards({ items, disclosure }: PerformanceProofCar
       <div className="performance-proof-heading">
         <div className="performance-proof-heading-copy">
           <p className="eyebrow">Selected campaign work</p>
-          <h2 id="performance-proof-title">Proof, with the context left in.</h2>
-          <p>Two anonymized campaign systems. Each connects the business problem, media decision, source report, and outcome it actually measured.</p>
+          <h2 id="performance-proof-title">Selected campaign work.</h2>
+          <p>Two anonymized examples connecting the business problem, media decision, source report, and outcome each campaign measured.</p>
         </div>
       </div>
 
