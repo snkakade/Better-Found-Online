@@ -177,7 +177,7 @@ function PerformanceMarketingPage() {
           <div className="service-detail-hero-copy">
             <p className="eyebrow">Performance Marketing</p>
             <h1 id="performance-title">Turn ad spend into measurable growth.</h1>
-            <p>Paid search, social advertising, marketplace campaigns, tracking, and creative built around one goal: connecting the right audience with meaningful business actions.</p>
+            <p>Paid search, social advertising, marketplace campaigns, tracking, and optimization for businesses that need to reach relevant audiences and connect ad spend to meaningful actions.</p>
             <div className="service-detail-actions">
               <TransitionLink className="primary-btn" href="/#contact">Discuss Your Growth Goals <ArrowUpRight size={17} weight="light" /></TransitionLink>
               <a className="story-link" href="#results">See Campaign Results <ArrowDown size={16} weight="light" /></a>

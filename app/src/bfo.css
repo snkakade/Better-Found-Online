@@ -2506,7 +2506,7 @@ section[id] {
 
 .hero-copy {
   position: relative;
-  width: min(650px, 72vw);
+  width: min(720px, 78vw);
   padding-top: 8px;
   text-align: center;
   transform-origin: center;
@@ -2514,7 +2514,7 @@ section[id] {
 }
 
 .hero-copy > .eyebrow {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   color: #d4b9ac;
 }
 
@@ -2540,19 +2540,11 @@ section[id] {
 }
 
 .hero-sub {
-  max-width: 440px;
-  margin: 26px auto 0;
+  max-width: 610px;
+  margin: 24px auto 0;
   color: rgba(242, 239, 236, 0.72);
   font-size: clamp(0.98rem, 1.2vw, 1.12rem);
   line-height: 1.55;
-}
-
-.hero-sub small {
-  display: block;
-  margin-top: 0.65rem;
-  color: rgba(242, 239, 236, 0.55);
-  font-size: 0.78em;
-  letter-spacing: 0.02em;
 }
 
 .hero-actions {
@@ -2670,8 +2662,8 @@ section[id] {
   }
 
   .hero-copy > .eyebrow {
-    max-width: 260px;
-    margin-bottom: 18px;
+    max-width: 100%;
+    margin-bottom: 14px;
     line-height: 1.45;
   }
 
@@ -2687,9 +2679,10 @@ section[id] {
   }
 
   .hero-sub {
-    max-width: 330px;
-    margin-top: 20px;
-    font-size: 0.94rem;
+    max-width: 345px;
+    margin-top: 18px;
+    font-size: 0.92rem;
+    line-height: 1.48;
   }
 
   .hero-actions {

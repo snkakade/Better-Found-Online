@@ -42,6 +42,8 @@
 @media(max-width:600px){.growth-service-page .section-pad{padding:64px 20px}.search-journey{padding-block:54px 36px!important}.search-journey .journey-line{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.websites-growth-hero{height:100svh;min-height:620px}.websites-growth-hero>div{padding:92px 20px 40px}.websites-growth-hero .website-phone-hero{display:none}}
 
+@media(max-width:600px){.seo-growth-hero{height:100svh;min-height:620px}.seo-growth-hero>div{padding:92px 20px 40px}.seo-growth-hero figure{display:none}}
+
 @media(max-width:600px){
   .growth-hero>div{padding:96px 20px 40px}
   .growth-hero h1,.websites-growth-hero h1,.seo-growth-hero h1{margin:14px 0;font-size:clamp(2.85rem,13vw,4.25rem);line-height:.94}

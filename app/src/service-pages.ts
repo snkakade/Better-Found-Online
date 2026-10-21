@@ -96,7 +96,7 @@ export const socialMedia: ServiceLandingData = {
   path: "/services/social-media-management",
   eyebrow: "Social Media Management",
   h1: "Social media management with a clearer plan.",
-  intro: "Keep your business active and consistent with content planning, creative coordination, publishing, and ongoing social media management.",
+  intro: "Content planning, creative coordination, scheduling, publishing, and ongoing management for growing businesses that need a consistent social presence.",
   definition: "Social media management can include content planning, creative coordination, scheduling, publishing, and ongoing management of a brand's social presence.",
   sectionHeading: "From what to post to getting it published.",
   services: ["Social Content Planning", "Creative Coordination", "Social Graphics and Video Coordination", "Content Scheduling and Publishing", "Ongoing Social Media Management"],
@@ -111,7 +111,7 @@ export const socialMedia: ServiceLandingData = {
     { question: "Do you guarantee audience or engagement growth?", answer: "No. We focus on a clear content process and consistent execution without guaranteeing followers, impressions, leads, or engagement rates." },
   ],
   related: [{ label: "Graphic Design", href: "/services/graphic-design" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Performance Marketing", href: "/services/performance-marketing" }],
-  cta: "Discuss Social Media Management",
+  cta: "Discuss Social Media",
   image: "/assets/connect.webp",
 };
 

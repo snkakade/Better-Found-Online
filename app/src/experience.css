@@ -11,12 +11,12 @@
   display: block;
   background: var(--rose);
   transform-origin: top;
-  animation: curtain-reveal 0.82s cubic-bezier(0.76, 0, 0.24, 1) both;
+  animation: curtain-reveal 0.52s cubic-bezier(0.76, 0, 0.24, 1) both;
 }
 
-.page-curtain i:nth-child(2) { animation-delay: 0.06s; }
-.page-curtain i:nth-child(3) { animation-delay: 0.12s; }
-.page-curtain i:nth-child(4) { animation-delay: 0.18s; }
+.page-curtain i:nth-child(2) { animation-delay: 0.035s; }
+.page-curtain i:nth-child(3) { animation-delay: 0.07s; }
+.page-curtain i:nth-child(4) { animation-delay: 0.105s; }
 
 .is-leaving .page-curtain i {
   animation: curtain-cover 0.52s cubic-bezier(0.76, 0, 0.24, 1) both;

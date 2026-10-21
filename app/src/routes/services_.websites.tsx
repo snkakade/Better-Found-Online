@@ -312,9 +312,9 @@ function WebsitesPage() {
               <em>do more than look good.</em>
             </h1>
             <p>
-              We design and develop websites that make your business easier to understand, trust,
-              and choose. Clear messaging, distinctive design, thoughtful interactions, and solid
-              technical foundations, all working toward a purpose.
+              Custom website design, development, and redesign for service businesses and growing
+              brands that need to explain their value clearly, earn trust, and turn visits into
+              enquiries.
             </p>
             <div className="growth-actions">
               <TransitionLink className="primary-btn" href="/#contact">

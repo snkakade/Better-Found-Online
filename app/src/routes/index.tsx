@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Better Found Online | Websites, SEO & Performance Marketing" },
-      { name: "description", content: "Better Found Online helps businesses get found, understood, and chosen through strategy, websites, SEO, performance marketing, and creative production." },
+      { name: "description", content: "Websites, SEO, paid advertising, and creative digital experiences for service businesses and growing brands in the U.S. and beyond." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
     ],
     links: [{ rel: "canonical", href: "https://betterfoundonline.com/" }],
@@ -358,7 +358,7 @@ function Index() {
   return (
     <div ref={root} className={`${motionPaused ? "site motion-paused" : "site"}${reduced ? " reduced-motion" : ""}`}>
       <PageTransition />
-      <PageSchema name="Web Design, SEO & Marketing | Better Found Online" path="/" description="Better Found Online offers website design, SEO, digital marketing, creative production, and connected digital services for growing businesses." />
+      <PageSchema name="Web Design, SEO & Marketing | Better Found Online" path="/" description="Better Found Online builds websites and creates search, advertising, and digital experiences for service businesses and growing brands in the U.S. and beyond." />
       <a className="skip-link" href="#main">
         Skip to Content
       </a>
@@ -374,20 +374,20 @@ function Index() {
               <div className="hero-backdrop" aria-hidden="true"><div className="hero-grain" /></div>
 
               <div className="hero-copy">
+                <p className="eyebrow">Web Design / SEO / Paid Ads / Creative</p>
                 <h1 id="hero-title">
                   Get found.
                   <span>Get chosen.</span>
                 </h1>
                 <p className="hero-sub">
-                  Websites, SEO, digital marketing, and creative content that help growing businesses stand out, communicate their value, and turn interest into action.
-                  <small>For businesses in the U.S. and beyond.</small>
+                  We build websites and create search, advertising, and digital experiences for service businesses and growing brands in the U.S. and beyond.
                 </p>
                 <div className="hero-actions">
-                  <a href="#contact" className="primary-btn">
+                  <a href="#contact" className="primary-btn" data-cta>
                     Discuss Your Project <ArrowUpRight size={16} weight="light" aria-hidden="true" />
                   </a>
                   <a href="/work" className="story-link">
-                    Explore Our Work <ArrowUpRight size={15} weight="light" aria-hidden="true" />
+                    See Our Work <ArrowUpRight size={15} weight="light" aria-hidden="true" />
                   </a>
                 </div>
               </div>
