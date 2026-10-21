@@ -319,6 +319,7 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
         <div className="footer-brand-block">
           <Brand large />
           <p>Website design, creative production, SEO, and digital marketing for businesses in the U.S. and beyond.</p>
+          <p className="footer-business-id">Better Found Online is a trading brand of Qboid Businesses, a registered Micro enterprise in Maharashtra, India. GSTIN 27HCOPK1131D1ZS · Udyam UDYAM-MH-26-1231498.</p>
         </div>
         <nav aria-label="Footer navigation">
           <p className="footer-label">Explore</p>
@@ -349,8 +350,11 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Better Found Online</span>
         <span>Found. Understood. Chosen.</span>
-        <TransitionLink href="/privacy">Privacy</TransitionLink>
-        <CookieSettingsButton />
+        <nav className="footer-legal-nav" aria-label="Legal and privacy">
+          <TransitionLink href="/privacy">Privacy</TransitionLink>
+          <TransitionLink href="/terms">Terms</TransitionLink>
+          <CookieSettingsButton />
+        </nav>
         {onMotionToggle && <button onClick={onMotionToggle} aria-pressed={motionPaused}>Motion {motionPaused ? "Off" : "On"}</button>}
         <a href="#main">Back to top ↑</a>
       </div>

@@ -18,6 +18,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StudioRouteImport } from './routes/studio'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkRouteImport } from './routes/work'
 import { Route as Services3dCgiRenderingRouteImport } from './routes/services_.3d-cgi-rendering'
 import { Route as ServicesGraphicDesignRouteImport } from './routes/services_.graphic-design'
@@ -71,6 +72,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorkRoute = WorkRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/studio': typeof StudioRoute
+  '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
   '/services/3d-cgi-rendering': typeof Services3dCgiRenderingRoute
   '/services/graphic-design': typeof ServicesGraphicDesignRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/studio': typeof StudioRoute
+  '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
   '/services/3d-cgi-rendering': typeof Services3dCgiRenderingRoute
   '/services/graphic-design': typeof ServicesGraphicDesignRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/studio': typeof StudioRoute
+  '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
   '/services_/3d-cgi-rendering': typeof Services3dCgiRenderingRoute
   '/services_/graphic-design': typeof ServicesGraphicDesignRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/studio'
+    | '/terms'
     | '/work'
     | '/services/3d-cgi-rendering'
     | '/services/graphic-design'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/studio'
+    | '/terms'
     | '/work'
     | '/services/3d-cgi-rendering'
     | '/services/graphic-design'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/studio'
+    | '/terms'
     | '/work'
     | '/services_/3d-cgi-rendering'
     | '/services_/graphic-design'
@@ -257,6 +269,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudioRoute: typeof StudioRoute
+  TermsRoute: typeof TermsRoute
   WorkRoute: typeof WorkRoute
   Services3dCgiRenderingRoute: typeof Services3dCgiRenderingRoute
   ServicesGraphicDesignRoute: typeof ServicesGraphicDesignRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/studio'
       fullPath: '/studio'
       preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/work': {
@@ -409,6 +429,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudioRoute: StudioRoute,
+  TermsRoute: TermsRoute,
   WorkRoute: WorkRoute,
   Services3dCgiRenderingRoute: Services3dCgiRenderingRoute,
   ServicesGraphicDesignRoute: ServicesGraphicDesignRoute,

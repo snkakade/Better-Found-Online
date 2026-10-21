@@ -585,6 +585,7 @@ function Index() {
             <label className="contact-form-wide"><span>What should the finished work achieve? *</span><textarea name="details" rows={3} placeholder="A short description of the problem, goal, and timing." required /></label>
             <div className="contact-form-actions">
               <label className="contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Optional: email or text me about relevant services and updates.</span></label>
+              <p className="contact-privacy-note">By continuing, you ask us to use these details to respond. WhatsApp receives the message only after you review and send it. See our <a href="/privacy">Privacy Notice</a>.</p>
               <button type="submit" data-cta>Continue to WhatsApp <span aria-hidden="true">↗</span></button>
             </div>
             {inquiryReady && <p className="contact-form-status" role="status">Your message is ready to review in WhatsApp. Nothing has been sent yet.</p>}
