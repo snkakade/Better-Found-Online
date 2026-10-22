@@ -99,9 +99,9 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           afterBody={`${data.approach} Example deliverables include ${data.deliverables.join(", ")}.`}
         />
 
-        <section className="service-detail-faq section-pad" aria-labelledby="faq-title">
-          <div><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">Before we begin.</h2></div>
-          <div>{data.faq.map((item) => <details key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+        <section className="faq-section section-pad" aria-labelledby="faq-title">
+          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">What buyers usually need to know.</h2></header>
+          <div>{data.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
         </section>
 
         <section className="service-detail-related section-pad" aria-labelledby="related-title">

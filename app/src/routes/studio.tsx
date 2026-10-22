@@ -52,6 +52,10 @@ function StudioPage() {
             <p className="eyebrow">The studio</p>
             <h1>Good digital work<span>starts with better questions.</span></h1>
             <p>Good digital work rarely fits inside one discipline. A website, campaign, video, or visual experience needs the right thinking behind it. We start with the problem, bring in the right skills, and carry the idea through to execution.</p>
+            <div className="interior-hero-actions">
+              <TransitionLink className="primary-btn" href="/#contact">Discuss Your Project</TransitionLink>
+              <TransitionLink href="/services">Explore Our Services</TransitionLink>
+            </div>
           </div>
           <div className="studio-signal" aria-hidden="true">
             <svg viewBox="0 0 540 540">

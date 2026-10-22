@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUpRight } from "@phosphor-icons/react";
 import { HorizontalCases } from "@/components/horizontal-cases";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
@@ -25,8 +25,11 @@ function WorkPage() {
             <p className="eyebrow">Selected Work</p>
             <h1>Real challenges.<span>Work with a purpose.</span></h1>
             <p>From specialist service businesses to distinctive brands, explore digital projects built around clear positioning, considered design, and practical customer journeys.</p>
-            <p className="work-taxonomy">Website Design / SEO &amp; Marketing</p>
-            <a className="interior-down" href="#cases" aria-label="View case studies"><ArrowDown size={22} weight="light" /></a>
+            <p className="work-taxonomy">Website Design / SEO / Performance Marketing</p>
+            <div className="interior-hero-actions">
+              <a className="primary-btn" href="#cases">View Selected Work</a>
+              <TransitionLink href="/#contact">Discuss Your Project</TransitionLink>
+            </div>
           </div>
           <div className="work-hero-collage" aria-hidden="true">
             <img src="/assets/portals.webp" alt="" />

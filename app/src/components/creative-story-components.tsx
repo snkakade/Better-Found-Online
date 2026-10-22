@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StepRail } from "@/components/step-rail";
 import { TransitionLink } from "@/components/site-chrome";
@@ -374,19 +373,19 @@ export function CreativeProcessStory({ process }: { process: string[][] }) {
 
 export function CreativeFaq({ faq }: { faq: string[][] }) {
   return (
-    <section className="creative-faq-library section-pad" aria-labelledby="creative-faq-title">
+    <section className="faq-section section-pad" aria-labelledby="creative-faq-title">
+      <header>
+        <p className="eyebrow">Frequently asked questions</p>
+        <h2 id="creative-faq-title">What buyers usually need to know.</h2>
+      </header>
       <div>
-        <p className="eyebrow">Creative production FAQ</p>
-        <h2 id="creative-faq-title"><OrbitMotionText>Useful answers before we begin.</OrbitMotionText></h2>
-      </div>
-      <Accordion type="single" collapsible className="creative-accordion">
         {faq.map(([question, answer]) => (
-          <AccordionItem value={question} key={question}>
-            <AccordionTrigger>{question}</AccordionTrigger>
-            <AccordionContent><p>{answer}</p></AccordionContent>
-          </AccordionItem>
+          <details key={question}>
+            <summary>{question}</summary>
+            <p>{answer}</p>
+          </details>
         ))}
-      </Accordion>
+      </div>
     </section>
   );
 }

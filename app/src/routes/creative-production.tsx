@@ -57,7 +57,7 @@ function CreativeProductionPage() {
       <main id="main">
         <section className="creative-hero" aria-labelledby="creative-title">
           <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video editing and production, motion graphics, CGI, rendering, and graphic design for brands that need distinctive, campaign-ready content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project <ArrowUpRight size={17} weight="light" /></a><a className="story-link" href="#capabilities">Explore Our Services <ArrowDown size={16} weight="light" /></a></div></div>
-          <div className="creative-orbit" aria-hidden="true"><span>VIDEO</span><span>CGI</span><span>MOTION</span><span>DESIGN</span><i /></div>
+          <figure className="creative-hero-media"><img src="/assets/service-cards/create.jpg" alt="Creative production combining camera work, storyboards, motion, and CGI" width="960" height="1600" /></figure>
         </section>
 
         <CreativeCapabilityCarousel capabilities={capabilities} />

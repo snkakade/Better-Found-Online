@@ -182,7 +182,6 @@ function PerformanceMarketingPage() {
               <TransitionLink className="primary-btn" href="/#contact">Discuss Your Growth Goals <ArrowUpRight size={17} weight="light" /></TransitionLink>
               <a className="story-link" href="#results">See Campaign Results <ArrowDown size={16} weight="light" /></a>
             </div>
-            <p className="performance-hero-proof">Selected campaign experience across industrial B2B, consumer technology, ecommerce, and high-consideration services.</p>
           </div>
           <figure className="service-detail-hero-media"><img src="/assets/world/poster.webp" alt="Abstract metallic composition representing connected campaign planning" width="1200" height="1200" /></figure>
         </section>
@@ -307,9 +306,9 @@ function PerformanceMarketingPage() {
           </nav>
         </section>
 
-        <section className="service-detail-faq section-pad" aria-labelledby="faq-title">
-          <div><p className="eyebrow">Good questions, clear answers</p><h2 id="faq-title">What should you know before spending more?</h2><TransitionLink className="performance-inline-cta" href="/#contact">Ask About Your Campaign <ArrowUpRight size={17} weight="light" /></TransitionLink></div>
-          <div>{faqs.map((item) => <details key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+        <section className="faq-section section-pad" aria-labelledby="faq-title">
+          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">What buyers usually need to know.</h2></header>
+          <div>{faqs.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
         </section>
 
         <section className="performance-closing performance-closing--connected section-pad" aria-labelledby="closing-title">

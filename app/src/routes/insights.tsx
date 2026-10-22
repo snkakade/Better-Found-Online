@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDownRight, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { PageSchema } from "@/components/page-schema";
@@ -154,9 +154,8 @@ function InsightsPage() {
             <p>Clear thinking on websites, search, design, and what makes digital work useful.</p>
           </div>
           <button className="insights-enter" type="button" onClick={enterInsights} disabled={tunneling}>
-            <span>Enter insights</span><ArrowDownRight size={24} weight="light" />
+            <span>Explore Insights</span>
           </button>
-          <p className="insights-hero-note">Websites · search · content · purposeful motion</p>
         </section>
 
         <section className="insights-story insights-shell" data-insight-reveal aria-labelledby="insights-story-title">

@@ -22,6 +22,7 @@ const services = [
   {
     number: "01",
     name: "Build",
+    cardTitle: "Website Design",
     category: "Websites / Digital Experiences",
     lead: "Make your website worth visiting.",
     body: "Your website should make your business easy to understand, credible, and simple to contact. We bring strategy, messaging, design, and development together to create a digital experience with a clear purpose.",
@@ -35,6 +36,7 @@ const services = [
   {
     number: "02",
     name: "Create",
+    cardTitle: "Creative Production",
     category: "Video / CGI / Animation / Design",
     lead: "Make your message worth seeing.",
     body: "From polished campaign videos to detailed 3D visuals, we create content that helps brands show what words alone cannot. Every format starts with the message, the audience, and what the content needs to accomplish.",
@@ -50,6 +52,7 @@ const services = [
   {
     number: "03",
     name: "Grow",
+    cardTitle: "SEO & Paid Media",
     category: "Search / Paid Media / Social",
     lead: "Reach the right people. Make the spend count.",
     body: "SEO, paid media, content, and social management connected to the customers you want to reach and the actions that matter to your business.",
@@ -65,6 +68,7 @@ const services = [
   {
     number: "04",
     name: "Connect",
+    cardTitle: "CRM & Automation",
     category: "CRM / Integrations / Automation",
     lead: "Make the next step easier for everyone.",
     body: "A customer journey doesn't end with a form submission. We help connect selected tools, information, and simple workflows so inquiries reach the right place and follow-up becomes easier.",
@@ -78,6 +82,7 @@ const services = [
   {
     number: "05",
     name: "Improve",
+    cardTitle: "Analytics & Optimization",
     category: "Analytics / Reporting / Optimization",
     lead: "Find the friction. Make the next move.",
     body: "Better decisions start with understanding what's happening. We review websites, customer journeys, and available performance information to identify practical improvements worth making.",
@@ -138,12 +143,6 @@ function ServicesPage() {
         "chars",
         "services-char",
       );
-      const heroHeaderSplit = splitText(
-        ".services-hero-title",
-        "chars",
-        "services-char",
-        false,
-      );
       gsap.set(".services-preloader-title", { visibility: "visible" });
 
       const supportingTargets = gsap.utils.toArray<HTMLElement>(
@@ -153,7 +152,7 @@ function ServicesPage() {
       if (compactMotion) {
         gsap.set(".services-preloader", { display: "none" });
         gsap.set(
-          [...heroHeaderSplit.chars, ...supportingTargets],
+          [".services-hero-title", ...supportingTargets],
           { y: "0%", autoAlpha: 1 },
         );
         gsap.set(".services-hero-card", { y: 0, scale: 1, rotate: 0, autoAlpha: 1 });
@@ -162,7 +161,7 @@ function ServicesPage() {
         gsap.set(".services-preloader-img", { rotate: (index) => imageRotations[index] });
         gsap.set(supportingTargets, { y: 22, autoAlpha: 0 });
         gsap.set(preloaderHeaderSplit.chars, { y: "100%" });
-        gsap.set(heroHeaderSplit.chars, { y: "100%" });
+        gsap.set(".services-hero-title", { y: 32, autoAlpha: 0 });
         gsap.set(".services-hero-card", { y: 56, scale: 0.96, rotate: 0, autoAlpha: 0 });
 
         const timeline = gsap.timeline({ delay: 0.05 });
@@ -220,12 +219,7 @@ function ServicesPage() {
             gsap.set(".services-preloader", { autoAlpha: 0, pointerEvents: "none" });
           },
         }, 4.35);
-        timeline.to(heroHeaderSplit.chars, {
-          y: "0%",
-          duration: 1,
-          ease: "servicesHop",
-          stagger: { each: 0.075, from: "random" },
-        }, 4.65);
+        timeline.to(".services-hero-title", { y: 0, autoAlpha: 1, duration: 1, ease: "servicesHop" }, 4.65);
         timeline.to(supportingTargets, {
           y: 0,
           autoAlpha: 1,
@@ -327,14 +321,18 @@ function ServicesPage() {
 
       <main id="main">
         <section className="services-hero" aria-labelledby="services-page-title">
-          <div className="services-hero-heading">
-            <h1 className="services-hero-title" id="services-page-title">What we do.</h1>
+          <div className="services-hero-intro">
+            <div>
+              <p className="eyebrow">Website / Creative / Search / Marketing</p>
+              <h1 className="services-hero-title" id="services-page-title">Build a stronger digital presence.</h1>
+            </div>
+            <p>Websites, creative production, SEO, paid media, social, and connected systems for service businesses and growing brands.</p>
           </div>
           <div className="services-hero-cards">
             {services.map((service) => (
               <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.name}`}>
                 <img src={service.image} alt="" />
-                <span><b>{service.name}</b><small>{service.cardLine}</small></span>
+                <span><b>{service.cardTitle}</b><small>{service.cardLine}</small></span>
               </a>
             ))}
           </div>
