@@ -578,29 +578,23 @@ function Index() {
 
         <section className="contact section-pad" id="contact" aria-labelledby="contact-title">
           <div className="contact-aside">
-            <p className="contact-kicker">Start a project</p>
             <h2 id="contact-title">Tell us what needs to work better.</h2>
-            <p className="contact-intro">Give us the problem, desired outcome, and timing. We&apos;ll suggest a useful next step.</p>
-            <div className="contact-response">
-              <span>What happens next</span>
-              <strong>A real person reviews your brief.</strong>
-              <p>Expect a considered reply, usually within one business day.</p>
-            </div>
+            <p className="contact-intro">Select the services you need and describe the outcome.</p>
             <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
               Prefer a quick message? WhatsApp us <span aria-hidden="true">↗</span>
             </a>
           </div>
           <form className="contact-form" onSubmit={handleInquiry}>
             <header className="contact-form-head">
-              <div><span>Project brief</span><h3>Start with the outcome.</h3></div>
-              <small>About 2 minutes</small>
+              <h3>Project details</h3>
+              <small>Required fields are marked *</small>
             </header>
             <div className="contact-field"><label htmlFor="contact-name">Your name *</label><input id="contact-name" name="name" autoComplete="name" placeholder="Enter your full name" required /></div>
             <div className="contact-field"><label htmlFor="contact-email">Your email *</label><input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@company.com" required /></div>
             <div className="contact-field"><label htmlFor="contact-phone">Your phone *</label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="Country code + number" required /></div>
             <div className="contact-field"><label htmlFor="contact-company">Company or website</label><input id="contact-company" name="company" autoComplete="organization" placeholder="Optional" /></div>
             <fieldset className="contact-project-types" aria-invalid={projectTypeError ? "true" : undefined} aria-describedby={projectTypeError ? "contact-project-error" : undefined}>
-              <legend>Choose a starting point * <span>Select one or more</span></legend>
+              <legend>Services * <span>Select all that apply</span></legend>
               <div className="contact-choice-grid">
                 {projectTypes.map(([label, value]) => (
                   <label key={value} className="contact-choice">
@@ -611,7 +605,7 @@ function Index() {
               </div>
               {projectTypeError && <p id="contact-project-error" className="contact-project-error" role="alert">{projectTypeError}</p>}
             </fieldset>
-            <div className="contact-field contact-form-wide contact-goal"><label htmlFor="contact-details">What should the finished work achieve? *</label><textarea id="contact-details" name="details" rows={3} placeholder="Tell us the problem, desired outcome, and timing." required /></div>
+            <div className="contact-field contact-form-wide contact-goal"><label htmlFor="contact-details">Desired outcome *</label><textarea id="contact-details" name="details" rows={3} placeholder="What should change, and when?" required /></div>
             <div className="contact-form-actions">
               <label className="contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Optional: email or text me about relevant services and updates.</span></label>
               <p className="contact-privacy-note">By continuing, you ask us to use these details to respond. WhatsApp receives the message only after you review and send it. See our <a href="/privacy">Privacy Notice</a>.</p>

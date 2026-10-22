@@ -1389,17 +1389,9 @@ section[id] {
   flex-direction: column;
 }
 
-.contact-kicker {
-  color: var(--rose);
-  font-family: Plex, monospace;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .contact-aside h2 {
   max-width: 9ch;
-  margin-top: clamp(18px, 2.8vh, 28px);
+  margin-top: 0;
   color: var(--silver);
   font-size: clamp(3.2rem, 5.3vw, 6.2rem);
   font-weight: 400;
@@ -1414,36 +1406,6 @@ section[id] {
   font-size: 14px;
   line-height: 1.55;
   letter-spacing: 0;
-}
-
-.contact-response {
-  display: grid;
-  gap: 8px;
-  max-width: 460px;
-  margin: auto 0 0;
-  padding: 20px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.contact-response span {
-  color: var(--rose);
-  font: 9px Plex, monospace;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
-.contact-response strong {
-  color: var(--silver);
-  font-size: clamp(18px, 1.5vw, 23px);
-  font-weight: 430;
-  letter-spacing: -.025em;
-}
-
-.contact-response p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
 }
 
 .contact-form {
@@ -1488,7 +1450,7 @@ section[id] {
 }
 
 .contact-form-head h3 {
-  margin-top: 6px;
+  margin-top: 0;
   color: var(--silver);
   font-size: clamp(1.65rem, 2vw, 2.2rem);
   font-weight: 450;
@@ -1689,6 +1651,8 @@ section[id] {
   font-size: 13px;
   transition: color 0.25s ease;
 }
+
+.contact-aside .whatsapp-link { margin-top: auto; }
 
 .whatsapp-link:hover {
   color: var(--rose);
@@ -2436,10 +2400,6 @@ section[id] {
     font-size: clamp(3.1rem, 14vw, 4.8rem);
   }
 
-  .contact-response {
-    margin-top: 30px;
-  }
-
   .contact-form {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -2449,6 +2409,8 @@ section[id] {
   .contact-form-head {
     align-items: flex-start;
   }
+
+  .contact-aside .whatsapp-link { margin-top: 24px; }
 
   .contact-form-wide,
   .contact-form-status { grid-column: auto; }
