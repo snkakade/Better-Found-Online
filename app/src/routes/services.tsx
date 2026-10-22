@@ -144,12 +144,6 @@ function ServicesPage() {
         "services-char",
         false,
       );
-      const footerSplit = splitText(
-        ".services-hero-footer p",
-        "words",
-        "services-word",
-      );
-
       gsap.set(".services-preloader-title", { visibility: "visible" });
 
       const supportingTargets = gsap.utils.toArray<HTMLElement>(
@@ -159,7 +153,7 @@ function ServicesPage() {
       if (compactMotion) {
         gsap.set(".services-preloader", { display: "none" });
         gsap.set(
-          [...heroHeaderSplit.chars, ...footerSplit.words, ...supportingTargets],
+          [...heroHeaderSplit.chars, ...supportingTargets],
           { y: "0%", autoAlpha: 1 },
         );
         gsap.set(".services-hero-card", { y: 0, scale: 1, rotate: 0, autoAlpha: 1 });
@@ -169,7 +163,6 @@ function ServicesPage() {
         gsap.set(supportingTargets, { y: 22, autoAlpha: 0 });
         gsap.set(preloaderHeaderSplit.chars, { y: "100%" });
         gsap.set(heroHeaderSplit.chars, { y: "100%" });
-        gsap.set(footerSplit.words, { y: "100%" });
         gsap.set(".services-hero-card", { y: 56, scale: 0.96, rotate: 0, autoAlpha: 0 });
 
         const timeline = gsap.timeline({ delay: 0.05 });
@@ -240,7 +233,6 @@ function ServicesPage() {
           ease: "servicesHop",
           stagger: 0.075,
         }, 4.75);
-        timeline.to(footerSplit.words, { y: "0%", duration: 1, ease: "servicesHop", stagger: 0.075 }, 4.75);
         timeline.to(".services-hero-card", {
           y: 0,
           scale: 1,
@@ -338,18 +330,6 @@ function ServicesPage() {
           <div className="services-hero-heading">
             <h1 className="services-hero-title" id="services-page-title">What we do.</h1>
           </div>
-          <div className="services-hero-meta">
-            <div className="services-hero-footer" aria-label="Our five service areas">
-              <p>Build with clarity.</p>
-              <p>Create with character.</p>
-              <p>Grow with purpose.</p>
-              <p>Connect the journey.</p>
-              <p>Improve what matters.</p>
-            </div>
-            <TransitionLink href="/#contact" className="services-hero-action">
-              Discuss Your Project <ArrowUpRight size={19} weight="light" />
-            </TransitionLink>
-          </div>
           <div className="services-hero-cards">
             {services.map((service) => (
               <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.name}`}>
@@ -357,6 +337,11 @@ function ServicesPage() {
                 <span><b>{service.name}</b><small>{service.cardLine}</small></span>
               </a>
             ))}
+          </div>
+          <div className="services-hero-cta">
+            <TransitionLink href="/#contact" className="services-hero-action">
+              Discuss Your Project <ArrowUpRight size={19} weight="light" />
+            </TransitionLink>
           </div>
         </section>
 

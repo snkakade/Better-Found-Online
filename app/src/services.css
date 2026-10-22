@@ -90,8 +90,8 @@
 .services-hero {
   position: relative;
   display: grid;
-  grid-template-rows: auto auto minmax(260px, 1fr);
-  gap: 20px;
+  grid-template-rows: auto minmax(260px, 1fr) auto;
+  gap: 16px;
   align-content: start;
   min-height: 100svh;
   padding: 92px max(4.5vw, 24px) 28px;
@@ -120,27 +120,11 @@
   white-space: nowrap;
 }
 
-.services-hero-meta {
+.services-hero-cta {
   position: relative;
   z-index: 4;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: clamp(24px, 4vw, 72px);
-  min-height: 82px;
-  align-items: center;
-  padding: 8px 0 2px;
-}
-
-.services-hero-footer {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.services-hero-footer p {
-  overflow: hidden;
-  font-size: 12px;
-  line-height: 1.2;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .services-hero-action {
@@ -620,14 +604,6 @@
 
 @media (max-width: 1060px) {
   .services-hero-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .services-hero-meta {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 22px;
-  }
-
-  .services-hero-footer {
-    gap: 12px;
-  }
 
   .service-chapter {
     grid-template-columns: 0.1fr minmax(280px, 0.85fr) minmax(340px, 1fr);
@@ -652,17 +628,6 @@
 
   .services-hero-title {
     font-size: clamp(4.8rem, 13vw, 7.4rem);
-  }
-
-  .services-hero-meta {
-    grid-template-columns: 1fr auto;
-    gap: 18px 28px;
-    min-height: 0;
-  }
-
-  .services-hero-footer {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
   }
 
   .services-hero-cards {
@@ -766,21 +731,8 @@
     padding: 86px 16px 18px;
   }
 
-  .services-hero-meta {
-    grid-template-columns: 1fr;
-    gap: 14px 18px;
-  }
-
   .services-hero-action {
     width: 100%;
-  }
-
-  .services-hero-footer {
-    gap: 9px 16px;
-  }
-
-  .services-hero-footer p {
-    font-size: 11px;
   }
 
   .services-hero-cards {
