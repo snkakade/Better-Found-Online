@@ -756,10 +756,20 @@ section[id] {
   color: var(--silver);
 }
 
-.site-menu-meta .site-menu-coming-soon {
-  margin-top: 6px;
-  color: var(--rose);
-  font-size: 10px;
+.site-menu-meta .site-menu-social-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 9px;
+}
+
+.site-menu-meta .site-menu-social-link svg {
+  flex: 0 0 auto;
+  color: var(--silver);
+}
+
+.site-menu-meta .site-menu-social-whatsapp {
+  margin-top: 18px;
 }
 
 .site-menu-wordmark {

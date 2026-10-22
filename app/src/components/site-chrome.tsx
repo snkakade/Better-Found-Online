@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUp, ArrowUpRight, FacebookLogo, InstagramLogo, LinkedinLogo, WhatsappLogo } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
@@ -293,12 +293,10 @@ export function SiteHeader({
             </div>
             <div>
               <p className="site-menu-meta-label">Social profiles</p>
-              <p>Instagram</p>
-              <a href="https://www.linkedin.com/company/better-found-online" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <p>Facebook</p>
-              <p className="site-menu-coming-soon">Launching soon</p>
-              <br />
-              <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              <p className="site-menu-social-link"><InstagramLogo size={18} weight="light" aria-hidden="true" />Instagram</p>
+              <a className="site-menu-social-link" href="https://www.linkedin.com/company/better-found-online" target="_blank" rel="noopener noreferrer"><LinkedinLogo size={18} weight="light" aria-hidden="true" />LinkedIn</a>
+              <p className="site-menu-social-link"><FacebookLogo size={18} weight="light" aria-hidden="true" />Facebook</p>
+              <a className="site-menu-social-link site-menu-social-whatsapp" href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer"><WhatsappLogo size={18} weight="light" aria-hidden="true" />WhatsApp</a>
             </div>
           </div>
           <div className="site-menu-wordmark" aria-label="Better Found Online">
