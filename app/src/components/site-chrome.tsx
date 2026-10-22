@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowUpRight, FacebookLogo, InstagramLogo, LinkedinLogo, WhatsappLogo } from "@phosphor-icons/react";
+import { ArrowUp, ArrowUpRight, CaretDown, FacebookLogo, InstagramLogo, LinkedinLogo, WhatsappLogo } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
@@ -214,7 +214,20 @@ export function SiteHeader({
       <nav className="desktop-navigation" aria-label="Primary navigation">
         <div className="desktop-navigation-links">
           <TransitionLink href="/work">Work</TransitionLink>
-          <TransitionLink href="/services">Services</TransitionLink>
+          <div className="desktop-services">
+            <TransitionLink href="/services" className="desktop-services-trigger">
+              Services <CaretDown size={13} weight="bold" aria-hidden="true" />
+            </TransitionLink>
+            <div className="desktop-services-menu" aria-label="Services">
+              <TransitionLink href="/services/websites">Website Design</TransitionLink>
+              <TransitionLink href="/services/seo-ai-search">SEO &amp; AI Search</TransitionLink>
+              <TransitionLink href="/services/performance-marketing">Performance Marketing</TransitionLink>
+              <TransitionLink href="/creative-production">Creative Production</TransitionLink>
+              <TransitionLink href="/services/social-media-management">Social Media Management</TransitionLink>
+              <TransitionLink href="/services#service-stack">CRM &amp; Integrations</TransitionLink>
+              <TransitionLink href="/services" className="desktop-services-all">View All Services</TransitionLink>
+            </div>
+          </div>
           <TransitionLink href="/studio">Studio</TransitionLink>
           <TransitionLink href="/insights">Insights</TransitionLink>
         </div>

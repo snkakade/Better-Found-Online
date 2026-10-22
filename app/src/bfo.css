@@ -3134,7 +3134,8 @@ section[id] {
   gap: clamp(22px, 2.1vw, 36px);
 }
 
-.desktop-navigation-links a {
+.desktop-navigation-links > a,
+.desktop-services > .desktop-services-trigger {
   position: relative;
   padding: 11px 0;
   color: rgba(241, 236, 231, .76);
@@ -3144,7 +3145,8 @@ section[id] {
   transition: color 220ms ease;
 }
 
-.desktop-navigation-links a::after {
+.desktop-navigation-links > a::after,
+.desktop-services > .desktop-services-trigger::after {
   position: absolute;
   right: 100%;
   bottom: 5px;
@@ -3155,14 +3157,102 @@ section[id] {
   transition: right 260ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.desktop-navigation-links a:hover,
-.desktop-navigation-links a:focus-visible {
+.desktop-navigation-links > a:hover,
+.desktop-navigation-links > a:focus-visible,
+.desktop-services:hover > .desktop-services-trigger,
+.desktop-services:focus-within > .desktop-services-trigger {
   color: var(--nav-text);
 }
 
-.desktop-navigation-links a:hover::after,
-.desktop-navigation-links a:focus-visible::after {
+.desktop-navigation-links > a:hover::after,
+.desktop-navigation-links > a:focus-visible::after,
+.desktop-services:hover > .desktop-services-trigger::after,
+.desktop-services:focus-within > .desktop-services-trigger::after {
   right: 0;
+}
+
+.desktop-services {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.desktop-services-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.desktop-services-trigger svg {
+  transition: transform 220ms ease;
+}
+
+.desktop-services:hover .desktop-services-trigger svg,
+.desktop-services:focus-within .desktop-services-trigger svg {
+  transform: rotate(180deg);
+}
+
+.desktop-services-menu {
+  position: absolute;
+  top: calc(100% + 13px);
+  left: 50%;
+  display: grid;
+  width: 470px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 18px;
+  padding: 16px;
+  border: 1px solid rgba(241, 236, 231, .12);
+  background: #291b20;
+  box-shadow: 0 22px 52px rgba(8, 5, 6, .28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 240ms cubic-bezier(.22, 1, .36, 1), visibility 180ms ease;
+}
+
+.desktop-services-menu::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 18px;
+  content: "";
+}
+
+.desktop-services:hover .desktop-services-menu,
+.desktop-services:focus-within .desktop-services-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.desktop-services-menu a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 10px 12px;
+  color: rgba(241, 236, 231, .74);
+  font-size: 13px;
+  line-height: 1.25;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.desktop-services-menu a:hover,
+.desktop-services-menu a:focus-visible {
+  background: rgba(187, 154, 138, .1);
+  color: var(--silver);
+}
+
+.desktop-services-menu .desktop-services-all {
+  grid-column: 1 / -1;
+  min-height: 42px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(241, 236, 231, .12);
+  color: var(--rose);
+  font-weight: 520;
 }
 
 .desktop-navigation-cta {
@@ -3198,6 +3288,13 @@ section[id] {
 @media (max-width: 1100px) {
   .desktop-navigation {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-services-trigger svg,
+  .desktop-services-menu {
+    transition: none;
   }
 }
 
