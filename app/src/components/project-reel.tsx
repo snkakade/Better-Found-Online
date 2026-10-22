@@ -3,10 +3,46 @@ import { useEffect, useRef, useState } from "react";
 import { TransitionLink } from "@/components/site-chrome";
 
 const projects = [
-  { title: "Specialist care. Clearly presented.", name: "Dr Shweta Valunj", type: "Website Design / Search", image: "/assets/portals.webp", text: "A considered dental practice website built around clear treatment information, patient confidence, and an easier path to consultation." },
-  { title: "A premium presence with purpose.", name: "CharterX", type: "Positioning / Digital Experience", image: "/assets/macro.webp", text: "A polished digital experience that brings clarity and character to specialist yacht services." },
-  { title: "A sharper way to stand apart.", name: "Tech Sales Sourced", type: "Messaging / Website", image: "/assets/connect.webp", text: "Clear positioning and focused customer journeys for a specialist tech-sales recruitment business." },
+  { title: "Premium presentation. Clear purpose.", name: "CharterX", type: "Website / Digital Experience", video: "/assets/service-pages/websites/charterx.webm", mp4: "/assets/service-pages/websites/charterx.mp4", text: "A polished website experience that brings structure and character to specialist yacht services while presenting the offer clearly." },
+  { title: "A specialist product, made easier to explore.", name: "Say Vanilla", type: "Website Strategy / Design / Development", video: "/assets/service-pages/websites/say-vanilla.webm", mp4: "/assets/service-pages/websites/say-vanilla.mp4", text: "A tactile website that gives an ingredient-led brand space to explain its product, build confidence, and make discovery feel effortless." },
+  { title: "Stand out in a market full of sameness.", name: "Tech Sales Sourced", type: "Positioning / Website Development", video: "/assets/work/tech-sales-desktop-smooth.webm", mp4: "/assets/work/tech-sales-desktop-smooth.mp4", text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates." },
 ];
+
+function ProjectPreview({ name, video, mp4 }: { name: string; video: string; mp4: string }) {
+  const preview = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const element = preview.current;
+    if (!element) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    element.playbackRate = 0.78;
+
+    if (reducedMotion.matches) {
+      element.pause();
+      element.currentTime = 0;
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        void element.play().catch(() => undefined);
+      } else {
+        element.pause();
+      }
+    }, { rootMargin: "20% 400px", threshold: 0.12 });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video ref={preview} autoPlay muted loop playsInline preload="metadata" aria-label={`${name} desktop website preview`}>
+      <source src={video} type="video/webm" />
+      <source src={mp4} type="video/mp4" />
+    </video>
+  );
+}
 
 export function ProjectReel() {
   const section = useRef<HTMLElement>(null);
@@ -90,7 +126,7 @@ export function ProjectReel() {
         <div className="reel-track" ref={track}>
           {projects.map((project) => (
             <article className="reel-card" key={project.title}>
-              <div className="reel-image"><img src={project.image} alt="" loading="lazy" /></div>
+              <div className="reel-image"><ProjectPreview name={project.name} video={project.video} mp4={project.mp4} /></div>
               <div className="reel-copy"><span>{project.type}</span><b>{project.name}</b><h3>{project.title}</h3><p>{project.text}</p></div>
             </article>
           ))}
