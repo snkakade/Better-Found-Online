@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUpRight, Check, PaperPlaneTilt } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
@@ -135,6 +135,16 @@ const insights = [
   },
 ];
 
+const projectTypes = [
+  ["Website", "Website Design & Development"],
+  ["Search", "SEO & Search Visibility"],
+  ["Paid marketing", "Paid Advertising & Performance Marketing"],
+  ["Creative", "Creative Production"],
+  ["Social media", "Social Media Management"],
+  ["CRM & integrations", "CRM & Integrations"],
+  ["Not sure yet", "Not Sure Yet"],
+] as const;
+
 function Index() {
   const root = useRef<HTMLDivElement>(null);
   const [activeStory, setActiveStory] = useState(0);
@@ -153,7 +163,7 @@ function Index() {
       data.get("company") ? `Company or Website: ${data.get("company")}` : "",
       `What I'm working on: ${data.get("projectType")}`,
       `Project details: ${data.get("details")}`,
-      `Marketing follow-up: ${data.get("marketingConsent") === "yes" ? "Yes — email or text is okay" : "No"}`,
+      `Marketing follow-up: ${data.get("marketingConsent") === "yes" ? "Yes - email or text is okay" : "No"}`,
     ].filter(Boolean).join("\n");
     window.open(`https://wa.me/15707077078?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
     setInquiryReady(true);
@@ -562,31 +572,41 @@ function Index() {
           <div className="contact-aside">
             <p className="contact-kicker">Start a project</p>
             <h2 id="contact-title">Tell us what needs to work better.</h2>
-            <p className="contact-intro">Share the essentials. We&apos;ll review the context before suggesting a call, scope, or next step.</p>
-            <ol className="contact-expectations" aria-label="What to expect">
-              <li><span>01</span><div><strong>About two minutes</strong><small>Five details and a short brief.</small></div></li>
-              <li><span>02</span><div><strong>A considered reply</strong><small>Usually within one business day.</small></div></li>
-              <li><span>03</span><div><strong>No obligation</strong><small>Just a useful first conversation.</small></div></li>
-            </ol>
+            <p className="contact-intro">Give us the problem, desired outcome, and timing. We&apos;ll suggest a useful next step.</p>
+            <div className="contact-response">
+              <span>What happens next</span>
+              <strong>A real person reviews your brief.</strong>
+              <p>Expect a considered reply, usually within one business day.</p>
+            </div>
             <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
               Prefer a quick message? WhatsApp us <span aria-hidden="true">↗</span>
             </a>
           </div>
           <form className="contact-form" onSubmit={handleInquiry}>
             <header className="contact-form-head">
-              <div><span>Project enquiry</span><h3>Start with the essentials.</h3></div>
-              <small>* Required</small>
+              <div><span>Project brief</span><h3>Start with the outcome.</h3></div>
+              <small>About 2 minutes</small>
             </header>
-            <label><span>Your name *</span><input name="name" autoComplete="name" placeholder="Jane Smith" required /></label>
-            <label><span>Your email *</span><input name="email" type="email" autoComplete="email" placeholder="jane@company.com" required /></label>
-            <label><span>Your phone *</span><input name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="+1 570 000 0000" required /></label>
-            <label><span>Company or website</span><input name="company" autoComplete="organization" placeholder="Optional" /></label>
-            <label className="contact-form-wide"><span>What are you working on? *</span><select name="projectType" defaultValue="" required><option value="" disabled>Select a service</option><option>Website Design &amp; Development</option><option>Website Redesign</option><option>Landing Page</option><option>Ecommerce Website</option><option>SEO &amp; Search Visibility</option><option>Technical SEO</option><option>AI Search &amp; GEO</option><option>Content Strategy</option><option>Paid Advertising &amp; Performance Marketing</option><option>Social Media Management</option><option>Video Production &amp; Editing</option><option>3D CGI &amp; Rendering</option><option>Motion Graphics &amp; Animation</option><option>Graphic Design</option><option>CRM &amp; Integrations</option><option>Website &amp; Marketing Optimization</option><option>Not Sure Yet</option></select></label>
-            <label className="contact-form-wide"><span>What should the finished work achieve? *</span><textarea name="details" rows={3} placeholder="A short description of the problem, goal, and timing." required /></label>
+            <div className="contact-field"><label htmlFor="contact-name">Your name *</label><input id="contact-name" name="name" autoComplete="name" placeholder="Enter your full name" required /></div>
+            <div className="contact-field"><label htmlFor="contact-email">Your email *</label><input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@company.com" required /></div>
+            <div className="contact-field"><label htmlFor="contact-phone">Your phone *</label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="Country code + number" required /></div>
+            <div className="contact-field"><label htmlFor="contact-company">Company or website</label><input id="contact-company" name="company" autoComplete="organization" placeholder="Optional" /></div>
+            <fieldset className="contact-project-types">
+              <legend>Choose a starting point *</legend>
+              <div className="contact-choice-grid">
+                {projectTypes.map(([label, value]) => (
+                  <label key={value} className="contact-choice">
+                    <input name="projectType" type="radio" value={value} required />
+                    <span>{label}<Check size={14} weight="bold" aria-hidden="true" /></span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <div className="contact-field contact-form-wide contact-goal"><label htmlFor="contact-details">What should the finished work achieve? *</label><textarea id="contact-details" name="details" rows={3} placeholder="Tell us the problem, desired outcome, and timing." required /></div>
             <div className="contact-form-actions">
               <label className="contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Optional: email or text me about relevant services and updates.</span></label>
               <p className="contact-privacy-note">By continuing, you ask us to use these details to respond. WhatsApp receives the message only after you review and send it. See our <a href="/privacy">Privacy Notice</a>.</p>
-              <button type="submit" data-cta>Continue to WhatsApp <span aria-hidden="true">↗</span></button>
+              <button type="submit" data-cta>Review in WhatsApp <PaperPlaneTilt size={18} weight="light" aria-hidden="true" /></button>
             </div>
             {inquiryReady && <p className="contact-form-status" role="status">Your message is ready to review in WhatsApp. Nothing has been sent yet.</p>}
           </form>
