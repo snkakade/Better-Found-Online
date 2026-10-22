@@ -211,6 +211,15 @@ export function SiteHeader({
   return (
     <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`}>
       <Brand tone={headerBrandTone} />
+      <nav className="desktop-navigation" aria-label="Primary navigation">
+        <div className="desktop-navigation-links">
+          <TransitionLink href="/work">Work</TransitionLink>
+          <TransitionLink href="/services">Services</TransitionLink>
+          <TransitionLink href="/studio">Studio</TransitionLink>
+          <TransitionLink href="/insights">Insights</TransitionLink>
+        </div>
+        <TransitionLink href="/#contact" className="desktop-navigation-cta">Discuss a Project</TransitionLink>
+      </nav>
       <button
         ref={toggleRef}
         className={`menu-toggle ${open ? "opened" : "closed"}`}
