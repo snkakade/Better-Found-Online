@@ -5,7 +5,7 @@ import { TransitionLink } from "@/components/site-chrome";
 const projects = [
   { title: "Premium presentation. Clear purpose.", name: "CharterX", type: "Website / Digital Experience", video: "/assets/service-pages/websites/charterx.webm", mp4: "/assets/service-pages/websites/charterx.mp4", text: "A polished website experience that brings structure and character to specialist yacht services while presenting the offer clearly." },
   { title: "A specialist product, made easier to explore.", name: "Say Vanilla", type: "Website Strategy / Design / Development", video: "/assets/service-pages/websites/say-vanilla.webm", mp4: "/assets/service-pages/websites/say-vanilla.mp4", text: "A tactile website that gives an ingredient-led brand space to explain its product, build confidence, and make discovery feel effortless." },
-  { title: "Stand out in a market full of sameness.", name: "Tech Sales Sourced", type: "Positioning / Website Development", video: "/assets/work/tech-sales-desktop-smooth.webm", mp4: "/assets/work/tech-sales-desktop-smooth.mp4", text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates." },
+  { title: "Stand out in a market full of sameness.", name: "Tech Sales Sourced", type: "Positioning / Website Development", video: "/assets/service-pages/websites/tech-sales.webm", mp4: "/assets/service-pages/websites/tech-sales.mp4", text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates." },
 ];
 
 function ProjectPreview({ name, video, mp4 }: { name: string; video: string; mp4: string }) {
@@ -14,6 +14,8 @@ function ProjectPreview({ name, video, mp4 }: { name: string; video: string; mp4
   useEffect(() => {
     const element = preview.current;
     if (!element) return;
+    const region = element.closest<HTMLElement>(".work-reel");
+    if (!region) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     element.playbackRate = 0.78;
@@ -24,20 +26,35 @@ function ProjectPreview({ name, video, mp4 }: { name: string; video: string; mp4
       return;
     }
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+    let sectionVisible = false;
+    let mediaRequested = false;
+    const updatePlayback = () => {
+      if (sectionVisible && document.visibilityState === "visible") {
+        if (!mediaRequested) {
+          mediaRequested = true;
+          element.load();
+        }
         void element.play().catch(() => undefined);
       } else {
         element.pause();
       }
-    }, { rootMargin: "20% 400px", threshold: 0.12 });
+    };
 
-    observer.observe(element);
-    return () => observer.disconnect();
+    const observer = new IntersectionObserver(([entry]) => {
+      sectionVisible = entry.isIntersecting;
+      updatePlayback();
+    }, { rootMargin: "50% 0px", threshold: 0.01 });
+
+    observer.observe(region);
+    document.addEventListener("visibilitychange", updatePlayback);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", updatePlayback);
+    };
   }, []);
 
   return (
-    <video ref={preview} autoPlay muted loop playsInline preload="metadata" aria-label={`${name} desktop website preview`}>
+    <video ref={preview} autoPlay muted loop playsInline preload="auto" aria-label={`${name} desktop website preview`}>
       <source src={video} type="video/webm" />
       <source src={mp4} type="video/mp4" />
     </video>
