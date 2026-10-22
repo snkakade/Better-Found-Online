@@ -151,17 +151,25 @@ function Index() {
   const [reduced, setReduced] = useState(false);
   const [motionPaused, setMotionPaused] = useState(false);
   const [inquiryReady, setInquiryReady] = useState(false);
+  const [projectTypeError, setProjectTypeError] = useState("");
 
   const handleInquiry = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const selectedProjectTypes = data.getAll("projectType").map(String);
+    if (selectedProjectTypes.length === 0) {
+      setProjectTypeError("Choose at least one starting point.");
+      event.currentTarget.querySelector<HTMLInputElement>('input[name="projectType"]')?.focus();
+      return;
+    }
+    setProjectTypeError("");
     const message = [
       "Hi Better Found Online, I'd like to discuss a project.",
       `Name: ${data.get("name")}`,
       `Email: ${data.get("email")}`,
       `Phone: ${data.get("phone")}`,
       data.get("company") ? `Company or Website: ${data.get("company")}` : "",
-      `What I'm working on: ${data.get("projectType")}`,
+      `What I'm working on: ${selectedProjectTypes.join(", ")}`,
       `Project details: ${data.get("details")}`,
       `Marketing follow-up: ${data.get("marketingConsent") === "yes" ? "Yes - email or text is okay" : "No"}`,
     ].filter(Boolean).join("\n");
@@ -591,16 +599,17 @@ function Index() {
             <div className="contact-field"><label htmlFor="contact-email">Your email *</label><input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@company.com" required /></div>
             <div className="contact-field"><label htmlFor="contact-phone">Your phone *</label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="Country code + number" required /></div>
             <div className="contact-field"><label htmlFor="contact-company">Company or website</label><input id="contact-company" name="company" autoComplete="organization" placeholder="Optional" /></div>
-            <fieldset className="contact-project-types">
-              <legend>Choose a starting point *</legend>
+            <fieldset className="contact-project-types" aria-invalid={projectTypeError ? "true" : undefined} aria-describedby={projectTypeError ? "contact-project-error" : undefined}>
+              <legend>Choose a starting point * <span>Select one or more</span></legend>
               <div className="contact-choice-grid">
                 {projectTypes.map(([label, value]) => (
                   <label key={value} className="contact-choice">
-                    <input name="projectType" type="radio" value={value} required />
+                    <input name="projectType" type="checkbox" value={value} onChange={() => projectTypeError && setProjectTypeError("")} />
                     <span>{label}<Check size={14} weight="bold" aria-hidden="true" /></span>
                   </label>
                 ))}
               </div>
+              {projectTypeError && <p id="contact-project-error" className="contact-project-error" role="alert">{projectTypeError}</p>}
             </fieldset>
             <div className="contact-field contact-form-wide contact-goal"><label htmlFor="contact-details">What should the finished work achieve? *</label><textarea id="contact-details" name="details" rows={3} placeholder="Tell us the problem, desired outcome, and timing." required /></div>
             <div className="contact-form-actions">

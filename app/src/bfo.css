@@ -1551,6 +1551,15 @@ section[id] {
   border: 0;
 }
 
+.contact-project-types legend > span {
+  margin-left: 8px;
+  color: rgba(241, 236, 231, .46);
+  font-family: Outfit, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .contact-choice-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1606,6 +1615,17 @@ section[id] {
 
 .contact-choice input:checked + span svg { opacity: 1; transform: scale(1); }
 .contact-choice input:focus-visible + span { outline: 2px solid var(--silver); outline-offset: 2px; }
+
+.contact-project-error {
+  margin: 2px 0 0;
+  color: #e8b9a5;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.contact-project-types[aria-invalid="true"] .contact-choice > span {
+  border-color: rgba(232, 185, 165, .58);
+}
 
 .contact-goal { min-height: 92px; }
 .contact-form .contact-marketing-consent {
