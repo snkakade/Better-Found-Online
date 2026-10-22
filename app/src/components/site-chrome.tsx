@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUp, ArrowUpRight } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
@@ -315,20 +315,32 @@ export function SiteHeader({
 export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: boolean; onMotionToggle?: () => void }) {
   return (
     <footer id="site-footer" className="footer">
+      <div className="footer-cta">
+        <h2>Build something people can find, understand, and choose.</h2>
+        <TransitionLink href="/#contact" className="footer-project-link">
+          <span>Discuss your project</span>
+          <span className="footer-project-icon" aria-hidden="true"><ArrowUpRight size={19} weight="light" /></span>
+        </TransitionLink>
+      </div>
+
       <div className="footer-directory">
         <div className="footer-brand-block">
           <Brand large />
-          <p>Website design, creative production, SEO, and digital marketing for businesses in the U.S. and beyond.</p>
-          <p className="footer-business-id">Better Found Online is a trading brand of Qboid Businesses, a registered Micro enterprise in Maharashtra, India. GSTIN 27HCOPK1131D1ZS · Udyam UDYAM-MH-26-1231498.</p>
+          <p>Websites, search, advertising, and creative work for service businesses and growing brands.</p>
+          <div className="footer-business-id">
+            <p>Qboid Businesses, trading as Better Found Online. Registered Micro enterprise in Maharashtra, India.</p>
+            <span>GSTIN 27HCOPK1131D1ZS</span>
+            <span>Udyam UDYAM-MH-26-1231498</span>
+          </div>
         </div>
-        <nav aria-label="Footer navigation">
+        <nav className="footer-nav footer-explore" aria-label="Footer navigation">
           <p className="footer-label">Explore</p>
           <TransitionLink href="/work">Work</TransitionLink>
           <TransitionLink href="/services">Services</TransitionLink>
           <TransitionLink href="/studio">Studio</TransitionLink>
           <TransitionLink href="/insights">Insights</TransitionLink>
         </nav>
-        <div>
+        <div className="footer-nav footer-services">
           <p className="footer-label">Services</p>
           <TransitionLink href="/services/websites">Website Design</TransitionLink>
           <TransitionLink href="/creative-production">Creative Production</TransitionLink>
@@ -337,7 +349,7 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
           <TransitionLink href="/services/social-media-management">Social Media Management</TransitionLink>
           <TransitionLink href="/services">CRM &amp; Integrations</TransitionLink>
         </div>
-        <div>
+        <div className="footer-nav footer-contact">
           <p className="footer-label">Start a conversation</p>
           <a href="mailto:hello@betterfoundonline.com">hello@betterfoundonline.com</a>
           <a href="tel:+15707077078">+1 (570) 707-7078</a>
@@ -346,17 +358,20 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
         </div>
       </div>
 
-      <div className="footer-wordmark" aria-hidden="true">BFO</div>
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} Better Found Online</span>
-        <span>Found. Understood. Chosen.</span>
+        <div className="footer-signoff">
+          <span>© {new Date().getFullYear()} Better Found Online</span>
+          <span>Found. Understood. Chosen.</span>
+        </div>
         <nav className="footer-legal-nav" aria-label="Legal and privacy">
           <TransitionLink href="/privacy">Privacy</TransitionLink>
           <TransitionLink href="/terms">Terms</TransitionLink>
           <CookieSettingsButton />
         </nav>
-        {onMotionToggle && <button onClick={onMotionToggle} aria-pressed={motionPaused}>Motion {motionPaused ? "Off" : "On"}</button>}
-        <a href="#main">Back to top ↑</a>
+        <div className="footer-controls">
+          {onMotionToggle && <button onClick={onMotionToggle} aria-pressed={motionPaused}>Motion {motionPaused ? "Off" : "On"}</button>}
+          <a href="#main">Back to top <ArrowUp size={13} weight="light" aria-hidden="true" /></a>
+        </div>
       </div>
     </footer>
   );
