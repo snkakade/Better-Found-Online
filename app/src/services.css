@@ -90,11 +90,11 @@
 .services-hero {
   position: relative;
   display: grid;
-  grid-template-rows: auto minmax(240px, 1fr) auto;
-  gap: 16px;
+  grid-template-rows: auto auto auto;
+  gap: 18px;
   align-content: start;
-  min-height: 100svh;
-  padding: 92px max(4.5vw, 24px) 28px;
+  min-height: 0;
+  padding: 92px max(4.5vw, 24px) clamp(48px, 5vw, 76px);
   overflow: clip;
   background: var(--services-paper);
   color: var(--deep);
@@ -128,7 +128,7 @@
 }
 
 .services-hero-title {
-  max-width: 900px;
+  max-width: 1100px;
   color: var(--deep);
   font-size: clamp(3.25rem, 4.65vw, 5.65rem);
   font-weight: 400;
@@ -141,33 +141,48 @@
   position: relative;
   z-index: 4;
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
 }
 
 .services-hero-action {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  justify-content: space-between;
-  min-width: 150px;
-  padding: 14px 16px;
+  justify-content: center;
+  min-width: 190px;
+  min-height: 48px;
+  padding: 13px 20px;
   border: 1px solid currentColor;
   font-size: 13px;
+  font-weight: 520;
   white-space: nowrap;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
-.services-hero-action:hover {
+.services-hero-action-primary {
   background: var(--deep);
   color: var(--services-paper);
 }
 
-.services-hero-action svg {
-  transition: transform 0.25s ease;
+.services-hero-action-primary:hover,
+.services-hero-action-primary:focus-visible {
+  border-color: var(--services-signal);
+  background: var(--services-signal);
+  color: var(--silver);
+  transform: translateY(-2px);
 }
 
-.services-hero-action:hover svg {
-  transform: translate(3px, -3px);
+.services-hero-action-secondary {
+  background: transparent;
+  color: var(--deep);
+}
+
+.services-hero-action-secondary:hover,
+.services-hero-action-secondary:focus-visible {
+  background: rgba(33, 22, 26, .07);
+  transform: translateY(-2px);
 }
 
 .services-hero-cards {
@@ -177,7 +192,7 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: clamp(10px, 1.35vw, 24px);
   min-height: 0;
-  height: min(48svh, 430px);
+  height: clamp(300px, 42svh, 430px);
   align-items: stretch;
 }
 
@@ -759,7 +774,7 @@
 
   .services-hero {
     gap: 12px;
-    min-height: 100svh;
+    min-height: auto;
     padding: 78px 16px 16px;
   }
 
@@ -779,6 +794,12 @@
 
   .services-hero-action {
     width: 100%;
+  }
+
+  .services-hero-cta {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 4px;
   }
 
   .services-hero-cards {

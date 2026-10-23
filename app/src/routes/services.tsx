@@ -337,8 +337,11 @@ function ServicesPage() {
             ))}
           </div>
           <div className="services-hero-cta">
-            <TransitionLink href="/#contact" className="services-hero-action">
-              Discuss Your Project <ArrowUpRight size={19} weight="light" />
+            <TransitionLink href="/#contact" className="services-hero-action services-hero-action-primary">
+              Discuss Your Project
+            </TransitionLink>
+            <TransitionLink href="/work" className="services-hero-action services-hero-action-secondary">
+              See Our Work
             </TransitionLink>
           </div>
         </section>
