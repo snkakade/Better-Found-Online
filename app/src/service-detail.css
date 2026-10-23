@@ -2066,15 +2066,15 @@
 /* Performance marketing: visual campaign system and one consolidated close. */
 .performance-marketing-page .performance-capabilities {
   min-height: 0;
-  padding-top: clamp(72px, 8vw, 118px);
-  padding-bottom: clamp(72px, 8vw, 118px);
+  padding-top: clamp(54px, 6vw, 76px);
+  padding-bottom: clamp(48px, 5vw, 68px);
   background: #4d1527;
 }
 .performance-system-heading { display: flex; justify-content: space-between; gap: 32px; align-items: end; }
 .performance-system-heading h2 {
   max-width: 10ch;
   margin: 0;
-  font-size: clamp(3.8rem, 7vw, 8.4rem);
+  font-size: clamp(3.8rem, 6vw, 7rem);
   line-height: .84;
   letter-spacing: -.07em;
 }
@@ -2089,19 +2089,19 @@
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1px;
-  margin-top: clamp(52px, 6vw, 82px);
+  margin-top: clamp(36px, 4vw, 52px);
   overflow: hidden;
   border: 1px solid var(--line);
   background: var(--line);
 }
 .performance-system-grid article {
   display: flex;
-  min-height: clamp(190px, 19vw, 280px);
+  min-height: clamp(160px, 14vw, 220px);
   grid-column: span 2;
   flex-direction: column;
   justify-content: space-between;
-  gap: 42px;
-  padding: clamp(24px, 3vw, 42px);
+  gap: 28px;
+  padding: clamp(24px, 2.4vw, 34px);
   background: #4d1527;
   transition: background-color .35s ease, color .35s ease;
 }
@@ -2125,7 +2125,7 @@
   color: rgba(241, 236, 231, .66);
   font-size: clamp(.82rem, .92vw, 1rem);
 }
-.performance-system-footer { display: flex; justify-content: space-between; gap: 28px; align-items: center; margin-top: 28px; }
+.performance-system-footer { display: flex; justify-content: space-between; gap: 28px; align-items: center; margin-top: 22px; }
 .performance-system-footer > p {
   max-width: 27rem;
   margin: 0;
