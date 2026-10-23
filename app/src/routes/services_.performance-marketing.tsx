@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUpRight, Broadcast, ChartLineUp, CursorClick, MagnifyingGlass, Strategy } from "@phosphor-icons/react";
 import { InformationScrollStory } from "@/components/information-scroll-story";
 import { PerformanceProofCards, type PerformanceProofCard } from "@/components/performance-proof-cards";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
@@ -34,12 +34,12 @@ const campaignEvidence: PerformanceProofCard[] = [
     evidenceNote: "90-day platform report. Conversion actions are tracked, not verified sales or qualified leads.",
     resultGroups: [{
       title: "The reported results",
-      headline: "₹203,060.06 spent. 266 tracked conversions. 90 days.",
+      headline: "₹203K spent. 266 tracked conversions. 90 days.",
       period: "90-day reporting period",
       metrics: [
-        { label: "Google Ads spend", value: "₹203,060.06" },
-        { label: "Impressions", value: "25,311" },
-        { label: "Clicks", value: "4,301" },
+        { label: "Google Ads spend", value: "₹203K" },
+        { label: "Impressions", value: "25.3K" },
+        { label: "Clicks", value: "4.30K" },
         { label: "Average CPC", value: "₹47.21" },
         { label: "Tracked conversions", value: "266" },
         { label: "Cost / tracked conversion", value: "₹763.38" },
@@ -50,7 +50,7 @@ const campaignEvidence: PerformanceProofCard[] = [
         src: "/assets/performance-evidence/industrial-search-report.png",
         alt: "Anonymized Google Ads dashboard showing a 90-day industrial search campaign summary",
         platform: "Google Ads",
-        period: "15 Jul–12 Oct 2026",
+        period: "15 Jul-12 Oct 2026",
         width: 2048,
         height: 620,
         caption: "Industrial B2B Google Ads report, 90 days. ₹203,060.06 spend, 4,301 clicks, and 266 platform-tracked conversions.",
@@ -72,10 +72,10 @@ const campaignEvidence: PerformanceProofCard[] = [
         headline: "₹11.86 million in platform-recorded conversion value.",
         period: "90-day reporting period",
         metrics: [
-          { label: "Advertising spend", value: "₹2,750,711.36" },
-          { label: "Impressions", value: "839,418" },
-          { label: "Tracked conversions", value: "5,836.63" },
-          { label: "Conversion value", value: "₹11,863,687.13" },
+          { label: "Advertising spend", value: "₹2.75 million" },
+          { label: "Impressions", value: "839K" },
+          { label: "Tracked conversions", value: "5.84K" },
+          { label: "Conversion value", value: "₹11.86 million" },
           { label: "Average CPC", value: "₹7.92" },
           { label: "Cost / tracked conversion", value: "≈ ₹471.28" },
           { label: "Value / cost ratio", value: "4.31x" },
@@ -85,7 +85,7 @@ const campaignEvidence: PerformanceProofCard[] = [
           src: "/assets/performance-evidence/consumer-search-report.png",
           alt: "Google Ads campaign dashboard with the account identity permanently redacted",
           platform: "Google Ads",
-          period: "15 Jul–12 Oct 2026",
+          period: "15 Jul-12 Oct 2026",
           width: 2048,
           height: 1150,
           caption: "Google Ads report, 90 days. ₹2.75 million spend and ₹11.86 million in platform-recorded conversion value.",
@@ -93,14 +93,14 @@ const campaignEvidence: PerformanceProofCard[] = [
       },
       {
         title: "Amazon Ads performance",
-        headline: "9.80x reported ROAS across more than 43,000 attributed purchases.",
+        headline: "9.80x reported ROAS across 43.6K attributed purchases.",
         period: "13 October 2025 to 13 October 2026",
         metrics: [
-          { label: "Advertising spend", value: "₹5,546,734.40" },
-          { label: "Clicks", value: "366,245" },
+          { label: "Advertising spend", value: "₹5.55 million" },
+          { label: "Clicks", value: "366K" },
           { label: "Average CPC", value: "₹15.14" },
-          { label: "Attributed purchases", value: "43,623" },
-          { label: "Reported sales", value: "₹54,338,608.71" },
+          { label: "Attributed purchases", value: "43.6K" },
+          { label: "Reported sales", value: "₹54.34 million" },
           { label: "ACOS", value: "10.21%" },
           { label: "ROAS", value: "9.80x" },
         ],
@@ -109,7 +109,7 @@ const campaignEvidence: PerformanceProofCard[] = [
           src: "/assets/performance-evidence/consumer-marketplace-report.png",
           alt: "Anonymized Amazon Ads dashboard showing marketplace campaign reporting",
           platform: "Amazon Ads",
-          period: "13 Oct 2025–13 Oct 2026",
+          period: "13 Oct 2025-13 Oct 2026",
           width: 2048,
           height: 973,
           caption: "Amazon Ads report, October 2025 to October 2026. 43,623 attributed purchases and 9.80x ROAS.",
@@ -121,12 +121,12 @@ const campaignEvidence: PerformanceProofCard[] = [
   },
 ];
 
-const capabilities = [
-  { number: "01", label: "Paid Search", title: "Capture existing demand.", body: "Show up when potential customers are actively searching for the products or services you offer.", tags: "Google Ads / Microsoft Advertising / Search Intent / Campaign Structure" },
-  { number: "02", label: "Paid Social", title: "Create interest before the search.", body: "Reach relevant audiences with messaging and creative designed to introduce your offer and encourage consideration.", tags: "Audience Strategy / Social Advertising / Campaign Creative" },
-  { number: "03", label: "Tracking & Attribution", title: "Measure actions that actually matter.", body: "Review conversion tracking, account data, and meaningful customer actions before treating dashboard numbers as business results.", tags: "Conversion Tracking / Measurement Reviews / Attribution / Reporting" },
-  { number: "04", label: "Media Planning & Optimization", title: "Give the budget a clear direction.", body: "Connect audience intent, channel selection, spending decisions, and performance reviews to the goals of the campaign.", tags: "Media Planning / Budget Allocation / Campaign Reviews / Optimization" },
-  { number: "05", label: "Creative & Landing Pages", title: "Make the next click count.", body: "Support paid campaigns with relevant creative, clear messaging, and landing pages that help visitors understand the offer and take action.", tags: "Ad Creative / Landing Pages / Messaging / Conversion Journeys" },
+const campaignSystem = [
+  { label: "Paid search", outcome: "Capture demand", icon: MagnifyingGlass },
+  { label: "Paid social", outcome: "Build interest", icon: Broadcast },
+  { label: "Creative and landing pages", outcome: "Turn attention into action", icon: CursorClick },
+  { label: "Tracking and attribution", outcome: "See what happened", icon: ChartLineUp },
+  { label: "Media planning", outcome: "Choose the next move", icon: Strategy },
 ];
 
 const process = [
@@ -201,9 +201,9 @@ function PerformanceMarketingPage() {
               <p>₹54.34 million in platform-reported sales from an anonymized consumer software marketplace campaign.</p>
             </article>
             <div className="performance-results-support">
-              <article><span>01 / Marketplace</span><strong>43,623</strong><h3>Attributed purchases</h3><p>13 Oct 2025–13 Oct 2026</p></article>
+              <article><span>01 / Marketplace</span><strong>43.6K</strong><h3>Attributed purchases</h3><p>13 Oct 2025-13 Oct 2026</p></article>
               <article className="performance-results-google"><span>02 / B2B search</span><img src="/assets/platforms/google-ads-logo.webp" alt="Google Ads" width="512" height="256" /><strong>266</strong><h3>Tracked conversions</h3><p>Industrial equipment campaign / 90 days</p></article>
-              <article><span>03 / B2B search</span><strong>₹47.21</strong><h3>Average cost per click</h3><p>4,301 clicks / 25,311 impressions</p></article>
+              <article><span>03 / B2B search</span><strong>₹47.21</strong><h3>Average cost per click</h3><p>4.30K clicks / 25.3K impressions</p></article>
             </div>
           </div>
           <div className="performance-results-footer">
@@ -237,22 +237,22 @@ function PerformanceMarketingPage() {
         />
 
         <section className="performance-capabilities section-pad" aria-labelledby="capabilities-title">
-          <div className="performance-capabilities-intro">
-            <p className="eyebrow">What we connect</p>
-            <h2 id="capabilities-title">Every click needs a reason. Every campaign needs a plan.</h2>
-            <p>A useful advertising strategy connects the audience, the offer, the creative, and what happens after someone clicks.</p>
-            <div className="performance-capabilities-sequence" aria-hidden="true"><span>Audience</span><i /><span>Offer</span><i /><span>Action</span></div>
-            <TransitionLink className="performance-inline-cta" href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink>
+          <header className="performance-system-heading">
+            <h2 id="capabilities-title">Reach. Convert. Learn.</h2>
+            <p>Five connected decisions. One campaign system.</p>
+          </header>
+          <div className="performance-system-grid">
+            {campaignSystem.map((item) => {
+              const Icon = item.icon;
+              return <article key={item.label}>
+                <Icon aria-hidden="true" size={34} weight="light" />
+                <div><h3>{item.label}</h3><p>{item.outcome}</p></div>
+              </article>;
+            })}
           </div>
-          <div className="performance-capability-grid">
-            {capabilities.map((item) => (
-              <article key={item.number}>
-                <span>{item.number}</span>
-                <div><small>{item.label}</small><h3>{item.title}</h3></div>
-                <p>{item.body}</p>
-                <small>{item.tags}</small>
-              </article>
-            ))}
+          <div className="performance-system-footer">
+            <p>From the first impression to the next decision.</p>
+            <TransitionLink className="performance-inline-cta" href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink>
           </div>
         </section>
 
