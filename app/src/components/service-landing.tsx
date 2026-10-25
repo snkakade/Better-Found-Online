@@ -1,6 +1,8 @@
 import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { InformationScrollStory } from "@/components/information-scroll-story";
+import { CreativeProofReel, InlineProjectVideo } from "@/components/creative-story-components";
+import type { CreativeProofVideo } from "@/components/creative-story-components";
 
 export type ServiceLink = { label: string; href: string };
 
@@ -21,6 +23,8 @@ export type ServiceLandingData = {
   related: ServiceLink[];
   cta: string;
   image: string;
+  heroVideo?: { src: string; poster: string; caption: string };
+  proofVideos?: CreativeProofVideo[];
 };
 
 export function ServiceStructuredData({ data }: { data: ServiceLandingData }) {
@@ -76,7 +80,9 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
               <a className="story-link" href="#scope">Explore the Scope <ArrowDown size={16} weight="light" /></a>
             </div>
           </div>
-          <figure className="service-detail-hero-media"><img src={data.image} alt="Abstract sculptural artwork representing the service" width="1200" height="1200" /></figure>
+          <figure className={`service-detail-hero-media${data.heroVideo ? " service-detail-hero-video" : ""}`}>
+            {data.heroVideo ? <><InlineProjectVideo src={data.heroVideo.src} poster={data.heroVideo.poster} /><figcaption>{data.heroVideo.caption}</figcaption></> : <img src={data.image} alt="Abstract sculptural artwork representing the service" width="1200" height="1200" />}
+          </figure>
         </section>
 
         <InformationScrollStory
@@ -98,6 +104,8 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           afterHeading="Useful outputs. Ready for the right channel."
           afterBody={`${data.approach} Example deliverables include ${data.deliverables.join(", ")}.`}
         />
+
+        {data.proofVideos ? <CreativeProofReel videos={data.proofVideos} /> : null}
 
         <section className="faq-section section-pad" aria-labelledby="faq-title">
           <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">What buyers usually need to know.</h2></header>

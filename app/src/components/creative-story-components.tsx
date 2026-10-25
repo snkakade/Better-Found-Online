@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowUpRight } from "@phosphor-icons/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StepRail } from "@/components/step-rail";
 import { TransitionLink } from "@/components/site-chrome";
@@ -15,7 +14,65 @@ export interface CreativeCapability {
   href: string;
   image: string;
   video: string;
+  poster?: string;
   sliderTitle: string;
+}
+
+export interface CreativeProofVideo {
+  src: string;
+  poster: string;
+  label: string;
+  title: string;
+  detail: string;
+}
+
+export function InlineProjectVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPlayback = (isVisible = true) => {
+      if (motionPreference.matches || !isVisible) {
+        video.pause();
+        return;
+      }
+      video.play().catch(() => undefined);
+    };
+    const observer = new IntersectionObserver(([entry]) => syncPlayback(entry.isIntersecting), { rootMargin: "160px 0px", threshold: 0.12 });
+    const handleMotionChange = () => syncPlayback(observer ? video.getBoundingClientRect().top < window.innerHeight : true);
+
+    observer.observe(video);
+    motionPreference.addEventListener("change", handleMotionChange);
+    return () => {
+      observer.disconnect();
+      motionPreference.removeEventListener("change", handleMotionChange);
+      video.pause();
+    };
+  }, []);
+
+  return <video ref={videoRef} className={className} muted loop playsInline preload="metadata" poster={poster} aria-hidden="true"><source src={src} type="video/mp4" /></video>;
+}
+
+export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) {
+  return (
+    <section className="creative-proof section-pad" aria-labelledby="creative-proof-title">
+      <header className="creative-proof-header">
+        <div><p className="eyebrow">Before / after</p><h2 id="creative-proof-title">The edit changes what people notice.</h2></div>
+        <p>Raw footage becomes paced, structured content through color, typography, graphics, sound-led timing, and platform-ready framing.</p>
+      </header>
+      <div className="creative-proof-grid">
+        {videos.map((video, index) => (
+          <figure className={index === 2 ? "creative-proof-card creative-proof-card-wide" : "creative-proof-card"} key={video.src}>
+            <div className="creative-proof-media"><InlineProjectVideo src={video.src} poster={video.poster} /></div>
+            <figcaption><span>{video.label}</span><h3>{video.title}</h3><p>{video.detail}</p></figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function OrbitMotionText({ children }: { children: string }) {
@@ -174,11 +231,12 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         const video = document.createElement("video");
         video.className = className;
         video.src = item.video;
+        if (item.poster) video.poster = item.poster;
         video.autoplay = true;
         video.muted = true;
         video.loop = true;
         video.playsInline = true;
-        video.preload = "auto";
+        video.preload = "metadata";
         video.style.opacity = "0";
         video.setAttribute("aria-hidden", "true");
         video.tabIndex = -1;

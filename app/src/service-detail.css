@@ -15,8 +15,11 @@
 .service-detail-hero-copy > p:not(.eyebrow) { max-width: 650px; margin-top: 26px; color: var(--muted); font-size: clamp(.98rem, 1.05vw, 1.1rem); line-height: 1.55; }
 .service-detail-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 28px; margin-top: 42px; }
 .service-detail-hero-media { position: relative; align-self: center; aspect-ratio: .82; margin: 0; overflow: hidden; transform: rotate(3deg); }
-.service-detail-hero-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.72) brightness(.72); }
+.service-detail-hero-media img,
+.service-detail-hero-media video { width: 100%; height: 100%; object-fit: cover; filter: saturate(.72) brightness(.72); }
 .service-detail-hero-media::after { position: absolute; inset: 0; border: 1px solid rgba(241,236,231,.18); content: ""; }
+.service-detail-hero-media figcaption { position: absolute; right: 18px; bottom: 16px; z-index: 2; color: rgba(255,255,255,.76); font: 9px Plex,monospace; letter-spacing: .12em; text-transform: uppercase; }
+.service-detail-hero-video { aspect-ratio: 16 / 9; transform: none; }
 
 .service-detail-intro { display: grid; grid-template-columns: .45fr 1.55fr; gap: 6vw; align-items: start; min-height: 0; padding-block: clamp(72px, 7vw, 112px); }
 .service-detail-intro h2 { font-size: clamp(2.5rem, 4vw, 4.8rem); line-height: .96; letter-spacing: -.055em; }
@@ -1022,8 +1025,10 @@
 .creative-hero h1 span { display: block; margin-top: .12em; color: inherit; font-size: 1em; letter-spacing: inherit; }
 .creative-hero > div:first-child > p:not(.eyebrow) { max-width: 650px; margin: 26px 0 0; color: var(--muted); font-size: clamp(.98rem,1.05vw,1.1rem); line-height: 1.55; }
 .creative-actions { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 34px; }
-.creative-hero-media { align-self:center; height:min(72svh,720px); margin:0; overflow:hidden; }
-.creative-hero-media img { width:100%; height:100%; object-fit:cover; filter:saturate(.76) brightness(.78); }
+.creative-hero-media { position:relative; align-self:center; aspect-ratio:16 / 9; margin:0; overflow:hidden; background:#090709; }
+.creative-hero-media img,
+.creative-hero-media video { width:100%; height:100%; object-fit:cover; filter:saturate(.76) brightness(.78); }
+.creative-hero-media figcaption { position:absolute; right:16px; bottom:14px; z-index:2; color:rgba(255,255,255,.72); font:9px Plex,monospace; letter-spacing:.12em; text-transform:uppercase; }
 .creative-orbit { position: absolute; top: 51%; left: 50%; width: min(68vw,820px); aspect-ratio: 1; border: 1px solid rgba(241,236,231,.1); border-radius: 50%; transform: translate(-50%, -50%); animation: creative-spin 42s linear infinite; }
 .creative-orbit::before, .creative-orbit::after { position: absolute; inset: 13%; border: 1px solid rgba(211,164,178,.18); border-radius: 50%; content: ""; }
 .creative-orbit::after { inset: 28%; }
@@ -1058,6 +1063,19 @@
 .creative-process li { display: grid; grid-template-columns: .2fr .7fr 1.1fr; gap: 3vw; align-items: center; min-height: 130px; border-bottom: 1px solid var(--line); }
 .creative-process li span { color: var(--rose); font: 10px Plex,monospace; }.creative-process li h3 { font-size: clamp(1.8rem,3vw,3.8rem); }.creative-process li p { color: var(--muted); line-height: 1.6; }
 .creative-closing-copy { max-width: 600px; margin-top: 36px; color: var(--muted); font-size: 18px; line-height: 1.7; }
+
+.creative-proof { background:#efe9e3; color:#171113; }
+.creative-proof-header { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(280px,.6fr); gap:clamp(40px,8vw,140px); align-items:end; }
+.creative-proof-header h2 { max-width:830px; margin-top:18px; font-size:clamp(3rem,5.8vw,6.8rem); font-weight:400; line-height:.9; letter-spacing:-.06em; }
+.creative-proof-header > p { max-width:520px; color:#655b5d; font-size:clamp(.95rem,1.15vw,1.1rem); line-height:1.65; }
+.creative-proof-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(16px,2vw,30px); max-width:1380px; margin:clamp(52px,7vw,96px) auto 0; }
+.creative-proof-card { display:flex; min-width:0; margin:0; flex-direction:column; background:#181114; color:#f1ece7; }
+.creative-proof-media { position:relative; aspect-ratio:9 / 16; overflow:hidden; background:#090709; }
+.creative-proof-media video { display:block; width:100%; height:100%; object-fit:contain; background:#090709; }
+.creative-proof-card figcaption { display:flex; min-height:220px; padding:clamp(22px,2.4vw,34px); flex-direction:column; }
+.creative-proof-card figcaption span { color:#d3a4b2; font:10px Plex,monospace; letter-spacing:.1em; text-transform:uppercase; }
+.creative-proof-card h3 { max-width:14ch; margin-top:clamp(42px,5vw,72px); font-size:clamp(1.55rem,2.2vw,2.45rem); font-weight:400; line-height:1.02; letter-spacing:-.045em; }
+.creative-proof-card p { max-width:38ch; margin-top:16px; color:rgba(241,236,231,.64); font-size:.9rem; line-height:1.55; }
 @keyframes creative-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
 @media (max-width: 900px) {
@@ -1070,6 +1088,10 @@
   .creative-capability-media { width: 78%; height: 50vh; }
   .creative-capability-copy { width: 88%; margin: -10vh 0 0 auto; padding: 32px; background: var(--deep); position: relative; }
   .creative-capability:nth-of-type(odd) .creative-capability-copy { background: var(--wine); }
+  .creative-proof-header { grid-template-columns:1fr; gap:24px; }
+  .creative-proof-grid { grid-template-columns:repeat(3,minmax(220px,1fr)); overflow-x:auto; overscroll-behavior-inline:contain; scroll-snap-type:x mandatory; scrollbar-width:none; }
+  .creative-proof-grid::-webkit-scrollbar { display:none; }
+  .creative-proof-card { scroll-snap-align:start; }
 }
 
 /* One FAQ system across every commercial page. */
@@ -1138,6 +1160,10 @@
   .creative-process li p { grid-column: 2; }
   .creative-capability-media { width: 92%; }
   .creative-capability-copy { width: 94%; padding: 24px; }
+  .creative-proof { padding-inline:20px; }
+  .creative-proof-grid { grid-template-columns:repeat(3,minmax(78vw,1fr)); margin-top:42px; }
+  .creative-proof-card figcaption { min-height:200px; }
+  .creative-proof-card h3 { margin-top:34px; }
 }
 
 @media (max-width: 560px) and (max-height: 700px) {
