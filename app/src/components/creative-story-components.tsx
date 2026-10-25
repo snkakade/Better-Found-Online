@@ -75,12 +75,12 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
   );
 }
 
-export function CreativeCampaignFilms() {
+export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
   return (
     <section className="creative-films section-pad" aria-labelledby="creative-films-title">
       <header className="creative-films-header">
-        <p className="eyebrow">Selected motion work</p>
-        <h2 id="creative-films-title">Stories built to move.</h2>
+        <div><p className="eyebrow">Selected motion work</p><h2 id="creative-films-title">Stories built to move.</h2></div>
+        <a className="primary-btn creative-films-cta" href={ctaHref} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a>
       </header>
       <div className="creative-films-reel">
         <figure className="creative-film creative-film-primary">
