@@ -75,6 +75,25 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
   );
 }
 
+export function CreativeCampaignFilms() {
+  return (
+    <section className="creative-films section-pad" aria-labelledby="creative-films-title">
+      <header className="creative-films-header">
+        <p className="eyebrow">Selected motion work</p>
+        <h2 id="creative-films-title">Stories built to move.</h2>
+      </header>
+      <div className="creative-films-reel">
+        <figure className="creative-film creative-film-primary">
+          <InlineProjectVideo src="/assets/creative-work/campaign-film-rev.mp4" poster="/assets/creative-work/campaign-film-rev-poster.jpg" />
+        </figure>
+        <figure className="creative-film creative-film-secondary">
+          <InlineProjectVideo src="/assets/creative-work/campaign-film-tts.mp4" poster="/assets/creative-work/campaign-film-tts-poster.jpg" />
+        </figure>
+      </div>
+    </section>
+  );
+}
+
 function OrbitMotionText({ children }: { children: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
