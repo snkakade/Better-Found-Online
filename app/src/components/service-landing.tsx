@@ -23,7 +23,7 @@ export type ServiceLandingData = {
   related: ServiceLink[];
   cta: string;
   image: string;
-  heroVideo?: { src: string; poster: string; caption: string };
+  heroVideo?: { src: string; poster: string };
   proofVideos?: CreativeProofVideo[];
 };
 
@@ -81,7 +81,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
             </div>
           </div>
           <figure className={`service-detail-hero-media${data.heroVideo ? " service-detail-hero-video" : ""}`}>
-            {data.heroVideo ? <><InlineProjectVideo src={data.heroVideo.src} poster={data.heroVideo.poster} /><figcaption>{data.heroVideo.caption}</figcaption></> : <img src={data.image} alt="Abstract sculptural artwork representing the service" width="1200" height="1200" />}
+            {data.heroVideo ? <InlineProjectVideo src={data.heroVideo.src} poster={data.heroVideo.poster} /> : <img src={data.image} alt="Abstract sculptural artwork representing the service" width="1200" height="1200" />}
           </figure>
         </section>
 

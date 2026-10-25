@@ -63,7 +63,7 @@ function CreativeProductionPage() {
       <main id="main">
         <section className="creative-hero" aria-labelledby="creative-title">
           <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video editing and production, motion graphics, CGI, rendering, and graphic design for brands that need distinctive, campaign-ready content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project <ArrowUpRight size={17} weight="light" /></a><a className="story-link" href="#capabilities">Explore Our Services <ArrowDown size={16} weight="light" /></a></div></div>
-          <figure className="creative-hero-media"><InlineProjectVideo src="/assets/creative-work/finished-interview-edit.mp4" poster="/assets/creative-work/finished-interview-edit-poster.jpg" /><figcaption>Selected video edit · 16:9 campaign delivery</figcaption></figure>
+          <figure className="creative-hero-media"><InlineProjectVideo src="/assets/creative-work/finished-interview-edit.mp4" poster="/assets/creative-work/finished-interview-edit-poster.jpg" /></figure>
         </section>
 
         <CreativeCapabilityCarousel capabilities={capabilities} />
