@@ -21,12 +21,6 @@ export const videoProduction: ServiceLandingData = {
   related: [{ label: "Social Media Management", href: "/services/social-media-management" }, { label: "Motion Graphics & Animation", href: "/services/motion-graphics-animation" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss a Video Project",
   image: "/assets/world/poster.webp",
-  heroVideo: { src: "/assets/creative-work/finished-interview-edit.mp4", poster: "/assets/creative-work/finished-interview-edit-poster.jpg" },
-  proofVideos: [
-    { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "01 / Short-form edit", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
-    { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "02 / Interview edit", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
-    { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "03 / Social transformation", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
-  ],
 };
 
 export const cgiRendering: ServiceLandingData = {
@@ -73,7 +67,6 @@ export const motionGraphics: ServiceLandingData = {
   related: [{ label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Graphic Design", href: "/services/graphic-design" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss an Animation Project",
   image: "/assets/connect.webp",
-  heroVideo: { src: "/assets/creative-work/campaign-film-tts.mp4", poster: "/assets/creative-work/campaign-film-tts-poster.jpg" },
 };
 
 export const graphicDesign: ServiceLandingData = {
