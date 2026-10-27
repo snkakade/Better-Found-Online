@@ -24,6 +24,7 @@ export type InformationScrollStoryProps = {
   outroCtaHref: string;
   afterHeading?: string;
   afterBody?: string;
+  scrollScreens?: number;
 };
 
 export function InformationScrollStory({
@@ -42,6 +43,7 @@ export function InformationScrollStory({
   outroCtaHref,
   afterHeading,
   afterBody,
+  scrollScreens = 5,
 }: InformationScrollStoryProps) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -88,7 +90,7 @@ export function InformationScrollStory({
       ScrollTrigger.create({
         trigger: hero,
         start: "top top",
-        end: `+=${window.innerHeight * 5}`,
+        end: `+=${window.innerHeight * scrollScreens}`,
         pin: true,
         pinSpacing: true,
         scrub: 1,
@@ -151,7 +153,7 @@ export function InformationScrollStory({
       lenis?.off("scroll", onLenisScroll);
       lenis?.destroy();
     };
-  }, []);
+  }, [scrollScreens]);
 
   return (
     <div className="scroll63-story" ref={root} id={id}>
@@ -173,7 +175,7 @@ export function InformationScrollStory({
           <div className="scroll63-hero-outro-header">
             <h3>{outroHeading}</h3>
             {outroBody && <p>{outroBody}</p>}
-            <a className="scroll63-hero-outro-cta" href={outroCtaHref} target={outroCtaHref.startsWith("http") ? "_blank" : undefined} rel={outroCtaHref.startsWith("http") ? "noopener noreferrer" : undefined}>{outroCtaLabel}<span aria-hidden="true">↗</span></a>
+            <a className="scroll63-hero-outro-cta" href={outroCtaHref} target={outroCtaHref.startsWith("http") ? "_blank" : undefined} rel={outroCtaHref.startsWith("http") ? "noopener noreferrer" : undefined}>{outroCtaLabel}</a>
           </div>
         </div>
       </section>

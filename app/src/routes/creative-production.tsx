@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { CreativeCampaignFilms, CreativeCapabilityCarousel, CreativeFaq, CreativeProcessStory, CreativeProofReel, OrbitShapeTransition } from "@/components/creative-story-components";
 import { InformationScrollStory } from "@/components/information-scroll-story";
@@ -28,9 +27,9 @@ const capabilities = [
 ];
 
 const proofVideos = [
-  { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "01 / Short-form edit", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
-  { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "02 / Interview edit", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
-  { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "03 / Social transformation", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
+  { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "Short-form edit", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
+  { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "Interview edit", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
+  { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "Social transformation", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
 ];
 
 const process = [
@@ -62,7 +61,7 @@ function CreativeProductionPage() {
       <PageTransition /><CreativeSchema /><a className="skip-link" href="#main">Skip to Content</a><SiteHeader />
       <main id="main">
         <section className="creative-hero" aria-labelledby="creative-title">
-          <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video editing and production, motion graphics, CGI, rendering, and graphic design for brands that need distinctive, campaign-ready content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project <ArrowUpRight size={17} weight="light" /></a><a className="story-link" href="#capabilities">Explore Our Services <ArrowDown size={16} weight="light" /></a></div></div>
+          <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video editing and production, motion graphics, CGI, rendering, and graphic design for brands that need distinctive, campaign-ready content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a><a className="story-link" href="#selected-work">View Selected Work</a></div></div>
           <figure className="creative-hero-media"><img src="/assets/service-cards/create.jpg" alt="Creative production combining camera work, storyboards, motion, and CGI" width="960" height="1600" /></figure>
         </section>
 
@@ -85,17 +84,16 @@ function CreativeProductionPage() {
           outroHeading="Make every frame matter."
           outroCtaLabel="Discuss a Creative Project"
           outroCtaHref={whatsapp}
-          afterHeading="Video. CGI. Motion. Design."
-          afterBody="One connected creative direction can adapt across brand films, product visuals, campaign assets, social content, and promotional work."
+          scrollScreens={2.25}
         />
 
-        <section className="creative-growth section-pad" aria-labelledby="creative-growth-title"><div><p className="eyebrow">Related growth services</p><h2 id="creative-growth-title">Great creative needs<br />somewhere to go.</h2><p>Creative production works alongside the channels where your audience discovers, sees, and engages with your business.</p></div><div className="creative-growth-grid"><article><span>01 / Paid campaigns</span><h3>Performance Marketing</h3><p>Paid campaign support that connects audience targeting, campaign creative, and ongoing optimization to business objectives.</p><TransitionLink href="/services/performance-marketing">Explore Performance Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink></article><article><span>02 / Ongoing content</span><h3>Social Media Management</h3><p>Content planning, creative coordination, publishing, and ongoing social media support that helps your business communicate consistently.</p><TransitionLink href="/services/social-media-management">Explore Social Media Management <ArrowUpRight size={17} weight="light" /></TransitionLink></article></div></section>
+        <section className="creative-growth section-pad" aria-labelledby="creative-growth-title"><div><p className="eyebrow">Related growth services</p><h2 id="creative-growth-title">Put the work<br />where it performs.</h2><p>Connect finished creative to paid campaigns and ongoing social content.</p></div><div className="creative-growth-grid"><article><span>Paid campaigns</span><h3>Performance Marketing</h3><p>Campaign creative, audience targeting, and optimization tied to commercial goals.</p><TransitionLink href="/services/performance-marketing">Explore Performance Marketing</TransitionLink></article><article><span>Ongoing content</span><h3>Social Media Management</h3><p>Planning, creative coordination, publishing, and ongoing channel management.</p><TransitionLink href="/services/social-media-management">Explore Social Media Management</TransitionLink></article></div></section>
 
         <OrbitShapeTransition />
         <CreativeProcessStory process={process} />
         <CreativeFaq faq={faq} />
 
-        <section className="service-detail-closing section-pad"><p className="eyebrow">Ready to make it?</p><h2>Have an idea worth<br />bringing to life?</h2><p className="creative-closing-copy">Tell us what you're making, who it's for, and what the finished content needs to do.</p><a href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project <ArrowUpRight size={28} weight="light" /></a></section>
+        <section className="service-detail-closing section-pad"><p className="eyebrow">Ready to make it?</p><h2>Have an idea worth<br />bringing to life?</h2><p className="creative-closing-copy">Tell us what you're making, who it's for, and what the finished content needs to do.</p><a href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a></section>
       </main><SiteFooter />
     </div>
   );

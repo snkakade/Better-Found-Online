@@ -60,8 +60,7 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
   return (
     <section className="creative-proof section-pad" aria-labelledby="creative-proof-title">
       <header className="creative-proof-header">
-        <div><p className="eyebrow">Before / after</p><h2 id="creative-proof-title">The edit changes what people notice.</h2></div>
-        <p>Raw footage becomes paced, structured content through color, typography, graphics, sound-led timing, and platform-ready framing.</p>
+        <div><p className="eyebrow">Before / after</p><h2 id="creative-proof-title">See what the edit changes.</h2><p>Raw footage becomes clear, paced, platform-ready content.</p></div>
       </header>
       <div className="creative-proof-grid">
         {videos.map((video, index) => (
@@ -77,10 +76,9 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
 
 export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
   return (
-    <section className="creative-films section-pad" aria-labelledby="creative-films-title">
+    <section className="creative-films section-pad" id="selected-work" aria-labelledby="creative-films-title">
       <header className="creative-films-header">
         <div><p className="eyebrow">Selected motion work</p><h2 id="creative-films-title">Stories built to move.</h2></div>
-        <a className="primary-btn creative-films-cta" href={ctaHref} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a>
       </header>
       <div className="creative-films-reel">
         <figure className="creative-film creative-film-primary">
@@ -90,6 +88,7 @@ export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
           <InlineProjectVideo src="/assets/creative-work/campaign-film-tts.mp4" poster="/assets/creative-work/campaign-film-tts-poster.jpg" />
         </figure>
       </div>
+      <div className="creative-films-action"><a className="primary-btn creative-films-cta" href={ctaHref} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a></div>
     </section>
   );
 }
@@ -354,15 +353,19 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       updateActiveSlide();
     });
 
+    const slideTitlesElement = slideTitles.current;
+    const imgTopElement = imgTop.current;
+    const imgBottomElement = imgBottom.current;
+
     return () => {
       disposed = true;
       handleMediaHover.current = () => undefined;
       if (activeTimer) clearTimeout(activeTimer);
       if (gsapInstance) {
-        gsapInstance.killTweensOf(slideTitles.current);
-        gsapInstance.killTweensOf([...(imgTop.current?.children ?? []), ...(imgBottom.current?.children ?? [])]);
+        gsapInstance.killTweensOf(slideTitlesElement);
+        gsapInstance.killTweensOf([...(imgTopElement?.children ?? []), ...(imgBottomElement?.children ?? [])]);
       }
-      [imgTop.current, imgBottom.current].forEach((container) => {
+      [imgTopElement, imgBottomElement].forEach((container) => {
         container?.querySelectorAll("video").forEach((video) => video.pause());
       });
     };
@@ -379,7 +382,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         className="slider"
         role="region"
         aria-roledescription="carousel"
-        aria-label="Creative production video showcase. Click anywhere in the showcase to advance."
+        aria-label="Creative production video showcase. Select the showcase to advance."
         aria-live="polite"
         onClick={(event) => {
           if ((event.target as HTMLElement).closest("a")) return;
@@ -417,10 +420,9 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         <footer className="modular-slider-footer">
           <div className="links">
             <a href={item?.href ?? "/services"}>{item?.cta ?? "Explore the work"}</a>
-            <a href="https://www.linkedin.com/company/better-found-online" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <TransitionLink href="/services">All services</TransitionLink>
           </div>
-          <p><span>{item?.headline}</span><span>{String(active + 1).padStart(2, "0")} / 07 · Click anywhere to advance</span></p>
+          <p><span>{item?.headline}</span><span>{String(active + 1).padStart(2, "0")} / 07 - Select to advance</span></p>
         </footer>
       </div>
     </section>
