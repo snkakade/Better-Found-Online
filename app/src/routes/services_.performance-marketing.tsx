@@ -318,7 +318,6 @@ function PerformanceMarketingPage() {
             <p>Have a campaign to improve or a new growth goal in mind? Tell us what you sell, who you want to reach, and what&apos;s happening with your advertising today. We&apos;ll start with the problem worth solving.</p>
             <div className="performance-closing-actions">
               <TransitionLink href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={24} weight="light" /></TransitionLink>
-              <TransitionLink href="/#contact">Share Your Campaign Challenge <ArrowUpRight size={24} weight="light" /></TransitionLink>
             </div>
             <small className="performance-brand-signoff">Get found. Get chosen.</small>
           </div>

@@ -110,7 +110,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
         </section>
 
         <section className="service-detail-closing section-pad">
-          <p className="eyebrow">Start a conversation</p><h2>{data.cta}.</h2><a href={whatsapp} target="_blank" rel="noopener noreferrer">Tell Us What You&apos;re Making <ArrowUpRight size={28} weight="light" /></a>
+          <p className="eyebrow">Start a conversation</p><h2>{data.cta}.</h2><a href={whatsapp} target="_blank" rel="noopener noreferrer">{data.cta} <ArrowUpRight size={28} weight="light" /></a>
         </section>
       </main>
       <SiteFooter />

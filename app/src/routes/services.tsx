@@ -236,6 +236,9 @@ function ServicesPage() {
           ease: "servicesHop",
           stagger: 0.085,
         }, 4.82);
+
+        // Keep the signature reveal, but let the service offer become readable promptly.
+        timeline.timeScale(2.5);
       }
 
       if (!compactMotion) {

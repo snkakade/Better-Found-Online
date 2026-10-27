@@ -347,11 +347,6 @@ export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: bo
         <div className="footer-brand-block">
           <Brand large />
           <p>Websites, search, advertising, and creative work for service businesses and growing brands.</p>
-          <div className="footer-business-id">
-            <p>Qboid Businesses, trading as Better Found Online. Registered Micro enterprise in Maharashtra, India.</p>
-            <span>GSTIN 27HCOPK1131D1ZS</span>
-            <span>Udyam UDYAM-MH-26-1231498</span>
-          </div>
         </div>
         <nav className="footer-nav footer-explore" aria-label="Footer navigation">
           <p className="footer-label">Explore</p>
