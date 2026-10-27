@@ -68,25 +68,107 @@ export default {
       // keeping document requests in TanStack Start for server-rendered SEO.
       const url = new URL(request.url);
       const { pathname } = url;
+      const consoleHost = url.hostname === "console.betterfoundonline.com";
+      const publicWebsiteHost =
+        url.hostname === "betterfoundonline.com" || url.hostname === "www.betterfoundonline.com";
+      const isConsoleUiPath = pathname === "/console" || pathname.startsWith("/console/");
+      const isDocumentRequest = request.method === "GET" || request.method === "HEAD";
 
       if (pathname.startsWith("/api/console/")) {
         return applySecurityHeaders(await handleConsoleApi(request, env));
       }
 
-      if ((request.method === "GET" || request.method === "HEAD") && env.ASSETS) {
-        if (pathname === "/console") {
+      if (isDocumentRequest && publicWebsiteHost && isConsoleUiPath) {
+        return applySecurityHeaders(
+          new Response(null, {
+            status: 308,
+            headers: { location: "https://console.betterfoundonline.com/" },
+          }),
+        );
+      }
+
+      if (isDocumentRequest && consoleHost) {
+        if (
+          pathname === "/console" ||
+          pathname === "/console/" ||
+          pathname === "/console/shell" ||
+          pathname === "/console/shell.html" ||
+          pathname === "/index.html"
+        ) {
+          return applySecurityHeaders(
+            new Response(null, { status: 308, headers: { location: "/" } }),
+          );
+        }
+
+        if (pathname === "/robots.txt") {
+          return applySecurityHeaders(
+            new Response("User-agent: *\nDisallow: /\n", {
+              headers: {
+                "content-type": "text/plain; charset=utf-8",
+                "cache-control": "public, max-age=3600",
+                "x-robots-tag": "noindex, nofollow",
+              },
+            }),
+          );
+        }
+      }
+
+      if (isDocumentRequest && env.ASSETS) {
+        // Keep the legacy /console route available only in local/preview builds.
+        // Production website traffic is redirected to the dedicated subdomain above.
+        if (!consoleHost && !publicWebsiteHost && pathname === "/console") {
           return new Response(null, { status: 308, headers: { location: "/console/" } });
         }
-        const consoleHost = url.hostname === "console.betterfoundonline.com";
-        if (pathname === "/console/" || (consoleHost && (pathname === "/" || pathname === "/index.html"))) {
+
+        if (
+          (!consoleHost && !publicWebsiteHost && pathname === "/console/") ||
+          (consoleHost && pathname === "/")
+        ) {
           const assetUrl = new URL(request.url);
-          assetUrl.pathname = "/console/shell.html";
+          // Fetch the clean asset URL so Pages does not leak its internal
+          // /console/shell route into the browser address bar.
+          assetUrl.pathname = "/console/shell";
           const response = await env.ASSETS.fetch(new Request(assetUrl, request));
           const headers = new Headers(response.headers);
           headers.set("cache-control", "no-store");
           headers.set("x-robots-tag", "noindex, nofollow");
-          return applySecurityHeaders(new Response(response.body, { status: response.status, statusText: response.statusText, headers }), { allowMicrophone: true });
+          return applySecurityHeaders(
+            new Response(response.body, {
+              status: response.status,
+              statusText: response.statusText,
+              headers,
+            }),
+            { allowMicrophone: true },
+          );
         }
+
+        if (consoleHost && pathname === "/console/sw.js") {
+          const response = await env.ASSETS.fetch(request);
+          const headers = new Headers(response.headers);
+          headers.set("service-worker-allowed", "/");
+          return applySecurityHeaders(
+            new Response(response.body, {
+              status: response.status,
+              statusText: response.statusText,
+              headers,
+            }),
+          );
+        }
+      }
+
+      // The console subdomain belongs exclusively to the CRM. Do not expose
+      // the marketing site's routes there; keep only the console's static files
+      // and the shared brand/font assets used by its shell.
+      if (
+        isDocumentRequest &&
+        consoleHost &&
+        pathname !== "/" &&
+        !pathname.startsWith("/console/") &&
+        !pathname.startsWith("/assets/")
+      ) {
+        return applySecurityHeaders(
+          new Response(null, { status: 308, headers: { location: "/" } }),
+        );
       }
 
       const isStaticAsset =

@@ -1,10 +1,10 @@
 {
-  "id": "/console/",
+  "id": "/",
   "name": "Better Found Online Console",
   "short_name": "BFO Console",
   "description": "Private communications administration for calls, messages and contacts.",
-  "start_url": "/console/",
-  "scope": "/console/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",

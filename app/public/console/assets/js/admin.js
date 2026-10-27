@@ -1418,7 +1418,10 @@
     $("#install-app").addEventListener("click", async () => { if (!state.deferredInstall) return; state.deferredInstall.prompt(); await state.deferredInstall.userChoice; state.deferredInstall = null; $("#install-app").hidden = true; });
   }
 
-  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("/console/sw.js", { scope: "/console/" }).catch(() => {});
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    const scope = location.hostname === "console.betterfoundonline.com" ? "/" : "/console/";
+    navigator.serviceWorker.register("/console/sw.js", { scope }).catch(() => {});
+  }
   setupSettingsTabs();
   registerEvents();
   verifySession();
