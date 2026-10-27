@@ -38,10 +38,37 @@ const E164 = /^\+[1-9]\d{7,14}$/;
 const PASSWORD_HASH_ITERATIONS = 100000;
 const roles = ["agent", "manager", "admin"] as const;
 const permissionsByRole = {
-  agent: ["send_messages", "place_calls", "view_contacts"],
-  manager: ["send_messages", "place_calls", "view_contacts", "view_team_performance"],
-  admin: ["send_messages", "place_calls", "view_contacts", "view_team_performance", "manage_users", "manage_compliance", "manage_billing"],
+  agent: ["send_messages", "place_calls", "run_call_preflight", "record_do_not_call", "view_contacts"],
+  manager: ["send_messages", "place_calls", "run_call_preflight", "record_do_not_call", "view_contacts", "view_team_performance"],
+  admin: ["send_messages", "place_calls", "run_call_preflight", "record_do_not_call", "view_contacts", "view_team_performance", "manage_users", "manage_compliance", "manage_billing"],
 } as const;
+
+const allowedTimezones = new Set([
+  "America/New_York", "America/Chicago", "America/Denver", "America/Phoenix",
+  "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu",
+]);
+const recipientTypes = new Set(["business", "consumer", "unknown"]);
+const relationships = new Set(["cold_business", "existing_customer", "requested_call", "other"]);
+const screeningBases = new Set(["not_screened", "business_line_verified", "screened_clear", "listed_do_not_call"]);
+const consentTypes = new Set(["none", "express", "express_written"]);
+
+type ComplianceSettingsRow = {
+  legal_seller_name: string;
+  trading_name: string;
+  approved_caller_id: string;
+  opening_script: string;
+  recording_notice_script: string;
+  calls_enabled: number;
+  ai_voice_enabled: number;
+  recording_enabled: number;
+  default_window_start: number;
+  default_window_end: number;
+  record_retention_years: number;
+  national_dnc_checked_at: string | null;
+  state_policy_reviewed_at: string | null;
+  ai_voice_counsel_reviewed_at: string | null;
+  updated_at: string;
+};
 
 function json(value: unknown, status = 200, extraHeaders: HeadersInit = {}) {
   return new Response(JSON.stringify(value), {
@@ -52,6 +79,59 @@ function json(value: unknown, status = 200, extraHeaders: HeadersInit = {}) {
 
 function cleanPhone(value: unknown) {
   return String(value ?? "").replace(/[\s().-]/g, "");
+}
+
+function cleanText(value: unknown, maxLength = 500) {
+  return String(value ?? "").trim().slice(0, maxLength);
+}
+
+function minutesLabel(value: number) {
+  const hour = Math.floor(value / 60);
+  const minute = value % 60;
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
+}
+
+function recipientLocalTime(timezone: string, at = new Date()) {
+  if (!allowedTimezones.has(timezone)) return null;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(at);
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const minutes = Number(value.hour) * 60 + Number(value.minute);
+  return {
+    minutes,
+    label: `${value.month}/${value.day}/${value.year}, ${minutesLabel(minutes)}`,
+  };
+}
+
+function complianceSettingsJson(settings: ComplianceSettingsRow, callerIdFallback = "") {
+  return {
+    legalSellerName: settings.legal_seller_name,
+    tradingName: settings.trading_name,
+    sellerIdentity: `${settings.legal_seller_name}, trading as ${settings.trading_name}`,
+    approvedCallerId: settings.approved_caller_id || callerIdFallback,
+    openingScript: settings.opening_script,
+    recordingNoticeScript: settings.recording_notice_script,
+    callsEnabled: Boolean(settings.calls_enabled),
+    aiVoiceEnabled: Boolean(settings.ai_voice_enabled),
+    recordingEnabled: Boolean(settings.recording_enabled),
+    defaultWindowStart: settings.default_window_start,
+    defaultWindowEnd: settings.default_window_end,
+    defaultWindowLabel: `${minutesLabel(settings.default_window_start)} to ${minutesLabel(settings.default_window_end)} recipient local time`,
+    recordRetentionYears: settings.record_retention_years,
+    nationalDncCheckedAt: settings.national_dnc_checked_at,
+    statePolicyReviewedAt: settings.state_policy_reviewed_at,
+    aiVoiceCounselReviewedAt: settings.ai_voice_counsel_reviewed_at,
+    updatedAt: settings.updated_at,
+  };
 }
 
 function bytesToBase64(bytes: Uint8Array) {
@@ -543,7 +623,222 @@ async function handleLeads(request: Request, env: ConsoleEnv, user: Authenticate
   return json({ error: "Method not allowed" }, 405);
 }
 
-async function handleCalls(request: Request, env: ConsoleEnv) {
+async function readComplianceSettings(env: ConsoleEnv) {
+  const db = requireDb(env);
+  const settings = await db.prepare("SELECT * FROM call_compliance_settings WHERE id = 1").first<ComplianceSettingsRow>();
+  if (settings) return settings;
+  await db.prepare("INSERT OR IGNORE INTO call_compliance_settings (id, approved_caller_id) VALUES (1, ?)")
+    .bind(env.TWILIO_CALLER_ID || "+15707077078").run();
+  const created = await db.prepare("SELECT * FROM call_compliance_settings WHERE id = 1").first<ComplianceSettingsRow>();
+  if (!created) throw new Error("Calling compliance settings are unavailable");
+  return created;
+}
+
+async function logComplianceEvent(env: ConsoleEnv, userId: number | null, eventType: string, phone: string | null, details: Record<string, unknown>) {
+  await requireDb(env).prepare(
+    "INSERT INTO call_compliance_events (id,user_id,phone,event_type,details_json) VALUES (?,?,?,?,?)",
+  ).bind(crypto.randomUUID(), userId, phone, eventType, JSON.stringify(details)).run();
+}
+
+async function handleCallCompliance(request: Request, env: ConsoleEnv, actor: AuthenticatedUser) {
+  const db = requireDb(env);
+  if (request.method === "GET") {
+    const [settings, states, recent, counts] = await Promise.all([
+      readComplianceSettings(env),
+      db.prepare("SELECT state_code,state_name,status,window_start,window_end,notes,reviewed_at FROM call_state_policies ORDER BY state_name").all(),
+      db.prepare(`SELECT e.*, u.display_name FROM call_compliance_events e LEFT JOIN console_users u ON u.id=e.user_id ORDER BY e.created_at DESC LIMIT 20`).all(),
+      db.prepare(`SELECT
+        (SELECT COUNT(*) FROM console_suppressions) AS suppressed,
+        (SELECT COUNT(*) FROM call_recipient_profiles WHERE recipient_type='business') AS verified_businesses,
+        (SELECT COUNT(*) FROM call_state_policies WHERE status='approved') AS states_approved,
+        (SELECT COUNT(*) FROM call_state_policies WHERE status='review_required') AS states_pending,
+        (SELECT COUNT(*) FROM call_preflight_logs WHERE decision='blocked' AND created_at >= datetime('now','-30 days')) AS blocked_30d`).first(),
+    ]);
+    return json({
+      settings: complianceSettingsJson(settings, env.TWILIO_CALLER_ID || ""),
+      states: states.results,
+      recentEvents: recent.results,
+      counts: counts || {},
+    });
+  }
+  if (request.method !== "PATCH") return json({ error: "Method not allowed" }, 405);
+  if (!roleAtLeast(actor, "admin")) return json({ error: "Administrator access required" }, 403);
+  const body = await readJson(request);
+  if (!body) return json({ error: "Invalid settings payload" }, 400);
+
+  const stateCode = cleanText(body.stateCode, 2).toUpperCase();
+  if (stateCode) {
+    const status = cleanText(body.status, 32);
+    if (!new Set(["approved", "review_required", "blocked"]).has(status)) return json({ error: "Invalid state policy status" }, 400);
+    const start = Number(body.windowStart);
+    const end = Number(body.windowEnd);
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > 1439 || start >= end) return json({ error: "Use a valid local calling window" }, 400);
+    const result = await db.prepare(`UPDATE call_state_policies SET status=?,window_start=?,window_end=?,notes=?,reviewed_by=?,reviewed_at=datetime('now'),updated_at=datetime('now') WHERE state_code=?`)
+      .bind(status, start, end, cleanText(body.notes, 1000), actor.id, stateCode).run();
+    if (!result.meta.changes) return json({ error: "State policy not found" }, 404);
+    await logComplianceEvent(env, actor.id, "state_policy_updated", null, { stateCode, status, windowStart: start, windowEnd: end });
+    return json({ ok: true });
+  }
+
+  const current = await readComplianceSettings(env);
+  const callsEnabled = body.callsEnabled === undefined ? current.calls_enabled : body.callsEnabled ? 1 : 0;
+  const aiVoiceEnabled = body.aiVoiceEnabled === undefined ? current.ai_voice_enabled : body.aiVoiceEnabled ? 1 : 0;
+  const recordingEnabled = body.recordingEnabled === undefined ? current.recording_enabled : body.recordingEnabled ? 1 : 0;
+  const start = body.defaultWindowStart === undefined ? current.default_window_start : Number(body.defaultWindowStart);
+  const end = body.defaultWindowEnd === undefined ? current.default_window_end : Number(body.defaultWindowEnd);
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > 1439 || start >= end) return json({ error: "Use a valid recipient-local calling window" }, 400);
+  if (aiVoiceEnabled && !current.ai_voice_counsel_reviewed_at && body.aiVoiceCounselReviewed !== true) {
+    return json({ error: "Record legal approval before enabling AI or prerecorded voice" }, 409);
+  }
+  const openingScript = body.openingScript === undefined ? current.opening_script : cleanText(body.openingScript, 1200);
+  const recordingNotice = body.recordingNoticeScript === undefined ? current.recording_notice_script : cleanText(body.recordingNoticeScript, 500);
+  if (openingScript.length < 20) return json({ error: "The approved opening must clearly identify the caller and business" }, 400);
+  await db.prepare(`UPDATE call_compliance_settings SET
+    opening_script=?,recording_notice_script=?,calls_enabled=?,ai_voice_enabled=?,recording_enabled=?,
+    default_window_start=?,default_window_end=?,record_retention_years=5,
+    national_dnc_checked_at=CASE WHEN ?=1 THEN datetime('now') ELSE national_dnc_checked_at END,
+    state_policy_reviewed_at=CASE WHEN ?=1 THEN datetime('now') ELSE state_policy_reviewed_at END,
+    ai_voice_counsel_reviewed_at=CASE WHEN ?=1 THEN datetime('now') ELSE ai_voice_counsel_reviewed_at END,
+    updated_by=?,updated_at=datetime('now') WHERE id=1`)
+    .bind(openingScript, recordingNotice, callsEnabled, aiVoiceEnabled, recordingEnabled, start, end,
+      body.nationalDncReviewed === true ? 1 : 0, body.statePolicyReviewed === true ? 1 : 0,
+      body.aiVoiceCounselReviewed === true ? 1 : 0, actor.id).run();
+  await logComplianceEvent(env, actor.id, "calling_policy_updated", null, {
+    callsEnabled: Boolean(callsEnabled), aiVoiceEnabled: Boolean(aiVoiceEnabled), recordingEnabled: Boolean(recordingEnabled), windowStart: start, windowEnd: end,
+  });
+  return json({ settings: complianceSettingsJson(await readComplianceSettings(env), env.TWILIO_CALLER_ID || "") });
+}
+
+async function handleSuppressions(request: Request, env: ConsoleEnv, actor: AuthenticatedUser) {
+  const db = requireDb(env);
+  if (request.method === "GET") {
+    const result = await db.prepare("SELECT phone,reason,source,created_at FROM console_suppressions ORDER BY created_at DESC").all();
+    return json({ suppressions: result.results });
+  }
+  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const body = await readJson(request);
+  const phone = cleanPhone(body?.phone);
+  if (!E164.test(phone)) return json({ error: "Enter a valid international phone number" }, 400);
+  const reason = cleanText(body?.reason || "Do-not-call request", 300);
+  const source = cleanText(body?.source || "console", 80);
+  await db.batch([
+    db.prepare("INSERT OR REPLACE INTO console_suppressions (phone,reason,source,created_at) VALUES (?,?,?,datetime('now'))").bind(phone, reason, source),
+    db.prepare("UPDATE console_contacts SET consent_status='opted_out',updated_at=datetime('now') WHERE phone=?").bind(phone),
+  ]);
+  await logComplianceEvent(env, actor.id, "do_not_call_recorded", phone, { reason, source });
+  return json({ ok: true, phone }, 201);
+}
+
+async function handleCallPreflight(request: Request, env: ConsoleEnv, actor: AuthenticatedUser) {
+  const db = requireDb(env);
+  const url = new URL(request.url);
+  if (request.method === "GET") {
+    const phone = cleanPhone(url.searchParams.get("phone"));
+    if (!E164.test(phone)) return json({ error: "Enter a valid international phone number" }, 400);
+    const [profile, suppression, settings] = await Promise.all([
+      db.prepare("SELECT * FROM call_recipient_profiles WHERE phone=?").bind(phone).first(),
+      db.prepare("SELECT reason,source,created_at FROM console_suppressions WHERE phone=?").bind(phone).first(),
+      readComplianceSettings(env),
+    ]);
+    return json({ profile, suppressed: suppression || null, settings: complianceSettingsJson(settings, env.TWILIO_CALLER_ID || "") });
+  }
+  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const body = await readJson(request);
+  const phone = cleanPhone(body?.phone);
+  const recipientType = cleanText(body?.recipientType, 20);
+  const relationship = cleanText(body?.relationship || "cold_business", 30);
+  const screeningBasis = cleanText(body?.screeningBasis || "not_screened", 40);
+  const consentType = cleanText(body?.consentType || "none", 30);
+  const stateCode = cleanText(body?.stateCode, 2).toUpperCase();
+  const timezone = cleanText(body?.timezone, 64);
+  const companyName = cleanText(body?.companyName, 200);
+  const callMode = body?.callMode === "ai_or_prerecorded" ? "ai_or_prerecorded" : "live_agent";
+  const recordingMode = body?.recordingMode === "on" ? "on" : "off";
+  const consentEvidence = cleanText(body?.consentEvidence, 1200);
+  const agentAttested = body?.agentAttested === true;
+  if (!E164.test(phone)) return json({ error: "Enter a valid international phone number" }, 400);
+  if (!recipientTypes.has(recipientType) || !relationships.has(relationship) || !screeningBases.has(screeningBasis) || !consentTypes.has(consentType)) return json({ error: "Complete the recipient classification" }, 400);
+  if (!stateCode || !allowedTimezones.has(timezone)) return json({ error: "Choose the recipient state and time zone" }, 400);
+
+  const [settings, suppression, statePolicy, recentCalls] = await Promise.all([
+    readComplianceSettings(env),
+    db.prepare("SELECT reason,source,created_at FROM console_suppressions WHERE phone=?").bind(phone).first<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM call_state_policies WHERE state_code=?").bind(stateCode).first<Record<string, unknown>>(),
+    db.prepare("SELECT COUNT(*) AS count FROM outreach_events WHERE channel='call' AND direction='outbound' AND counterpart=? AND created_at>=datetime('now','-7 days')").bind(phone).first<{ count: number }>(),
+  ]);
+  if (!statePolicy) return json({ error: "Choose a valid US state" }, 400);
+  const local = recipientLocalTime(timezone);
+  if (!local) return json({ error: "Could not determine recipient local time" }, 400);
+  const windowStart = Number(statePolicy.status === "approved" ? statePolicy.window_start : settings.default_window_start);
+  const windowEnd = Number(statePolicy.status === "approved" ? statePolicy.window_end : settings.default_window_end);
+  const reasons: string[] = [];
+  const warnings: string[] = [];
+
+  if (!settings.calls_enabled) reasons.push("Outbound calling is paused by an administrator.");
+  if (suppression) reasons.push("This number is on the internal do-not-call list.");
+  if (screeningBasis === "listed_do_not_call") reasons.push("The recipient is marked do not call.");
+  if (statePolicy.status === "blocked") reasons.push(`${statePolicy.state_name} is blocked by the current calling policy.`);
+  if (local.minutes < windowStart || local.minutes >= windowEnd) reasons.push(`Recipient local time is outside the ${minutesLabel(windowStart)} to ${minutesLabel(windowEnd)} calling window.`);
+  if (!agentAttested) reasons.push("Confirm the truthful identity and business-purpose statement before calling.");
+  if (recipientType === "unknown") reasons.push("Verify whether this is a business or consumer line.");
+  if (recipientType === "business" && !companyName) reasons.push("Record the business name before calling.");
+  if (recipientType === "business" && !new Set(["business_line_verified", "screened_clear"]).has(screeningBasis)) reasons.push("Document the business line or completed screening.");
+  if (recipientType === "consumer" && screeningBasis !== "screened_clear") reasons.push("Consumer lines require a current do-not-call screening result.");
+  if (callMode === "ai_or_prerecorded") {
+    if (!settings.ai_voice_enabled || !settings.ai_voice_counsel_reviewed_at) reasons.push("AI and prerecorded voice are disabled until legal approval is recorded.");
+    if (consentType !== "express_written" || !consentEvidence || body?.aiVoiceConsent !== true) reasons.push("AI or prerecorded voice requires documented prior express written consent.");
+  }
+  if (recordingMode === "on") {
+    if (!settings.recording_enabled) reasons.push("Call recording is disabled by workspace policy.");
+    if (body?.recordingConsent !== true) reasons.push("Recording requires the configured notice and recipient consent.");
+  }
+  if (statePolicy.status === "review_required") warnings.push(`${statePolicy.state_name} has not been marked reviewed by an administrator.`);
+  if (recipientType === "business" && screeningBasis === "business_line_verified") warnings.push("Federal DNC coverage generally excludes business numbers, but state rules and number type still require review.");
+  if (recipientType === "consumer" && (!settings.national_dnc_checked_at || Date.now() - new Date(settings.national_dnc_checked_at).getTime() > 31 * 86400000)) warnings.push("The recorded National DNC review is older than 31 days or missing.");
+  if (Number(recentCalls?.count || 0) >= 3) warnings.push(`${recentCalls?.count || 0} outbound attempts were logged for this number in the last 7 days.`);
+
+  const now = new Date().toISOString();
+  await db.prepare(`INSERT INTO call_recipient_profiles
+    (phone,recipient_type,company_name,us_state,timezone,relationship,screening_basis,screening_checked_at,consent_type,consent_obtained_at,consent_evidence,ai_voice_consent,recording_consent,business_verified_at,updated_by,updated_at)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))
+    ON CONFLICT(phone) DO UPDATE SET recipient_type=excluded.recipient_type,company_name=excluded.company_name,us_state=excluded.us_state,timezone=excluded.timezone,relationship=excluded.relationship,screening_basis=excluded.screening_basis,screening_checked_at=excluded.screening_checked_at,consent_type=excluded.consent_type,consent_obtained_at=excluded.consent_obtained_at,consent_evidence=excluded.consent_evidence,ai_voice_consent=excluded.ai_voice_consent,recording_consent=excluded.recording_consent,business_verified_at=excluded.business_verified_at,updated_by=excluded.updated_by,updated_at=datetime('now')`)
+    .bind(phone, recipientType, companyName, stateCode, timezone, relationship, screeningBasis,
+      screeningBasis === "not_screened" ? null : now, consentType, consentType === "none" ? null : now,
+      consentEvidence, body?.aiVoiceConsent === true ? 1 : 0, body?.recordingConsent === true ? 1 : 0,
+      recipientType === "business" ? now : null, actor.id).run();
+
+  const preflightId = crypto.randomUUID();
+  const decision = reasons.length ? "blocked" : "allowed";
+  const sellerIdentity = `${settings.legal_seller_name}, trading as ${settings.trading_name}`;
+  await db.prepare(`INSERT INTO call_preflight_logs
+    (id,user_id,phone,recipient_type,company_name,state_code,timezone,recipient_local_time,relationship,screening_basis,call_mode,recording_mode,caller_id,seller_identity,decision,reasons_json,warnings_json,agent_attested,expires_at)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now','+10 minutes'))`)
+    .bind(preflightId, actor.id, phone, recipientType, companyName, stateCode, timezone, local.label, relationship, screeningBasis,
+      callMode, recordingMode, settings.approved_caller_id || env.TWILIO_CALLER_ID || "", sellerIdentity, decision,
+      JSON.stringify(reasons), JSON.stringify(warnings), agentAttested ? 1 : 0).run();
+  await logComplianceEvent(env, actor.id, `preflight_${decision}`, phone, { preflightId, recipientType, stateCode, callMode, recordingMode, reasons, warnings });
+  return json({
+    id: preflightId,
+    allowed: decision === "allowed",
+    expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(),
+    localTime: local.label,
+    callerId: settings.approved_caller_id || env.TWILIO_CALLER_ID || "",
+    sellerIdentity,
+    openingScript: settings.opening_script,
+    reasons,
+    warnings,
+    checks: [
+      { id: "suppression", label: "Internal DNC", status: suppression ? "blocked" : "passed", detail: suppression ? String(suppression.reason || "Do-not-call request") : "No internal suppression" },
+      { id: "identity", label: "Identity", status: agentAttested ? "passed" : "blocked", detail: sellerIdentity },
+      { id: "window", label: "Local time", status: local.minutes >= windowStart && local.minutes < windowEnd ? "passed" : "blocked", detail: local.label },
+      { id: "screening", label: "Recipient", status: reasons.some((reason) => /business|consumer|screening|line/i.test(reason)) ? "blocked" : warnings.length ? "warning" : "passed", detail: screeningBasis.replaceAll("_", " ") },
+      { id: "voice", label: "Voice mode", status: reasons.some((reason) => /voice|recording/i.test(reason)) ? "blocked" : "passed", detail: callMode === "live_agent" ? "Live agent" : "AI or prerecorded" },
+      { id: "state", label: "State policy", status: statePolicy.status === "approved" ? "passed" : statePolicy.status === "blocked" ? "blocked" : "warning", detail: `${statePolicy.state_name}: ${String(statePolicy.status).replaceAll("_", " ")}` },
+    ],
+  }, decision === "allowed" ? 201 : 409);
+}
+
+async function handleCalls(request: Request, env: ConsoleEnv, actor: AuthenticatedUser) {
   const db = requireDb(env); const url = new URL(request.url);
   const id = url.pathname.match(/^\/api\/console\/calls\/([^/]+)$/)?.[1];
   if (request.method === "GET") {
@@ -554,6 +849,13 @@ async function handleCalls(request: Request, env: ConsoleEnv) {
     const body = await readJson(request);
     await db.prepare(`UPDATE outreach_events SET disposition=?, notes=?, tags_json=?, lead_id=COALESCE(?,lead_id), updated_at=datetime('now') WHERE id=? AND channel='call'`)
       .bind(String(body?.disposition || ""), String(body?.notes || ""), JSON.stringify(body?.tags || []), body?.leadId || null, id).run();
+    if (body?.disposition === "do_not_call") {
+      const call = await db.prepare("SELECT counterpart FROM outreach_events WHERE id=? AND channel='call'").bind(id).first<{ counterpart: string }>();
+      if (call?.counterpart) {
+        await db.prepare("INSERT OR REPLACE INTO console_suppressions (phone,reason,source,created_at) VALUES (?,'Do-not-call request recorded after call','call_outcome',datetime('now'))").bind(call.counterpart).run();
+        await logComplianceEvent(env, actor.id, "do_not_call_recorded", call.counterpart, { source: "call_outcome", callId: id });
+      }
+    }
     if (body?.nextFollowUpAt && body?.leadId) await db.prepare(`INSERT INTO console_tasks (id,lead_id,assigned_to,created_by,title,due_at) VALUES (?,?,?,?,?,?)`).bind(crypto.randomUUID(), body.leadId, body?.assignedTo || null, body?.assignedTo || null, "Follow up after call", body.nextFollowUpAt).run();
     return json({ ok: true });
   }
@@ -586,12 +888,45 @@ async function handleVoiceWebhook(request: Request, env: ConsoleEnv) {
   const from = String(form.get("From") || "");
   const userId = Number(from.match(/^client:bfo_user_(\d+)$/)?.[1] || 0) || null;
   const callSid = String(form.get("CallSid") || "") || null;
+  const preflightId = String(form.get("PreflightId") || "");
   if (!E164.test(target)) return xml("<Response><Say>Invalid destination number.</Say></Response>", 400);
-  await requireDb(env).prepare(
-    "INSERT OR IGNORE INTO outreach_events (id, user_id, channel, direction, counterpart, twilio_sid, status) VALUES (?, ?, 'call', 'outbound', ?, ?, 'initiated')",
-  ).bind(crypto.randomUUID(), userId, target, callSid).run();
+  const db = requireDb(env);
+  const preflight = await db.prepare(`SELECT p.* FROM call_preflight_logs p
+    WHERE p.id=? AND p.phone=? AND p.user_id=? AND p.decision='allowed' AND p.expires_at>datetime('now')
+      AND NOT EXISTS (SELECT 1 FROM console_suppressions s WHERE s.phone=p.phone)`)
+    .bind(preflightId, target, userId).first<Record<string, unknown>>();
+  if (!preflight) {
+    await logComplianceEvent(env, userId, "outbound_call_blocked", target, { reason: "missing_or_expired_preflight", callSid });
+    return xml("<Response><Say>This call was blocked because its compliance review is missing or expired.</Say></Response>", 403);
+  }
+  await db.prepare(
+    `INSERT OR IGNORE INTO outreach_events
+      (id,user_id,channel,direction,counterpart,twilio_sid,status,call_preflight_id,caller_id_used,call_mode,recording_mode,seller_identity,recipient_local_time)
+      VALUES (?,?,'call','outbound',?,?,'initiated',?,?,?,?,?,?)`,
+  ).bind(crypto.randomUUID(), userId, target, callSid, preflightId, preflight.caller_id, preflight.call_mode, preflight.recording_mode, preflight.seller_identity, preflight.recipient_local_time).run();
+  await logComplianceEvent(env, userId, "outbound_call_started", target, { preflightId, callSid, callerId: preflight.caller_id });
   const callback = `${new URL(request.url).origin}/api/console/call-status-webhook`;
-  return xml(`<Response><Dial callerId="${escapeXml(env.TWILIO_CALLER_ID || "")}" answerOnBridge="true"><Number statusCallback="${escapeXml(callback)}" statusCallbackEvent="initiated ringing answered completed" statusCallbackMethod="POST">${escapeXml(target)}</Number></Dial></Response>`);
+  const recordingCallback = `${new URL(request.url).origin}/api/console/recording-status-webhook`;
+  const recordingAttributes = preflight.recording_mode === "on"
+    ? ` record="record-from-answer-dual" recordingStatusCallback="${escapeXml(recordingCallback)}" recordingStatusCallbackMethod="POST"`
+    : "";
+  return xml(`<Response><Dial callerId="${escapeXml(String(preflight.caller_id || env.TWILIO_CALLER_ID || ""))}" answerOnBridge="true"${recordingAttributes}><Number statusCallback="${escapeXml(callback)}" statusCallbackEvent="initiated ringing answered completed" statusCallbackMethod="POST">${escapeXml(target)}</Number></Dial></Response>`);
+}
+
+async function handleRecordingStatusWebhook(request: Request, env: ConsoleEnv) {
+  const form = await verifiedForm(request, env);
+  if (!form) return new Response("Invalid Twilio signature", { status: 403 });
+  const callSid = String(form.get("CallSid") || "");
+  const event = await requireDb(env).prepare("SELECT user_id,counterpart,call_preflight_id FROM outreach_events WHERE twilio_sid=? AND channel='call' LIMIT 1")
+    .bind(callSid).first<{ user_id: number | null; counterpart: string; call_preflight_id: string | null }>();
+  await logComplianceEvent(env, event?.user_id || null, "recording_status", event?.counterpart || null, {
+    callSid,
+    preflightId: event?.call_preflight_id || null,
+    recordingSid: String(form.get("RecordingSid") || ""),
+    status: String(form.get("RecordingStatus") || "unknown"),
+    durationSeconds: Number(form.get("RecordingDuration") || 0),
+  });
+  return new Response(null, { status: 204 });
 }
 
 async function handleSmsWebhook(request: Request, env: ConsoleEnv) {
@@ -663,6 +998,7 @@ export async function handleConsoleApi(request: Request, env: ConsoleEnv) {
     if (pathname === "/api/console/sms-webhook") return await handleSmsWebhook(request, env);
     if (pathname === "/api/console/sms-status-webhook") return await handleStatusWebhook(request, env, "sms");
     if (pathname === "/api/console/call-status-webhook") return await handleStatusWebhook(request, env, "call");
+    if (pathname === "/api/console/recording-status-webhook") return await handleRecordingStatusWebhook(request, env);
     if (pathname === "/api/console/voice-webhook") return await handleVoiceWebhook(request, env);
     if (pathname === "/api/console/incoming-voice-webhook") return await handleIncomingVoiceWebhook(request, env);
     const user = await authenticate(request, env);
@@ -674,7 +1010,10 @@ export async function handleConsoleApi(request: Request, env: ConsoleEnv) {
     if (pathname === "/api/console/presence") return await handlePresence(request, env, user);
     if (pathname === "/api/console/contacts") return await handleContacts(request, env, user);
     if (pathname === "/api/console/leads" || pathname.startsWith("/api/console/leads/")) return await handleLeads(request, env, user);
-    if (pathname === "/api/console/calls" || pathname.startsWith("/api/console/calls/")) return await handleCalls(request, env);
+    if (pathname === "/api/console/call-compliance") return await handleCallCompliance(request, env, user);
+    if (pathname === "/api/console/call-preflight") return await handleCallPreflight(request, env, user);
+    if (pathname === "/api/console/suppressions") return await handleSuppressions(request, env, user);
+    if (pathname === "/api/console/calls" || pathname.startsWith("/api/console/calls/")) return await handleCalls(request, env, user);
     if (pathname === "/api/console/tasks") return await handleTasks(request, env, user);
     if (pathname === "/api/console/performance") return await handlePerformance(request, env, user);
     if (pathname === "/api/console/users") return await handleUsers(request, env, user);

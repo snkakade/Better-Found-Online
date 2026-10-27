@@ -7,7 +7,6 @@
   const CONTACTS_KEY = "bfo_console_contacts_v2";
   const TEMPLATES_KEY = "bfo_console_templates_v2";
   const SCHEDULES_KEY = "bfo_console_schedules_v2";
-  const SUPPRESSIONS_KEY = "bfo_console_suppressions_v2";
   const AUDIO_INPUT_KEY = "bfo_console_audio_input";
   const AUDIO_OUTPUT_KEY = "bfo_console_audio_output";
   const LAST_DIALLED_KEY = "bfo_console_last_dialled";
@@ -39,14 +38,15 @@
     tasks: [],
     templates: load(TEMPLATES_KEY, seedTemplates),
     schedules: load(SCHEDULES_KEY, []),
-    suppressions: load(SUPPRESSIONS_KEY, []),
+    suppressions: [],
+    compliance: null,
     selectedConversation: null,
     messageFilter: "all",
     conversationPage: 1,
     contactPage: 1,
     scheduleFilter: "upcoming",
     deferredInstall: null,
-    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null, muted: false, micStream: null, micFrame: null, hiddenRecents: false }
+    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null, muted: false, micStream: null, micFrame: null, hiddenRecents: false, preflight: null, preflightPhone: "" }
   };
 
   function haptic(duration = 12) {
@@ -103,6 +103,7 @@
       const error = new Error(data.error || `Request failed (${response.status})`);
       error.code = data.code;
       error.status = response.status;
+      error.details = data;
       throw error;
     }
     return data;
@@ -188,6 +189,7 @@
     if (target === "scheduled") loadTasks();
     if (target === "performance") loadPerformance();
     if (target === "team") loadTeam();
+    if (target === "compliance") loadCompliance();
   }
 
   function roleRank(role) {
@@ -276,13 +278,15 @@
     refresh?.classList.add("ph-spin");
     $("#main-content")?.setAttribute("aria-busy", "true");
     try {
-      const [statusResult, messagesResult, contactsResult, leadsResult, callsResult, tasksResult] = await Promise.allSettled([
+      const [statusResult, messagesResult, contactsResult, leadsResult, callsResult, tasksResult, complianceResult, suppressionsResult] = await Promise.allSettled([
         api("/api/console/status"),
         api("/api/console/messages?pageSize=100"),
         api("/api/console/contacts"),
         api("/api/console/leads"),
         api("/api/console/calls"),
-        api("/api/console/tasks")
+        api("/api/console/tasks"),
+        api("/api/console/call-compliance"),
+        api("/api/console/suppressions")
       ]);
       if (statusResult.status === "fulfilled") state.smsStatus = statusResult.value;
       else state.smsStatus = {
@@ -298,6 +302,8 @@
       if (leadsResult.status === "fulfilled") state.leads = leadsResult.value.leads || [];
       if (callsResult.status === "fulfilled") state.calls = callsResult.value.calls || [];
       if (tasksResult.status === "fulfilled") state.tasks = tasksResult.value.tasks || [];
+      if (complianceResult.status === "fulfilled") state.compliance = complianceResult.value;
+      if (suppressionsResult.status === "fulfilled") state.suppressions = suppressionsResult.value.suppressions || [];
       syncOptOuts();
       updateStatusUI();
       renderMessages();
@@ -306,6 +312,8 @@
       renderLeads();
       renderCalls();
       renderTasks();
+      renderCompliance();
+      renderSuppressions();
     } finally {
       refresh?.classList.remove("ph-spin");
       $("#main-content")?.removeAttribute("aria-busy");
@@ -382,6 +390,16 @@
     catch (error) { toast("error", "Could not load calls", error.message); }
   }
 
+  async function loadCompliance() {
+    try {
+      state.compliance = await api("/api/console/call-compliance");
+      const result = await api("/api/console/suppressions");
+      state.suppressions = result.suppressions || [];
+      renderCompliance();
+      renderSuppressions();
+    } catch (error) { toast("error", "Could not load compliance controls", error.message); }
+  }
+
   function renderCalls() {
     const body = $("#call-history-body"); if (!body) return;
     const calls = filteredCalls();
@@ -390,7 +408,8 @@
     body.innerHTML = calls.map((call) => {
       const name = call.first_name ? `${call.first_name} ${call.last_name || ""}`.trim() : formatPhone(call.counterpart);
       const seconds = Number(call.duration_seconds || 0);
-      return `<tr><td>${escapeHtml(shortCallDate(call.created_at))}</td><td><strong>${escapeHtml(name)}</strong><small>${escapeHtml(call.company || call.counterpart)}</small></td><td>${call.direction === "inbound" ? "Inbound" : "Outbound"}</td><td>${escapeHtml(call.display_name || "Unassigned")}</td><td>${messageStatusBadge(call.status)}</td><td>${Math.floor(seconds / 60)}m ${String(seconds % 60).padStart(2, "0")}s</td><td>${escapeHtml((call.disposition || "Untagged").replaceAll("_", " "))}</td><td><div class="call-row-actions"><button data-call-back="${escapeHtml(call.counterpart)}" aria-label="Call back"><i class="ph ph-phone"></i></button><button data-copy-number="${escapeHtml(call.counterpart)}" aria-label="Copy number"><i class="ph ph-copy"></i></button><button data-tag-call="${call.id}" aria-label="Tag call"><i class="ph ph-tag"></i></button></div></td></tr>`;
+      const review = call.direction === "inbound" ? '<span class="badge">Inbound</span>' : call.call_preflight_id ? '<span class="badge badge-success"><i class="ph-bold ph-check"></i>Logged</span>' : '<span class="badge badge-warning">Legacy</span>';
+      return `<tr><td>${escapeHtml(shortCallDate(call.created_at))}</td><td><strong>${escapeHtml(name)}</strong><small>${escapeHtml(call.company || call.counterpart)}</small></td><td>${call.direction === "inbound" ? "Inbound" : "Outbound"}</td><td>${escapeHtml(call.display_name || "Unassigned")}</td><td>${messageStatusBadge(call.status)}</td><td>${review}</td><td>${Math.floor(seconds / 60)}m ${String(seconds % 60).padStart(2, "0")}s</td><td>${escapeHtml((call.disposition || "Untagged").replaceAll("_", " "))}</td><td><div class="call-row-actions"><button data-call-back="${escapeHtml(call.counterpart)}" aria-label="Call back"><i class="ph ph-phone"></i></button><button data-copy-number="${escapeHtml(call.counterpart)}" aria-label="Copy number"><i class="ph ph-copy"></i></button><button data-mark-dnc="${escapeHtml(call.counterpart)}" aria-label="Add to do-not-call list"><i class="ph ph-prohibit"></i></button><button data-tag-call="${call.id}" aria-label="Tag call"><i class="ph ph-tag"></i></button></div></td></tr>`;
     }).join("");
     renderCallMetrics();
     renderQuickCalls();
@@ -404,9 +423,9 @@
   }
 
   function shortCallDate(value) {
-    if (!value) return "—";
+    if (!value) return "Not available";
     const date = callTimestamp({ created_at: value });
-    if (Number.isNaN(date.getTime())) return "—";
+    if (Number.isNaN(date.getTime())) return "Not available";
     return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(date);
   }
 
@@ -485,17 +504,11 @@
     const commands = /^(stop|unsubscribe|cancel|end|quit)$/i;
     let changed = false;
     state.messages.filter((message) => message.direction === "inbound" && commands.test(String(message.body || "").trim())).forEach((message) => {
-      if (!state.suppressions.some((entry) => entry.phone === message.from)) {
-        state.suppressions.unshift({ id: crypto.randomUUID(), phone: message.from, reason: `Keyword: ${String(message.body).trim().toUpperCase()}`, source: "Inbound SMS", createdAt: message.sentAt || message.createdAt });
-        changed = true;
-      }
       const contact = state.contacts.find((item) => item.phone === message.from);
       if (contact && contact.consent !== "opted_out") { contact.consent = "opted_out"; changed = true; }
     });
     if (changed) {
-      save(SUPPRESSIONS_KEY, state.suppressions);
       save(CONTACTS_KEY, state.contacts);
-      renderSuppressions();
       renderContacts();
     }
   }
@@ -650,9 +663,9 @@
     }).join("");
     const counts = { opted_in: 0, pending: 0, opted_out: 0 };
     state.contacts.forEach((contact) => counts[contact.consent]++);
-    $("#consent-opted-in").textContent = counts.opted_in;
-    $("#consent-pending").textContent = counts.pending;
-    $("#consent-opted-out").textContent = counts.opted_out;
+    if ($("#consent-opted-in")) $("#consent-opted-in").textContent = counts.opted_in;
+    if ($("#consent-pending")) $("#consent-pending").textContent = counts.pending;
+    if ($("#consent-opted-out")) $("#consent-opted-out").textContent = counts.opted_out;
   }
 
   function renderTemplates() {
@@ -694,16 +707,73 @@
     }));
   }
 
+  const minutesToInput = (minutes) => `${String(Math.floor(Number(minutes || 0) / 60)).padStart(2, "0")}:${String(Number(minutes || 0) % 60).padStart(2, "0")}`;
+  const inputToMinutes = (value) => { const [hours, minutes] = String(value || "00:00").split(":").map(Number); return hours * 60 + minutes; };
+
+  function renderCompliance() {
+    const result = state.compliance;
+    if (!result?.settings) return;
+    const settings = result.settings;
+    const counts = result.counts || {};
+    $("#calls-enabled").checked = settings.callsEnabled;
+    $("#ai-voice-enabled").checked = settings.aiVoiceEnabled;
+    $("#recording-enabled").checked = settings.recordingEnabled;
+    $("#calling-window-start").value = minutesToInput(settings.defaultWindowStart);
+    $("#calling-window-end").value = minutesToInput(settings.defaultWindowEnd);
+    $("#opening-script").value = settings.openingScript || "";
+    $("#recording-notice").value = settings.recordingNoticeScript || "";
+    $("#compliance-seller").textContent = settings.sellerIdentity;
+    $("#compliance-caller-id").textContent = formatPhone(settings.approvedCallerId);
+    $("#compliance-retention").textContent = `${settings.recordRetentionYears} years`;
+    $("#policy-updated-at").textContent = settings.updatedAt ? `Updated ${relativeTime(settings.updatedAt)}` : "Not reviewed";
+    $("#compliance-calls-status").textContent = settings.callsEnabled ? "Enabled with preflight" : "Paused";
+    $("#compliance-calls-dot").className = `status-indicator ${settings.callsEnabled ? "" : "status-warning"}`;
+    $("#compliance-dnc-count").textContent = `${Number(counts.suppressed || 0)} records`;
+    $("#compliance-states-status").textContent = `${Number(counts.states_approved || 0)} approved, ${Number(counts.states_pending || 0)} pending`;
+    $("#compliance-states-dot").className = `status-indicator ${Number(counts.states_pending || 0) ? "status-warning" : ""}`;
+    $("#compliance-ai-status").textContent = settings.aiVoiceEnabled ? "Enabled with consent gate" : "Disabled";
+    $("#compliance-ai-dot").className = `status-indicator ${settings.aiVoiceEnabled ? "status-warning" : ""}`;
+    $("#call-policy-seller").textContent = settings.tradingName;
+    $("#call-policy-caller-id").textContent = formatPhone(settings.approvedCallerId);
+    $("#call-policy-mode").textContent = `Live agent, ${settings.recordingEnabled ? "recording available" : "not recorded"}`;
+    const callingNeedsReview = !settings.callsEnabled || Number(counts.states_pending || 0) > 0;
+    $("#settings-calling-dot").className = `status-indicator ${callingNeedsReview ? "status-warning" : ""}`;
+    $("#settings-calling-status").textContent = !settings.callsEnabled ? "Outbound calls paused" : Number(counts.states_pending || 0) ? `${Number(counts.states_pending)} state reviews pending` : "Policy reviewed";
+    $(".nav-alert").hidden = Boolean(state.smsStatus?.messaging?.enabled) && !callingNeedsReview;
+
+    const stateSelect = $("#state-policy-select");
+    const preflightState = $("#preflight-state");
+    const current = stateSelect.value;
+    const options = (result.states || []).map((item) => `<option value="${escapeHtml(item.state_code)}">${escapeHtml(item.state_name)}</option>`).join("");
+    stateSelect.innerHTML = options;
+    preflightState.innerHTML = `<option value="">Select</option>${options}`;
+    if (current && [...stateSelect.options].some((option) => option.value === current)) stateSelect.value = current;
+    syncStatePolicyForm();
+
+    const events = result.recentEvents || [];
+    $("#compliance-audit-list").innerHTML = events.length ? events.map((event) => `<article><span class="audit-icon"><i class="ph ${event.event_type.includes("blocked") || event.event_type.includes("do_not_call") ? "ph-prohibit" : "ph-shield-check"}"></i></span><div><strong>${escapeHtml(event.event_type.replaceAll("_", " "))}</strong><small>${escapeHtml([event.phone ? formatPhone(event.phone) : "Workspace", event.display_name || "System"].join(" · "))}</small></div><time>${escapeHtml(relativeTime(event.created_at))}</time></article>`).join("") : '<p class="compact-empty">No compliance events</p>';
+  }
+
+  function syncStatePolicyForm() {
+    const selected = state.compliance?.states?.find((item) => item.state_code === $("#state-policy-select")?.value) || state.compliance?.states?.[0];
+    if (!selected) return;
+    $("#state-policy-select").value = selected.state_code;
+    $("#state-policy-status").value = selected.status;
+    $("#state-window-start").value = minutesToInput(selected.window_start);
+    $("#state-window-end").value = minutesToInput(selected.window_end);
+    $("#state-policy-notes").value = selected.notes || "";
+    const badge = $("#state-policy-badge");
+    badge.className = `badge ${selected.status === "approved" ? "badge-success" : selected.status === "blocked" ? "badge-danger" : "badge-warning"}`;
+    badge.textContent = selected.status.replaceAll("_", " ");
+  }
+
   function renderSuppressions() {
-    $("#suppression-empty").hidden = state.suppressions.length > 0;
-    $("#suppression-table-body").closest(".responsive-table").hidden = state.suppressions.length === 0;
-    $("#suppression-table-body").innerHTML = state.suppressions.map((entry) => `<tr><td>${escapeHtml(formatPhone(entry.phone))}</td><td>${escapeHtml(entry.reason)}</td><td>${escapeHtml(entry.source)}</td><td>${escapeHtml(fullDate(entry.createdAt))}</td><td><button class="icon-button" data-remove-suppression="${escapeHtml(entry.id)}" aria-label="Remove suppression"><i class="ph ph-trash"></i></button></td></tr>`).join("");
-    $$("[data-remove-suppression]").forEach((button) => button.addEventListener("click", () => {
-      state.suppressions = state.suppressions.filter((entry) => entry.id !== button.dataset.removeSuppression);
-      save(SUPPRESSIONS_KEY, state.suppressions);
-      renderSuppressions();
-      toast("success", "Number removed from suppression list");
-    }));
+    const empty = $("#suppression-empty");
+    const body = $("#suppression-table-body");
+    if (!empty || !body) return;
+    empty.hidden = state.suppressions.length > 0;
+    body.closest(".responsive-table").hidden = state.suppressions.length === 0;
+    body.innerHTML = state.suppressions.map((entry) => `<tr><td>${escapeHtml(formatPhone(entry.phone))}</td><td>${escapeHtml(entry.reason)}</td><td>${escapeHtml(entry.source)}</td><td>${escapeHtml(fullDate(entry.created_at || entry.createdAt))}</td></tr>`).join("");
   }
 
   function renderAll() {
@@ -716,6 +786,7 @@
     renderLeads();
     renderCalls();
     renderTasks();
+    renderCompliance();
   }
 
   function openDialog(dialog) {
@@ -846,7 +917,7 @@
         tags: $("#call-tags").value.split(",").map((tag) => tag.trim()).filter(Boolean), notes: $("#call-notes").value.trim(),
         nextFollowUpAt: $("#call-follow-up").value ? new Date($("#call-follow-up").value).toISOString() : null, assignedTo: state.user?.id
       }) });
-      $("#call-outcome-dialog").close(); event.currentTarget.reset(); await Promise.all([loadCalls(), loadTasks()]); toast("success", "Call outcome saved");
+      $("#call-outcome-dialog").close(); event.currentTarget.reset(); await Promise.all([loadCalls(), loadTasks(), loadCompliance()]); toast("success", "Call outcome saved");
     } catch (error) { toast("error", "Could not save call outcome", error.message); }
   }
 
@@ -860,15 +931,22 @@
     toast("success", "Template saved");
   }
 
-  function addSuppression() {
+  async function recordSuppression(phone, reason = "Manual do-not-call", source = "admin_console") {
+    await api("/api/console/suppressions", { method: "POST", body: JSON.stringify({ phone, reason, source }) });
+    const result = await api("/api/console/suppressions");
+    state.suppressions = result.suppressions || [];
+    renderSuppressions();
+  }
+
+  async function addSuppression() {
     const phone = window.prompt("Phone number in international format, for example +12125550142");
     if (!phone) return;
     const normalized = phone.replace(/[\s().-]/g, "");
     if (!/^\+[1-9]\d{7,14}$/.test(normalized)) return toast("error", "Enter a valid international phone number");
-    state.suppressions.unshift({ id: crypto.randomUUID(), phone: normalized, reason: "Manual opt-out", source: "Admin portal", createdAt: new Date().toISOString() });
-    save(SUPPRESSIONS_KEY, state.suppressions);
-    renderSuppressions();
-    toast("success", "Number added to suppression list");
+    try {
+      await recordSuppression(normalized);
+      toast("success", "Number added to the do-not-call list");
+    } catch (error) { toast("error", "Could not record do-not-call", error.message); }
   }
 
   function updateNetworkStatus() {
@@ -976,19 +1054,127 @@
 
   function updateCallButton() {
     const number = normalizedDialNumber();
+    if (state.voice.preflightPhone && state.voice.preflightPhone !== number) resetCallPreflight();
     $("#call-button").disabled = !/^\+[1-9]\d{7,14}$/.test(number) || Boolean(state.voice.call);
     const match = state.leads.find((lead) => lead.phone === number) || state.contacts.find((contact) => contact.phone === number);
     const name = match ? `${match.first_name || match.firstName || ""} ${match.last_name || match.lastName || ""}`.trim() : "";
     $("#dial-contact-match").textContent = name ? [name, match.company].filter(Boolean).join(" · ") : "No contact selected";
   }
 
-  async function placeCall() {
+  function resetCallPreflight() {
+    state.voice.preflight = null;
+    state.voice.preflightPhone = "";
+    [["#preflight-recipient", "Review"], ["#preflight-time", "Review"], ["#preflight-dnc", "Review"], ["#preflight-voice", "Live"]].forEach(([selector, text]) => { const node = $(selector); if (node) { node.textContent = text; node.closest("span")?.removeAttribute("data-state"); } });
+    const buttonText = $("#call-button span"); if (buttonText) buttonText.textContent = "Review call";
+  }
+
+  function renderPreflightChecks(result) {
+    const byId = Object.fromEntries((result.checks || []).map((check) => [check.id, check]));
+    const set = (selector, check, fallback) => {
+      const node = $(selector); if (!node) return;
+      node.textContent = check?.detail || fallback;
+      node.closest("span")?.setAttribute("data-state", check?.status || "pending");
+    };
+    set("#preflight-recipient", byId.screening, result.allowed ? "Clear" : "Blocked");
+    set("#preflight-time", byId.window, result.localTime || "Unknown");
+    set("#preflight-dnc", byId.suppression, result.allowed ? "Clear" : "Blocked");
+    set("#preflight-voice", byId.voice, "Live agent");
+  }
+
+  function renderPreflightResult(result) {
+    const panel = $("#preflight-result");
+    const reasons = result.reasons || [];
+    const warnings = result.warnings || [];
+    panel.hidden = false;
+    panel.className = `preflight-result ${reasons.length ? "blocked" : warnings.length ? "warning" : "allowed"}`;
+    panel.innerHTML = `<strong><i class="ph-bold ph-${reasons.length ? "prohibit" : warnings.length ? "warning-circle" : "check-circle"}"></i>${reasons.length ? "Call blocked" : warnings.length ? "Allowed with review notes" : "Checks passed"}</strong>${[...reasons, ...warnings].map((item) => `<p>${escapeHtml(item)}</p>`).join("")}${result.openingScript && !reasons.length ? `<div class="approved-opening"><small>Approved opening</small><p>${escapeHtml(result.openingScript).replace("{{agent}}", state.user?.name || "the agent").replace("{{company}}", $("#preflight-company").value.trim() || "your business")}</p></div>` : ""}`;
+  }
+
+  async function openCallPreflight() {
     const to = normalizedDialNumber();
+    if (!/^\+[1-9]\d{7,14}$/.test(to)) return toast("warning", "Enter a valid phone number");
+    resetCallPreflight();
+    if (!state.compliance) await loadCompliance();
+    const form = $("#call-preflight-form");
+    form.reset();
+    $("#preflight-submit span").textContent = "Review and call";
+    $("#preflight-dialog-number").textContent = formatPhone(to);
+    $("#preflight-result").hidden = true;
+    const match = state.leads.find((lead) => lead.phone === to) || state.contacts.find((contact) => contact.phone === to);
+    $("#preflight-company").value = match?.company || "";
+    try {
+      const result = await api(`/api/console/call-preflight?phone=${encodeURIComponent(to)}`);
+      const profile = result.profile || {};
+      $("#preflight-recipient-type").value = profile.recipient_type || (match?.company ? "business" : "unknown");
+      $("#preflight-company").value = profile.company_name || match?.company || "";
+      $("#preflight-state").value = profile.us_state || "";
+      $("#preflight-timezone").value = profile.timezone || "";
+      $("#preflight-relationship").value = profile.relationship || "cold_business";
+      $("#preflight-screening").value = result.suppressed ? "listed_do_not_call" : profile.screening_basis || "not_screened";
+      $("#preflight-consent-type").value = profile.consent_type || "none";
+      $("#preflight-consent-evidence").value = profile.consent_evidence || "";
+      if (result.suppressed) renderPreflightResult({ reasons: [`Internal do-not-call: ${result.suppressed.reason || "Do-not-call request"}`], warnings: [] });
+    } catch (error) { toast("error", "Could not load call review", error.message); }
+    togglePreflightConsentFields();
+    openDialog($("#call-preflight-dialog"));
+    window.setTimeout(() => $("#preflight-recipient-type").focus(), 60);
+  }
+
+  function togglePreflightConsentFields() {
+    $("#ai-consent-row").hidden = $("#preflight-call-mode").value !== "ai_or_prerecorded";
+    $("#recording-consent-row").hidden = $("#preflight-recording-mode").value !== "on";
+  }
+
+  async function handleCallPreflight(event) {
+    event.preventDefault();
+    const button = $("#preflight-submit");
+    const to = normalizedDialNumber();
+    if (state.voice.preflight?.allowed && state.voice.preflightPhone === to && new Date(state.voice.preflight.expiresAt).getTime() > Date.now()) return connectApprovedCall();
+    button.disabled = true;
+    const payload = {
+      phone: to,
+      recipientType: $("#preflight-recipient-type").value,
+      companyName: $("#preflight-company").value.trim(),
+      stateCode: $("#preflight-state").value,
+      timezone: $("#preflight-timezone").value,
+      relationship: $("#preflight-relationship").value,
+      screeningBasis: $("#preflight-screening").value,
+      callMode: $("#preflight-call-mode").value,
+      recordingMode: $("#preflight-recording-mode").value,
+      consentType: $("#preflight-consent-type").value,
+      consentEvidence: $("#preflight-consent-evidence").value.trim(),
+      aiVoiceConsent: $("#preflight-ai-consent").checked,
+      recordingConsent: $("#preflight-recording-consent").checked,
+      agentAttested: $("#preflight-attestation").checked
+    };
+    try {
+      const result = await api("/api/console/call-preflight", { method: "POST", body: JSON.stringify(payload) });
+      renderPreflightResult(result);
+      renderPreflightChecks(result);
+      state.voice.preflight = result;
+      state.voice.preflightPhone = to;
+      $("#call-button span").textContent = "Approved";
+      $("#preflight-submit span").textContent = "Start approved call";
+    } catch (error) {
+      const result = error.details || { reasons: [error.message], warnings: [] };
+      renderPreflightResult(result);
+      renderPreflightChecks(result);
+      state.voice.preflight = null;
+      state.voice.preflightPhone = "";
+      $("#preflight-submit span").textContent = "Review and call";
+    } finally { button.disabled = false; }
+  }
+
+  async function connectApprovedCall() {
+    const to = normalizedDialNumber();
+    const preflight = state.voice.preflight;
+    if (!preflight?.allowed || state.voice.preflightPhone !== to || new Date(preflight.expiresAt).getTime() <= Date.now()) return openCallPreflight();
     if (!state.voice.device) await initVoice();
     if (!state.voice.device) return toast("error", "Voice is not available", "Check the Twilio Voice API configuration.");
     try {
       haptic(20);
-      const call = await state.voice.device.connect({ params: { TargetNumber: to } });
+      const call = await state.voice.device.connect({ params: { TargetNumber: to, PreflightId: preflight.id, CallMode: $("#preflight-call-mode").value, Recording: $("#preflight-recording-mode").value } });
+      $("#call-preflight-dialog").close();
       state.voice.call = call;
       state.voice.muted = false;
       state.voice.startedAt = Date.now();
@@ -1003,6 +1189,8 @@
       call.on("error", (error) => { toast("error", "Call failed", error.message); endCallUI(); });
     } catch (error) { toast("error", "Could not place call", error.message); endCallUI(); }
   }
+
+  function placeCall() { return openCallPreflight(); }
 
   function startCallTimer() {
     clearInterval(state.voice.timer);
@@ -1047,7 +1235,7 @@
   }
 
   function exportFilteredCalls() {
-    const rows = [["date", "contact", "company", "number", "direction", "owner", "status", "duration_seconds", "outcome"], ...filteredCalls().map((call) => [call.created_at, `${call.first_name || ""} ${call.last_name || ""}`.trim(), call.company || "", call.counterpart, call.direction, call.display_name || "Unassigned", call.status, call.duration_seconds || 0, call.disposition || "untagged"])];
+    const rows = [["date", "contact", "company", "number", "direction", "owner", "status", "preflight_id", "caller_id", "voice_mode", "recording", "recipient_local_time", "duration_seconds", "outcome"], ...filteredCalls().map((call) => [call.created_at, `${call.first_name || ""} ${call.last_name || ""}`.trim(), call.company || "", call.counterpart, call.direction, call.display_name || "Unassigned", call.status, call.call_preflight_id || "", call.caller_id_used || "", call.call_mode || "", call.recording_mode || "", call.recipient_local_time || "", call.duration_seconds || 0, call.disposition || "untagged"])];
     const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const anchor = document.createElement("a"); anchor.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); anchor.download = `bfo-calls-${new Date().toISOString().slice(0, 10)}.csv`; anchor.click(); URL.revokeObjectURL(anchor.href);
   }
@@ -1059,6 +1247,42 @@
     $("#in-call").hidden = false; $("#in-call-number").textContent = formatPhone(number); $("#in-call-status").textContent = "Connected"; $("#call-button").hidden = true;
     call.accept(); startCallTimer(); $("#incoming-call-dialog").close(); routeTo("voice");
     call.on("disconnect", endCallUI); call.on("error", endCallUI);
+  }
+
+  async function saveCallingPolicy(event) {
+    event.preventDefault();
+    try {
+      await api("/api/console/call-compliance", { method: "PATCH", body: JSON.stringify({
+        callsEnabled: $("#calls-enabled").checked,
+        aiVoiceEnabled: $("#ai-voice-enabled").checked,
+        recordingEnabled: $("#recording-enabled").checked,
+        defaultWindowStart: inputToMinutes($("#calling-window-start").value),
+        defaultWindowEnd: inputToMinutes($("#calling-window-end").value),
+        openingScript: $("#opening-script").value.trim(),
+        recordingNoticeScript: $("#recording-notice").value.trim(),
+        nationalDncReviewed: $("#national-dnc-reviewed").checked,
+        aiVoiceCounselReviewed: $("#ai-counsel-reviewed").checked
+      }) });
+      $("#national-dnc-reviewed").checked = false;
+      $("#ai-counsel-reviewed").checked = false;
+      await loadCompliance();
+      toast("success", "Calling policy saved");
+    } catch (error) { toast("error", "Could not save calling policy", error.message); }
+  }
+
+  async function saveStatePolicy(event) {
+    event.preventDefault();
+    try {
+      await api("/api/console/call-compliance", { method: "PATCH", body: JSON.stringify({
+        stateCode: $("#state-policy-select").value,
+        status: $("#state-policy-status").value,
+        windowStart: inputToMinutes($("#state-window-start").value),
+        windowEnd: inputToMinutes($("#state-window-end").value),
+        notes: $("#state-policy-notes").value.trim()
+      }) });
+      await loadCompliance();
+      toast("success", "State policy saved");
+    } catch (error) { toast("error", "Could not save state policy", error.message); }
   }
 
   function registerEvents() {
@@ -1076,6 +1300,10 @@
     $("#refresh-performance").addEventListener("click", loadPerformance);
     $("#performance-window").addEventListener("change", loadPerformance);
     $("#refresh-team").addEventListener("click", loadTeam);
+    $("#refresh-compliance").addEventListener("click", loadCompliance);
+    $("#calling-policy-form").addEventListener("submit", saveCallingPolicy);
+    $("#state-policy-form").addEventListener("submit", saveStatePolicy);
+    $("#state-policy-select").addEventListener("change", syncStatePolicyForm);
     $("#new-team-user").addEventListener("click", () => openDialog($("#team-user-dialog")));
     $("#team-user-form").addEventListener("submit", handleCreateTeamUser);
     $$("[data-settings-route]").forEach((button) => button.addEventListener("click", () => routeTo(button.dataset.settingsRoute)));
@@ -1109,12 +1337,24 @@
     $("#task-strip").addEventListener("click", async (event) => { const button = event.target.closest("[data-complete-task]"); if (!button) return; await api("/api/console/tasks", { method: "PATCH", body: JSON.stringify({ id: button.dataset.completeTask, status: "done" }) }); await loadTasks(); });
     $("#refresh-calls").addEventListener("click", loadCalls);
     $("#call-history-body").addEventListener("click", async (event) => {
-      const tag = event.target.closest("[data-tag-call]"); const callback = event.target.closest("[data-call-back]"); const copy = event.target.closest("[data-copy-number]");
+      const tag = event.target.closest("[data-tag-call]"); const callback = event.target.closest("[data-call-back]"); const copy = event.target.closest("[data-copy-number]"); const dnc = event.target.closest("[data-mark-dnc]");
       if (tag) { populateLeadSelects(); $("#call-event-id").value = tag.dataset.tagCall; openDialog($("#call-outcome-dialog")); }
       if (callback) prepareCall(callback.dataset.callBack);
       if (copy) { await navigator.clipboard.writeText(copy.dataset.copyNumber); toast("success", "Number copied"); }
+      if (dnc) { try { await recordSuppression(dnc.dataset.markDnc, "Do-not-call request", "call_history"); toast("success", "Number added to the do-not-call list"); } catch (error) { toast("error", "Could not record do-not-call", error.message); } }
     });
     $("#call-outcome-form").addEventListener("submit", handleCallOutcome);
+    $("#call-preflight-form").addEventListener("submit", handleCallPreflight);
+    $("#call-preflight-form").addEventListener("input", () => {
+      if (!state.voice.preflight) return;
+      state.voice.preflight = null;
+      state.voice.preflightPhone = "";
+      $("#preflight-result").hidden = true;
+      $("#preflight-submit span").textContent = "Review and call";
+      $("#call-button span").textContent = "Review call";
+    });
+    $("#preflight-call-mode").addEventListener("change", togglePreflightConsentFields);
+    $("#preflight-recording-mode").addEventListener("change", togglePreflightConsentFields);
     $("#receive-calls-toggle").addEventListener("change", (event) => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: event.target.checked }) }).then(() => toast("success", event.target.checked ? "Browser calls enabled" : "Browser calls paused")).catch((error) => toast("error", "Could not update availability", error.message)));
     $("#answer-call").addEventListener("click", acceptIncomingCall);
     $("#decline-call").addEventListener("click", () => { state.voice.incoming?.reject(); state.voice.incoming = null; $("#incoming-call-dialog").close(); });
