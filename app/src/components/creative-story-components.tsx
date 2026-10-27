@@ -64,7 +64,7 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
       </header>
       <div className="creative-proof-grid">
         {videos.map((video, index) => (
-          <figure className={index === 2 ? "creative-proof-card creative-proof-card-wide" : "creative-proof-card"} key={video.src}>
+          <figure className={`creative-proof-card ${index === 0 ? "creative-proof-card--lead" : "creative-proof-card--support"}`} key={video.src}>
             <div className="creative-proof-media"><InlineProjectVideo src={video.src} poster={video.poster} /></div>
             <figcaption><span>{video.label}</span><h3>{video.title}</h3><p>{video.detail}</p></figcaption>
           </figure>

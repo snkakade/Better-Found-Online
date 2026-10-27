@@ -2499,25 +2499,24 @@
 
 .creative-page .creative-films-action {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: clamp(22px, 2.2vw, 28px);
 }
 
 .creative-page .creative-films-cta { margin: 0; }
 
 .creative-page .creative-proof {
-  padding-block: clamp(52px, 4.8vw, 68px);
+  padding-block: clamp(72px, 6vw, 96px);
 }
 
 .creative-page .creative-proof-header {
   display: block;
-  max-width: 920px;
+  max-width: 860px;
 }
 
 .creative-page .creative-proof-header h2 {
-  max-width: 920px;
+  max-width: 860px;
   margin-top: 12px;
-  font-size: clamp(3rem, 4.5vw, 5rem);
   line-height: .92;
 }
 
@@ -2530,31 +2529,101 @@
 }
 
 .creative-page .creative-proof-grid {
-  gap: clamp(14px, 1.8vw, 26px);
-  margin-top: clamp(30px, 3vw, 38px);
+  grid-template-columns: minmax(0, 1.18fr) minmax(380px, .82fr);
+  grid-template-rows: repeat(2, auto);
+  gap: clamp(28px, 3.4vw, 52px) clamp(42px, 5vw, 76px);
+  align-items: start;
+  max-width: 1440px;
+  margin-top: clamp(48px, 5vw, 72px);
 }
 
-.creative-page .creative-proof-media { aspect-ratio: 3 / 2; }
+.creative-page .creative-proof-card {
+  display: block;
+  background: transparent;
+  color: #171113;
+}
 
-.creative-page .creative-proof-media video { object-position: center 30%; }
-.creative-page .creative-proof-card:nth-child(2) .creative-proof-media video { object-position: center 37%; }
-.creative-page .creative-proof-card:nth-child(3) .creative-proof-media video { object-position: center 28%; }
+.creative-page .creative-proof-card--lead {
+  display: grid;
+  grid-row: 1 / span 2;
+  grid-template-columns: minmax(220px, 300px) minmax(220px, 1fr);
+  gap: clamp(28px, 3.5vw, 54px);
+  align-items: center;
+}
+
+.creative-page .creative-proof-card--support {
+  display: grid;
+  grid-column: 2;
+  grid-template-columns: clamp(128px, 9.5vw, 150px) minmax(0, 1fr);
+  gap: clamp(22px, 2.4vw, 36px);
+  align-items: center;
+}
+
+.creative-page .creative-proof-card--support + .creative-proof-card--support {
+  padding-top: clamp(28px, 3.4vw, 52px);
+  border-top: 1px solid rgba(23, 17, 19, .18);
+}
+
+.creative-page .creative-proof-media {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border: 1px solid rgba(23, 17, 19, .14);
+  background: #d8d0cb;
+}
+
+.creative-page .creative-proof-card--lead .creative-proof-media {
+  max-width: 330px;
+}
+
+.creative-page .creative-proof-media video {
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
 
 .creative-page .creative-proof-card figcaption {
-  min-height: 148px;
-  padding: clamp(18px, 1.8vw, 24px);
+  min-height: 0;
+  padding: 22px 0 0;
+}
+
+.creative-page .creative-proof-card--lead figcaption {
+  padding: 0;
+}
+
+.creative-page .creative-proof-card--support figcaption {
+  padding: 0;
+}
+
+.creative-page .creative-proof-card figcaption span {
+  color: #765865;
+  font-size: 10px;
 }
 
 .creative-page .creative-proof-card h3 {
-  max-width: 17ch;
-  margin-top: 18px;
-  font-size: clamp(1.35rem, 1.7vw, 1.85rem);
-  line-height: 1.04;
+  max-width: 18ch;
+  margin-top: 16px;
+  color: #171113;
+  font-size: clamp(1.45rem, 1.75vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.creative-page .creative-proof-card--lead h3 {
+  max-width: 12ch;
+  font-size: clamp(2rem, 2.8vw, 3rem);
+  line-height: 1;
+}
+
+.creative-page .creative-proof-card--support h3 {
+  margin-top: 12px;
+  font-size: clamp(1.35rem, 1.65vw, 1.75rem);
 }
 
 .creative-page .creative-proof-card p {
-  margin-top: 8px;
-  line-height: 1.45;
+  max-width: 34ch;
+  margin-top: 14px;
+  color: #655b5d;
+  font-size: clamp(.88rem, 1vw, 1rem);
+  line-height: 1.55;
 }
 
 .creative-page .creative-growth {
@@ -2624,7 +2693,87 @@
 .creative-page .faq-section { padding-block: clamp(62px, 6.5vw, 92px); }
 
 .creative-page .faq-section header h2 {
-  font-size: clamp(3rem, 4.7vw, 5.4rem);
+  font-size: clamp(3rem, 4.6vw, 5.25rem);
+}
+
+.creative-page .creative-films-header h2,
+.creative-page .creative-proof-header h2,
+.creative-page .creative-growth h2,
+.creative-page .creative-process-story h2,
+.creative-page .faq-section header h2 {
+  font-size: clamp(3rem, 4.6vw, 5.25rem);
+  line-height: .94;
+  letter-spacing: -.055em;
+}
+
+.creative-page .creative-film video {
+  object-fit: contain;
+  transform: none;
+}
+
+.creative-page .footer-cta { display: none; }
+.creative-page .footer-directory { padding-top: clamp(34px, 3vw, 48px); }
+
+@media (max-width: 1100px) and (min-width: 761px) {
+  .creative-page .creative-proof-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .creative-page .creative-proof-card--lead {
+    grid-row: auto;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  }
+
+  .creative-page .creative-proof-card--support {
+    display: block;
+    grid-column: auto;
+  }
+
+  .creative-page .creative-proof-card--support + .creative-proof-card--support {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .creative-page .creative-proof-card--support figcaption { padding-top: 22px; }
+}
+
+@media (min-width: 761px) {
+  .creative-page .service-detail-closing {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, .46fr);
+    gap: 20px clamp(48px, 7vw, 108px);
+    align-items: end;
+    padding-block: clamp(68px, 7vw, 96px);
+  }
+
+  .creative-page .service-detail-closing > .eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .creative-page .service-detail-closing h2 {
+    grid-row: 2 / span 2;
+    grid-column: 1;
+    max-width: 920px;
+    margin: 0;
+    font-size: clamp(3.4rem, 5vw, 5.8rem);
+    line-height: .9;
+  }
+
+  .creative-page .service-detail-closing .creative-closing-copy {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .creative-page .service-detail-closing > a {
+    grid-row: 3;
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 8px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -2655,7 +2804,16 @@
   .creative-page .creative-film-secondary { width: 100%; margin: 0; }
 
   .creative-page .creative-proof-header { max-width: 700px; }
-  .creative-page .creative-proof-grid { padding-bottom: 8px; }
+  .creative-page .creative-proof-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    padding-bottom: 8px;
+    scroll-snap-type: none;
+  }
+  .creative-page .creative-proof-card--lead {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(220px, .55fr) minmax(0, 1fr);
+  }
   .creative-page .creative-process-focus { min-height: 200px; }
 }
 
@@ -2677,6 +2835,43 @@
   .creative-page .creative-films-reel::-webkit-scrollbar { display: none; }
   .creative-page .creative-film { scroll-snap-align: start; }
   .creative-page .creative-films-action { justify-content: flex-start; }
+
+  .creative-page .creative-proof-grid {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88vw, 560px);
+    gap: 24px;
+    overflow-x: auto;
+    margin-right: -20px;
+    padding-right: 20px;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .creative-page .creative-proof-grid::-webkit-scrollbar { display: none; }
+
+  .creative-page .creative-proof-card,
+  .creative-page .creative-proof-card--lead {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns: minmax(136px, .42fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    scroll-snap-align: start;
+  }
+
+  .creative-page .creative-proof-card--lead .creative-proof-media { max-width: none; }
+
+  .creative-page .creative-proof-card figcaption,
+  .creative-page .creative-proof-card--lead figcaption { padding: 4px 0 0; }
+
+  .creative-page .creative-proof-card--lead h3,
+  .creative-page .creative-proof-card h3 {
+    max-width: 16ch;
+    font-size: clamp(1.35rem, 4.7vw, 1.9rem);
+  }
 
   .creative-page .creative-growth article { min-height: 250px; }
 }
@@ -2730,13 +2925,12 @@
   .creative-page .creative-films-cta { width: 100%; justify-content: center; }
 
   .creative-page .creative-proof-grid {
-    grid-template-columns: repeat(3, minmax(82vw, 1fr));
-    margin-top: 34px;
+    grid-auto-columns: 88vw;
+    margin-top: 36px;
   }
 
-  .creative-page .creative-proof-media { aspect-ratio: 4 / 3; }
-  .creative-page .creative-proof-card figcaption { min-height: 156px; }
-  .creative-page .creative-proof-card h3 { margin-top: 22px; }
+  .creative-page .creative-proof-card figcaption { min-height: 0; }
+  .creative-page .creative-proof-card h3 { margin-top: 16px; }
 
   .creative-page .creative-growth-grid { margin-top: 34px; }
   .creative-page .creative-growth article h3 { margin-top: 34px; }
