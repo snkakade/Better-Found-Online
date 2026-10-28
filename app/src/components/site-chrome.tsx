@@ -338,7 +338,6 @@ export function SiteFooter({ motionPaused, onMotionToggle, projectCta }: {
         <h2>{projectCta?.heading ?? "Build something people can find, understand, and choose."}</h2>
         <TransitionLink href="/#contact" className={projectCta ? "primary-btn" : "footer-project-link"}>
           <span>{projectCta?.label ?? "Discuss your project"}</span>
-          {!projectCta && <span className="footer-project-icon" aria-hidden="true"><ArrowUpRight size={19} weight="light" /></span>}
         </TransitionLink>
       </div>
 

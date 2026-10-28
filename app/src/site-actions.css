@@ -1,0 +1,245 @@
+/* Shared public-site actions. Explicit selectors preserve ordinary navigation,
+   article links, media controls, cookie choices, and the separate admin UI.
+   Root + site scope takes precedence over legacy page-local button scales. */
+:root
+  .site
+  :is(
+    .primary-btn,
+    .desktop-navigation-cta,
+    .services-hero-action,
+    .footer-project-link,
+    .site-menu-cta > a,
+    .contact-form-actions > button[type="submit"],
+    .story-link,
+    .text-link,
+    .text-cta,
+    .service-link,
+    .website-service-link,
+    .whatsapp-link,
+    .growth-actions > a,
+    .interior-hero-actions > a,
+    .service-chapter-actions > a,
+    .performance-inline-cta,
+    .performance-proof-cta,
+    .scroll63-hero-outro-cta,
+    .performance-results-footer > a,
+    .performance-closing-actions > a,
+    .service-detail-closing > a,
+    .services-closing > a,
+    .interior-contact > a,
+    .insights-closing > a,
+    .insights-card-body > a,
+    .article-body > a,
+    .case-copy > a,
+    .project-notes > a,
+    .work-paid-media > div > div > a,
+    .creative-capability-copy > a,
+    .creative-growth article > a,
+    .modular-slider-footer .links > a,
+    .service-detail-related nav > a,
+    .related-section > div > a,
+    .guidance-grid article > a,
+    .evidence-section article > a,
+    .channel-choice article > a,
+    .content-section > a
+  ) {
+  --action-fill: transparent;
+  --action-label: inherit;
+  --action-border: currentColor;
+  --action-hover-fill: var(--brand-red);
+  --action-hover-label: var(--brand-white);
+  --action-hover-border: var(--brand-red);
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  gap: 12px;
+  width: var(--action-width, fit-content);
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--action-height, 56px);
+  padding: var(--action-padding, 15px 24px);
+  border: 2px solid var(--action-border);
+  border-radius: 0;
+  background: var(--action-fill);
+  color: var(--action-label);
+  font-family: Outfit, sans-serif;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  white-space: normal;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+
+  &:hover {
+    background: var(--action-hover-fill);
+    border-color: var(--action-hover-border);
+    color: var(--action-hover-label);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--brand-white);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--brand-blue);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:is(:disabled, [aria-disabled="true"]) {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  /* No decorative CTA arrows; preserve real form-action icons. */
+  &:not(button) > svg,
+  & > span[aria-hidden="true"] {
+    display: none;
+  }
+
+  @media (hover: none) {
+    &:hover {
+      transform: none;
+    }
+    &:active {
+      transform: scale(.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+:root
+  .site
+  :is(
+    .primary-btn,
+    .desktop-navigation-cta,
+    .services-hero-action-primary,
+    .footer-project-link,
+    .site-menu-cta > a,
+    .contact-form-actions > button[type="submit"],
+    .performance-inline-cta,
+    .scroll63-hero-outro-cta,
+    .text-cta,
+    .performance-closing-actions > a,
+    .service-detail-closing > a,
+    .services-closing > a,
+    .interior-contact > a,
+    .insights-closing > a
+  ) {
+  --action-fill: var(--brand-red);
+  --action-label: var(--brand-white);
+  --action-border: var(--brand-red);
+  --action-hover-fill: var(--brand-white);
+  --action-hover-label: var(--brand-blue);
+  --action-hover-border: var(--brand-blue);
+}
+
+:root .site .desktop-navigation-cta {
+  --action-height: 52px;
+  --action-padding: 13px 24px;
+  white-space: nowrap;
+}
+
+:root
+  .site
+  :is(
+    .hero-actions,
+    .growth-actions,
+    .interior-hero-actions,
+    .service-detail-actions,
+    .creative-actions,
+    .service-chapter-actions
+  ) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+:root .site .performance-closing-actions {
+  width: fit-content;
+  max-width: 100%;
+  border: 0;
+}
+
+:root .site .performance-related-cta {
+  display: inline-flex;
+  padding: 10px 14px;
+  border: 2px solid var(--brand-white);
+  color: var(--brand-white);
+  font-family: Outfit, sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root .site .performance-related nav a:hover,
+:root .site .performance-related nav a:focus-visible {
+  color: var(--brand-white);
+}
+
+@media (max-width: 600px) {
+  :root
+    .site
+    :is(
+      .hero-actions,
+      .services-hero-cta,
+      .growth-actions,
+      .interior-hero-actions,
+      .service-detail-actions,
+      .creative-actions
+    ) {
+    gap: 12px;
+    --action-width: 100%;
+    --action-height: 52px;
+    --action-padding: 13px 16px;
+  }
+
+  :root .site :is(.footer-project-link, .contact-form-actions > button[type="submit"]) {
+    --action-width: 100%;
+  }
+
+  :root .site :is(.website-related-grid, .website-scope, .service-chapter-actions) {
+    --action-width: 100%;
+    --action-height: 52px;
+    --action-padding: 13px 16px;
+  }
+
+  :root .site .performance-related nav a {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  :root .site .performance-related-cta {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

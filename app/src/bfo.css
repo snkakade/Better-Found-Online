@@ -3251,10 +3251,11 @@ section[id] {
   top: calc(100% + 13px);
   left: 50%;
   display: grid;
-  width: 470px;
+  width: 600px;
+  max-width: calc(100vw - 64px);
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px 18px;
-  padding: 16px;
+  gap: 8px 16px;
+  padding: 24px;
   border: 1px solid rgba(255, 255, 255, .12);
   background: #20309A;
   box-shadow: 0 22px 52px rgba(32, 48, 154, .28);
@@ -3284,29 +3285,38 @@ section[id] {
 
 .desktop-services-menu a {
   display: flex;
-  min-height: 48px;
+  min-height: 60px;
   align-items: center;
-  padding: 10px 12px;
-  color: rgba(255, 255, 255, .9);
-  font-size: 15px;
-  line-height: 1.25;
+  padding: 14px 16px;
+  color: var(--brand-white);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.35;
   transition: background-color 180ms ease, color 180ms ease;
 }
 
 .desktop-services-menu a:hover,
 .desktop-services-menu a:focus-visible {
-  background: rgba(187, 35, 43, .1);
-  color: var(--silver);
+  background: var(--brand-white);
+  color: var(--brand-blue);
 }
 
 .desktop-services-menu .desktop-services-all {
   grid-column: 1 / -1;
-  min-height: 42px;
+  min-height: 52px;
   margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, .12);
-  color: var(--microcopy);
-  font-weight: 520;
+  padding: 14px 16px;
+  border: 2px solid var(--brand-red);
+  background: var(--brand-red);
+  color: var(--brand-white);
+  font-weight: 650;
+}
+
+.desktop-services-menu .desktop-services-all:hover,
+.desktop-services-menu .desktop-services-all:focus-visible {
+  border-color: var(--brand-white);
+  background: var(--brand-white);
+  color: var(--brand-blue);
 }
 
 .desktop-navigation-cta {
