@@ -1,0 +1,198 @@
+/* Website-page refinements. Keep shared service layouts unchanged. */
+.websites-service-page .website-benefits,
+.websites-service-page .website-related {
+  background: var(--brand-white);
+  color: var(--brand-blue);
+}
+
+.websites-service-page .website-benefits header,
+.websites-service-page .website-related header {
+  max-width: 960px;
+}
+
+.websites-service-page .website-benefits h2,
+.websites-service-page .website-related h2 {
+  margin: 0;
+  font-size: clamp(2.25rem, 3.6vw, 4.25rem);
+  line-height: 1.04;
+}
+
+.websites-service-page .website-benefits header p,
+.websites-service-page .website-related header p {
+  max-width: 640px;
+  margin: 24px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.website-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 64px;
+  margin-top: 48px;
+}
+
+.website-benefit-grid article {
+  padding-top: 24px;
+  border-top: 2px solid var(--brand-red);
+}
+
+.website-benefit-grid h3,
+.website-related-grid h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.8vw, 2rem);
+  line-height: 1.15;
+}
+
+.website-benefit-grid p,
+.website-related-grid p {
+  max-width: 56ch;
+  margin: 16px 0 0;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.websites-service-page .website-scope {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+  background: var(--brand-blue);
+  color: var(--brand-white);
+  padding-block: clamp(48px, 5vw, 80px);
+}
+
+.website-scope h2 {
+  max-width: 650px;
+  margin: 0;
+  font-size: clamp(2.25rem, 3.4vw, 4rem);
+  line-height: 1.04;
+}
+
+.website-scope p {
+  max-width: 55ch;
+  margin: 24px 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.website-scope dl {
+  display: grid;
+  gap: 24px;
+  margin: 0;
+}
+
+.website-scope dl > div {
+  padding-left: 24px;
+  border-left: 2px solid var(--brand-white);
+}
+
+.website-scope dt {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.website-scope dd {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.websites-service-page .project-section header {
+  display: block;
+}
+
+.websites-service-page .project-section header h2 {
+  max-width: none;
+  line-height: 1.04;
+}
+
+.websites-service-page .project-section header > p:last-child {
+  max-width: 650px;
+  margin: 24px 0 0;
+}
+
+.website-related-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.website-related-grid article {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  border: 1px solid var(--brand-blue);
+  border-top: 4px solid var(--brand-red);
+}
+
+.website-related-grid p {
+  margin-bottom: 24px;
+}
+
+.website-service-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  margin-top: auto;
+  padding: 12px 20px;
+  border: 1px solid var(--brand-blue);
+  color: var(--brand-blue);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.website-service-link:hover {
+  background: var(--brand-blue);
+  color: var(--brand-white);
+}
+
+.website-service-link:focus-visible,
+.website-scope .primary-btn:focus-visible {
+  outline: 3px solid var(--brand-red);
+  outline-offset: 5px;
+}
+
+@media (max-width: 900px) {
+  .website-benefit-grid {
+    gap: 32px;
+  }
+  .websites-service-page .website-scope {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .website-benefit-grid,
+  .website-related-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .website-related-grid article {
+    padding: 24px;
+  }
+  .website-service-link {
+    width: 100%;
+    padding-inline: 12px;
+  }
+  .website-scope dl > div {
+    padding-left: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .website-service-link {
+    transition: none;
+  }
+}

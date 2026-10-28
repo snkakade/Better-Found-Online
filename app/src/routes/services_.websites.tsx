@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import "@/service-growth-pages.css";
+import "@/website-page.css";
 
 const title = "Website Design & Development | Better Found Online";
 const description =
@@ -90,29 +90,47 @@ const projects = [
 
 const value = [
   [
-    "01",
-    "Positioning",
-    "Make your offer obvious.",
-    "Help visitors recognize who you serve, what you offer, and why they should consider you.",
+    "Explain what you offer.",
+    "Clear headlines and service pages help visitors see what you do, who it is for, and why to choose you.",
   ],
   [
-    "02",
-    "Trust",
-    "Give people reasons to believe.",
-    "Bring credible information, real work, clear messaging, and considered design into one experience.",
+    "Show why customers can trust you.",
+    "Real projects, relevant credentials, and useful business information give visitors evidence, not just promises.",
   ],
   [
-    "03",
-    "Conversion",
-    "Make the next step easy.",
-    "Help visitors enquire, book, purchase, or explore without unnecessary friction.",
+    "Make inquiries and bookings simple.",
+    "Visible contact buttons, straightforward forms, and agreed booking tools give interested visitors a clear next step.",
   ],
   [
-    "04",
-    "Foundation",
-    "Build it properly.",
-    "Responsive layouts, accessible interactions, search-friendly structure, performance, and measurement belong in the build.",
+    "Work across phones and desktops.",
+    "Responsive pages, optimized media, accessible controls, and search-friendly structure are planned into the build.",
   ],
+];
+const relatedServices = [
+  {
+    name: "SEO & AI Search",
+    body: "Help customers discover your services through technical SEO and useful search-focused content.",
+    href: "/services/seo-ai-search",
+    action: "Explore SEO & AI Search",
+  },
+  {
+    name: "Performance Marketing",
+    body: "Connect paid ads to relevant landing pages and track the inquiries they generate.",
+    href: "/services/performance-marketing",
+    action: "Explore Paid Advertising",
+  },
+  {
+    name: "Creative Production",
+    body: "Add video, motion graphics, CGI, and design that explain your products and services.",
+    href: "/creative-production",
+    action: "Explore Creative Production",
+  },
+  {
+    name: "CRM & Integrations",
+    body: "Connect selected forms, booking tools, and CRM systems so inquiries reach the right people.",
+    href: "/services#connect",
+    action: "Explore CRM & Integrations",
+  },
 ];
 const formats = [
   [
@@ -144,33 +162,6 @@ const formats = [
     "Website Redesign",
     "Keep what's working. Improve what isn't.",
     "Website Review / Content Structure / UX / Visual Redesign / Development",
-  ],
-];
-const process = [
-  [
-    "01",
-    "Find the signal",
-    "Understand the audience, offer, available proof, and action the website must support.",
-  ],
-  [
-    "02",
-    "Shape the story",
-    "Plan the hierarchy, messaging, visual direction, and customer journey.",
-  ],
-  [
-    "03",
-    "Build the experience",
-    "Develop responsive pages, purposeful interactions, integrations, and technical foundations.",
-  ],
-  [
-    "04",
-    "Test the details",
-    "Review layouts, forms, accessibility, performance, metadata, and the inquiry journey.",
-  ],
-  [
-    "05",
-    "Launch & improve",
-    "Launch the approved experience and identify opportunities through real use and available data.",
   ],
 ];
 const faqs = [
@@ -318,11 +309,9 @@ function WebsitesPage() {
             </p>
             <div className="growth-actions">
               <TransitionLink className="primary-btn" href="/#contact">
-                Discuss Your Website <ArrowUpRight />
+                Discuss Your Website
               </TransitionLink>
-              <a href="#website-projects">
-                Explore Website Projects <ArrowDown />
-              </a>
+              <a href="#website-projects">Explore Website Projects</a>
             </div>
             <small>
               From focused landing pages to complete business websites and connected platforms.
@@ -345,31 +334,56 @@ function WebsitesPage() {
             </figcaption>
           </figure>
         </section>
-        <section className="growth-intro section-pad">
-          <p className="eyebrow">The first impression matters</p>
-          <div>
-            <h2>A better website starts with a clearer business.</h2>
+        <section className="website-benefits section-pad" aria-labelledby="website-benefits-title">
+          <header>
+            <h2 id="website-benefits-title">Help visitors understand, trust, and contact you.</h2>
             <p>
-              A visitor shouldn't have to work out what you do, why it matters, or where to go next.
-              We connect business strategy, messaging, visual design, and development to make that
-              journey feel natural.
+              We bring copy, design, and development together around the decisions your customers
+              need to make.
             </p>
+          </header>
+          <div className="website-benefit-grid">
+            {value.map(([heading, copy]) => (
+              <article key={heading}>
+                <h3>{heading}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
           </div>
-          <ol className="statement-track">
-            <li>Make the offer clear.</li>
-            <li>Give the business character.</li>
-            <li>Build confidence.</li>
-            <li>Make action easy.</li>
-          </ol>
+        </section>
+        <section className="website-scope section-pad" aria-labelledby="website-scope-title">
+          <div>
+            <h2 id="website-scope-title">A clear scope makes a better start.</h2>
+            <p>
+              Before work begins, we agree on what is included, what you need to supply, and what
+              the project will cost.
+            </p>
+            <TransitionLink className="primary-btn" href="/#contact">
+              Discuss Your Website
+            </TransitionLink>
+          </div>
+          <dl>
+            <div>
+              <dt>Pages &amp; content</dt>
+              <dd>Key pages, copywriting, and the images or video needed.</dd>
+            </div>
+            <div>
+              <dt>Tools &amp; connections</dt>
+              <dd>Forms, booking, ecommerce, and selected CRM integrations.</dd>
+            </div>
+            <div>
+              <dt>Budget &amp; timeline</dt>
+              <dd>Project fees, content deadlines, reviews, and launch dependencies.</dd>
+            </div>
+            <div>
+              <dt>Ownership &amp; ongoing costs</dt>
+              <dd>Handover, maintenance, hosting, and any software or licensing fees.</dd>
+            </div>
+          </dl>
         </section>
         <section className="project-section section-pad" id="website-projects">
           <header>
-            <p className="eyebrow">The work behind the thinking</p>
-            <h2>
-              Different businesses.
-              <br />
-              Websites with a purpose.
-            </h2>
+            <h2>See the websites we’ve built.</h2>
             <p>
               Selected founder-portfolio projects across healthcare, leisure, agriculture, and
               specialist recruitment.
@@ -394,10 +408,7 @@ function WebsitesPage() {
               return (
                 <article className="project-card" key={project.name}>
                   <div className="project-media">
-                    <ViewportVideo
-                      src={project.video}
-                      label={`${project.name} website preview`}
-                    />
+                    <ViewportVideo src={project.video} label={`${project.name} website preview`} />
                   </div>
                   <div className="project-copy">
                     <span>
@@ -421,9 +432,7 @@ function WebsitesPage() {
                         <dt>Approach</dt>
                         <dd>{project.approach}</dd>
                       </dl>
-                      <TransitionLink href="/work">
-                        View Website Project <ArrowUpRight />
-                      </TransitionLink>
+                      <TransitionLink href="/work">View Website Project</TransitionLink>
                     </details>
                   </div>
                 </article>
@@ -434,27 +443,6 @@ function WebsitesPage() {
             These are selected projects from our founder's portfolio. Publication and project
             attribution remain subject to applicable client permissions.
           </p>
-        </section>
-        <section className="growth-cards section-pad">
-          <header>
-            <p className="eyebrow">What makes a website work</p>
-            <h2>
-              Good design gets attention.
-              <br />
-              Clear thinking earns the next click.
-            </h2>
-          </header>
-          <div>
-            {value.map(([n, l, h, c]) => (
-              <article key={n}>
-                <span>
-                  {n} / {l}
-                </span>
-                <h3>{h}</h3>
-                <p>{c}</p>
-              </article>
-            ))}
-          </div>
         </section>
         <section className="format-section section-pad">
           <header>
@@ -482,7 +470,7 @@ function WebsitesPage() {
             ))}
           </div>
           <TransitionLink className="text-cta" href="/#contact">
-            Find the Right Website Scope <ArrowUpRight />
+            Discuss Your Website
           </TransitionLink>
         </section>
         <section className="split-editorial section-pad">
@@ -522,74 +510,24 @@ function WebsitesPage() {
             </ul>
           </div>
         </section>
-        <section className="process-section section-pad">
+        <section className="website-related section-pad" aria-labelledby="website-related-title">
           <header>
-            <p className="eyebrow">From idea to experience</p>
-            <h2>Clear decisions. Better execution.</h2>
+            <h2 id="website-related-title">Support your website with the right services.</h2>
+            <p>
+              Need help getting found, creating content, or following up? Explore the services that
+              fit your next priority.
+            </p>
           </header>
-          <ol>
-            {process.map(([n, h, c]) => (
-              <li key={n}>
-                <span>{n}</span>
-                <h3>{h}</h3>
-                <p>{c}</p>
-              </li>
+          <div className="website-related-grid">
+            {relatedServices.map((service) => (
+              <article key={service.name}>
+                <h3>{service.name}</h3>
+                <p>{service.body}</p>
+                <TransitionLink className="website-service-link" href={service.href}>
+                  {service.action}
+                </TransitionLink>
+              </article>
             ))}
-          </ol>
-        </section>
-        <section className="guidance-grid section-pad">
-          <article>
-            <p className="eyebrow">Before the build</p>
-            <h2>A clear scope makes a better start.</h2>
-            <p>
-              Delivery depends on content readiness, page complexity, interaction requirements,
-              integrations, review cycles, and testing. We define scope and dependencies before
-              confirming the timeline.
-            </p>
-            <TransitionLink href="/#contact">
-              Discuss Your Requirements <ArrowUpRight />
-            </TransitionLink>
-          </article>
-          <article>
-            <p className="eyebrow">Understanding the investment</p>
-            <h2>Compare the scope. Not just the price.</h2>
-            <p>
-              Ask what is included, who creates the content, and what maintenance covers. Confirm
-              that you own the approved website, content, and transferable project assets, and
-              understand any continuing software, hosting, or licensing costs.
-            </p>
-            <TransitionLink href="/#contact">
-              Discuss Your Project Scope <ArrowUpRight />
-            </TransitionLink>
-          </article>
-          <article>
-            <p className="eyebrow">Prepare for a better project</p>
-            <h2>A great brief starts with the right questions.</h2>
-            <p>
-              Bring your offer, audience, objective, important pages, available proof, integrations,
-              budget considerations, preferred timing, and decision makers.
-            </p>
-            <TransitionLink href="/#contact">
-              Start a Website Conversation <ArrowUpRight />
-            </TransitionLink>
-          </article>
-        </section>
-        <section className="related-section section-pad">
-          <p className="eyebrow">Make the website work harder</p>
-          <h2>A great website is a beginning.</h2>
-          <div>
-            <TransitionLink href="/services/seo-ai-search">
-              SEO &amp; AI Search <ArrowUpRight />
-            </TransitionLink>
-            <TransitionLink href="/services/performance-marketing">
-              Performance Marketing <ArrowUpRight />
-            </TransitionLink>
-            <TransitionLink href="/creative-production">
-              Creative Production <ArrowUpRight />
-            </TransitionLink>
-            <TransitionLink href="/services#connect">
-              CRM &amp; Integrations <ArrowUpRight />
-            </TransitionLink>
           </div>
         </section>
         <section className="faq-section section-pad">
@@ -619,11 +557,9 @@ function WebsitesPage() {
           </p>
           <div className="growth-actions">
             <TransitionLink className="primary-btn" href="/#contact">
-              Discuss Your Website <ArrowUpRight />
+              Discuss Your Website
             </TransitionLink>
-            <TransitionLink href="/work">
-              Explore Our Work <ArrowUpRight />
-            </TransitionLink>
+            <TransitionLink href="/work">Explore Our Work</TransitionLink>
           </div>
           <small>Get found. Get chosen.</small>
         </section>
