@@ -3456,6 +3456,26 @@ section[id] {
   letter-spacing: -.06em;
 }
 
+.footer-cta--project {
+  padding-block: 32px;
+  scroll-margin-top: 88px;
+}
+
+.footer-cta--project .primary-btn {
+  width: fit-content;
+  min-height: 52px;
+  justify-content: center;
+  padding-inline: 24px;
+  background: var(--rose);
+  font-size: 14px;
+}
+
+.footer-cta--project .primary-btn:hover {
+  background: var(--silver);
+  border-color: var(--silver);
+  color: var(--wine);
+}
+
 .footer .footer-project-link {
   display: inline-flex;
   grid-column: auto;
@@ -3640,6 +3660,8 @@ section[id] {
     width: 100%;
     justify-content: space-between;
   }
+
+  .footer-cta--project .primary-btn { width: 100%; }
 
   .footer .footer-directory {
     grid-template-columns: repeat(2, minmax(0, 1fr));

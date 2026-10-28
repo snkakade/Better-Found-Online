@@ -65,21 +65,8 @@ function WorkPage() {
           </div>
         </section>
 
-        <section className="work-outro section-pad">
-          <p className="eyebrow">The common thread</p>
-          <h2>Clear thinking.<br />Built into the work.</h2>
-          <div className="work-outro-grid">
-            <p>Every business comes with a different challenge. The approach starts with understanding the audience, clarifying the offer, and building an experience around what matters.</p>
-            <TransitionLink href="/studio" className="text-link">Explore Our Approach <ArrowUpRight size={18} weight="light" /></TransitionLink>
-          </div>
-        </section>
-
-        <section className="interior-contact section-pad" id="work-contact">
-          <p>Your project<br />could be next.</p>
-          <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer">Discuss a Similar Project <ArrowUpRight size={28} weight="light" /></a>
-        </section>
       </main>
-      <SiteFooter />
+      <SiteFooter projectCta={{ heading: "Have a similar project in mind?", label: "Discuss a Similar Project", anchorId: "work-contact" }} />
     </div>
   );
 }

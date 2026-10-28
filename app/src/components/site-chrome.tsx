@@ -332,14 +332,18 @@ export function SiteHeader({
   );
 }
 
-export function SiteFooter({ motionPaused, onMotionToggle }: { motionPaused?: boolean; onMotionToggle?: () => void }) {
+export function SiteFooter({ motionPaused, onMotionToggle, projectCta }: {
+  motionPaused?: boolean;
+  onMotionToggle?: () => void;
+  projectCta?: { heading: string; label: string; anchorId: string };
+}) {
   return (
     <footer id="site-footer" className="footer">
-      <div className="footer-cta">
-        <h2>Build something people can find, understand, and choose.</h2>
-        <TransitionLink href="/#contact" className="footer-project-link">
-          <span>Discuss your project</span>
-          <span className="footer-project-icon" aria-hidden="true"><ArrowUpRight size={19} weight="light" /></span>
+      <div className={`footer-cta${projectCta ? " footer-cta--project" : ""}`} id={projectCta?.anchorId}>
+        <h2>{projectCta?.heading ?? "Build something people can find, understand, and choose."}</h2>
+        <TransitionLink href="/#contact" className={projectCta ? "primary-btn" : "footer-project-link"}>
+          <span>{projectCta?.label ?? "Discuss your project"}</span>
+          {!projectCta && <span className="footer-project-icon" aria-hidden="true"><ArrowUpRight size={19} weight="light" /></span>}
         </TransitionLink>
       </div>
 
