@@ -1,6 +1,6 @@
 .services-page {
-  --services-paper: #e7e0da;
-  --services-signal: #8d3144;
+  --services-paper: var(--brand-white);
+  --services-signal: var(--brand-red);
   background: var(--deep);
 }
 
@@ -14,7 +14,7 @@
   z-index: 240;
   overflow: hidden;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  background: #0b0b0d;
+  background: #20309A;
   color: var(--silver);
   isolation: isolate;
   will-change: clip-path;
@@ -32,7 +32,7 @@
   width: clamp(190px, 16vw, 250px);
   height: clamp(228px, 19.2vw, 300px);
   overflow: hidden;
-  border: 1px solid rgba(241, 236, 231, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   clip-path: polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%);
   background: var(--wine);
   transform: translate(-50%, -50%) scale(0);
@@ -51,13 +51,13 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  mix-blend-mode: difference;
+  mix-blend-mode: normal;
   transform: translate(-50%, -50%);
 }
 
 .services-preloader-title {
   visibility: hidden;
-  color: #f1ece7;
+  color: #FFFFFF;
   font-size: clamp(4rem, 10vw, 15rem);
   font-weight: 420;
   line-height: 0.82;
@@ -108,7 +108,7 @@
   align-items: end;
   gap: clamp(32px, 7vw, 112px);
   padding-block: clamp(20px, 3vh, 34px) clamp(12px, 2vh, 22px);
-  border-bottom: 1px solid rgba(33, 22, 26, .24);
+  border-bottom: 1px solid rgba(32, 48, 154, .24);
 }
 
 .services-hero-intro > div {
@@ -181,7 +181,7 @@
 
 .services-hero-action-secondary:hover,
 .services-hero-action-secondary:focus-visible {
-  background: rgba(33, 22, 26, .07);
+  background: rgba(32, 48, 154, .07);
   transform: translateY(-2px);
 }
 
@@ -203,7 +203,7 @@
   min-height: 280px;
   grid-template-rows: minmax(0, 1fr) auto;
   overflow: hidden;
-  border: 1px solid rgba(33, 22, 26, 0.24);
+  border: 1px solid rgba(32, 48, 154, 0.24);
   background: var(--wine);
   color: var(--silver);
   transform-origin: bottom center;
@@ -213,7 +213,7 @@
 
 .services-hero-card:hover {
   z-index: 3;
-  box-shadow: 0 24px 54px rgba(33, 22, 26, 0.18);
+  box-shadow: 0 24px 54px rgba(32, 48, 154, 0.18);
   transform: translateY(-7px) !important;
 }
 
@@ -313,7 +313,7 @@
 
 .service-chapter-number {
   align-self: start;
-  color: rgba(241, 236, 231, 0.08);
+  color: rgba(255, 255, 255, 0.08);
   font-family: Plex, monospace;
   font-size: clamp(4.5rem, 9vw, 10rem);
   line-height: 0.75;
@@ -330,7 +330,7 @@
 .service-chapter-visual::after {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(241, 236, 231, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   content: "";
   pointer-events: none;
 }
@@ -484,7 +484,7 @@
   height: 100%;
   overflow: visible;
   fill: none;
-  stroke: rgba(241, 236, 231, 0.25);
+  stroke: rgba(255, 255, 255, 0.25);
   stroke-width: 1;
 }
 

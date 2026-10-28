@@ -13,12 +13,12 @@
 }
 
 :root {
-  --deep: #171113;
-  --wine: #4b1728;
-  --rose: #c5a292;
-  --silver: #f0ece8;
-  --muted: #aea5a5;
-  --line: rgb(240 236 232 / 17%);
+  --deep: #20309A;
+  --wine: #20309A;
+  --rose: #BB232B;
+  --silver: #FFFFFF;
+  --muted: rgb(255 255 255 / 72%);
+  --line: rgb(255 255 255 / 22%);
   font-family: Outfit, sans-serif;
   font-weight: 350;
   color-scheme: dark;

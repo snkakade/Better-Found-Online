@@ -1,7 +1,7 @@
 .insights-page {
   --insights-ink: var(--silver);
   --insights-muted: var(--muted);
-  --insights-line: rgba(241, 236, 231, 0.16);
+  --insights-line: rgba(255, 255, 255, 0.16);
   --insights-accent: var(--rose);
   background: var(--deep);
 }
@@ -15,9 +15,9 @@
   overflow: hidden;
   border-bottom: 1px solid var(--insights-line);
   background:
-    radial-gradient(circle at 68% 51%, rgba(187, 154, 138, 0.2) 0 1px, transparent 2px),
-    radial-gradient(circle at 80% 24%, rgba(241, 236, 231, 0.32) 0 1px, transparent 2px),
-    radial-gradient(circle at 22% 78%, rgba(241, 236, 231, 0.18) 0 1px, transparent 2px),
+    radial-gradient(circle at 68% 51%, rgba(187, 35, 43, 0.2) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 24%, rgba(255, 255, 255, 0.32) 0 1px, transparent 2px),
+    radial-gradient(circle at 22% 78%, rgba(255, 255, 255, 0.18) 0 1px, transparent 2px),
     var(--deep);
   isolation: isolate;
   transition: height 0.9s cubic-bezier(0.2, 0.75, 0.2, 1), min-height 0.9s cubic-bezier(0.2, 0.75, 0.2, 1), opacity 0.6s ease, border-color 0.6s ease;
@@ -29,7 +29,7 @@
   width: min(78vw, 920px);
   aspect-ratio: 1.35;
   border-radius: 50%;
-  background: rgba(113, 42, 58, 0.18);
+  background: rgba(187, 35, 43, 0.18);
   content: "";
   filter: blur(88px);
   transition: opacity 0.45s ease, transform 1.15s cubic-bezier(0.2, 0.75, 0.2, 1);
@@ -39,7 +39,7 @@
   position: absolute;
   z-index: 2;
   inset: 0;
-  background: radial-gradient(ellipse at 12% 80%, rgba(23, 17, 19, 0.92) 0, rgba(23, 17, 19, 0.64) 18%, transparent 42%);
+  background: radial-gradient(ellipse at 12% 80%, rgba(32, 48, 154, 0.92) 0, rgba(32, 48, 154, 0.64) 18%, transparent 42%);
   content: "";
   pointer-events: none;
   transition: opacity 0.35s ease;
@@ -66,13 +66,13 @@
 
 .insights-orbit-spin { animation: insights-orbit 56s linear infinite; transform-origin: 700px 700px; }
 .insights-orbit-outer { animation-duration: var(--orbit-outer-duration, 56s); }
-.insights-orbit-outer text { fill: rgba(91, 94, 104, 0.6); font-size: 130px; }
+.insights-orbit-outer text { fill: rgba(255, 255, 255, 0.6); font-size: 130px; }
 .insights-orbit-title { animation-direction: reverse; animation-duration: var(--orbit-title-duration, 48s); }
 .insights-orbit-title text { fill: var(--silver); font-size: 116px; }
 .insights-orbit-middle { animation-duration: var(--orbit-middle-duration, 68s); }
 .insights-orbit-middle text { fill: var(--rose); font-size: 88px; }
 .insights-orbit-inner { animation-direction: reverse; animation-duration: var(--orbit-inner-duration, 52s); }
-.insights-orbit-inner text { fill: rgba(196, 184, 179, 0.78); font-size: 64px; }
+.insights-orbit-inner text { fill: rgba(255, 255, 255, 0.78); font-size: 64px; }
 
 .insights-hero-copy {
   position: absolute;
@@ -135,7 +135,7 @@
   padding: 0 22px;
   border-radius: 0;
   background: var(--rose);
-  color: var(--deep);
+  color: var(--silver);
   font-family: Plex, monospace;
   font-size: 11px;
   font-weight: 600;
@@ -145,7 +145,7 @@
   transition: background 0.3s ease, color 0.3s ease, opacity 0.35s ease, transform 0.55s cubic-bezier(0.2, 0.75, 0.2, 1);
 }
 
-.insights-enter:hover { background: var(--silver); transform: translateY(-2px); }
+.insights-enter:hover { background: var(--silver); color: var(--deep); transform: translateY(-2px); }
 .insights-enter:disabled { cursor: wait; }
 
 .insights-hero-note {
@@ -277,7 +277,7 @@
 .insights-card-media::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 30%, rgba(187, 154, 138, 0.2), transparent 70%);
+  background: linear-gradient(120deg, transparent 30%, rgba(187, 35, 43, 0.2), transparent 70%);
   content: "";
   pointer-events: none;
   transform: translateX(-120%);
@@ -304,7 +304,7 @@
   justify-content: space-between;
   height: 34px;
   padding-inline: 13px;
-  background: rgba(23, 17, 19, 0.76);
+  background: rgba(32, 48, 154, 0.76);
   color: var(--insights-muted);
   font-family: Plex, monospace;
   font-size: 9px;
@@ -419,7 +419,7 @@
   .insights-orbit-title text { font-size: 114px; }
   .insights-orbit-middle text { font-size: 88px; }
   .insights-orbit-inner text { font-size: 62px; }
-  .insights-hero::after { background: radial-gradient(ellipse at 19% 26%, rgba(23, 17, 19, 0.96) 0, rgba(23, 17, 19, 0.82) 24%, transparent 58%); }
+  .insights-hero::after { background: radial-gradient(ellipse at 19% 26%, rgba(32, 48, 154, 0.96) 0, rgba(32, 48, 154, 0.82) 24%, transparent 58%); }
   .insights-hero-copy { top: 46%; left: 20px; width: calc(100% - 40px); }
   .insights-hero-copy .eyebrow { position: static; margin-bottom: 14px; }
   .insights-hero-copy h1 { font-size: clamp(2.85rem, 13vw, 4.25rem); line-height: .94; }

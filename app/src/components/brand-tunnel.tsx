@@ -44,9 +44,9 @@ function makeGlowTexture() {
   if (!context) return null;
 
   const gradient = context.createRadialGradient(128, 128, 0, 128, 128, 128);
-  gradient.addColorStop(0, "rgba(209, 167, 146, 0.42)");
-  gradient.addColorStop(0.34, "rgba(151, 92, 91, 0.15)");
-  gradient.addColorStop(1, "rgba(23, 17, 19, 0)");
+  gradient.addColorStop(0, "rgba(187, 35, 43, 0.42)");
+  gradient.addColorStop(0.34, "rgba(32, 48, 154, 0.15)");
+  gradient.addColorStop(1, "rgba(32, 48, 154, 0)");
   context.fillStyle = gradient;
   context.fillRect(0, 0, 256, 256);
 
@@ -68,11 +68,11 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     gsap.registerPlugin(ScrollTrigger);
 
     const scene = new THREE.Scene();
-    const startColor = new THREE.Color(0x0c0b0d);
-    const endColor = new THREE.Color(0x191014);
+    const startColor = new THREE.Color(0x20309a);
+    const endColor = new THREE.Color(0x20309a);
     const clearColor = startColor.clone();
     scene.background = clearColor;
-    scene.fog = new THREE.Fog(0x0c0b0d, 7, 37);
+    scene.fog = new THREE.Fog(0x20309a, 7, 37);
 
     const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 90);
     camera.position.set(0, 0, 9.6);
@@ -91,15 +91,15 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     const world = new THREE.Group();
     scene.add(world);
 
-    const ambient = new THREE.AmbientLight(0xd9c9c0, 0.52);
-    const key = new THREE.PointLight(0xd2a28f, 28, 34, 1.65);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.52);
+    const key = new THREE.PointLight(0xffffff, 28, 34, 1.65);
     key.position.set(4, 4, 5);
-    const rim = new THREE.PointLight(0x6f3545, 34, 40, 1.8);
+    const rim = new THREE.PointLight(0xbb232b, 34, 40, 1.8);
     rim.position.set(-5, -2, -13);
     scene.add(ambient, key, rim);
 
     const sculptureMaterial = new THREE.MeshStandardMaterial({
-      color: 0xa88982,
+      color: 0xbb232b,
       metalness: 0.76,
       roughness: 0.32,
       transparent: true,
@@ -115,7 +115,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     world.add(sculpture);
 
     const veilMaterial = new THREE.MeshBasicMaterial({
-      color: 0x6f3443,
+      color: 0xbb232b,
       transparent: true,
       opacity: 0.085,
       side: THREE.DoubleSide,
@@ -129,7 +129,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     world.add(veil);
 
     const portalMaterial = new THREE.MeshBasicMaterial({
-      color: 0xc8a99b,
+      color: 0xffffff,
       transparent: true,
       opacity: 0.12,
       depthWrite: false,
@@ -150,7 +150,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     const glowMaterial = glowTexture
       ? new THREE.SpriteMaterial({
           map: glowTexture,
-          color: 0xd0a291,
+          color: 0xbb232b,
           transparent: true,
           opacity: 0.38,
           depthWrite: false,
@@ -182,7 +182,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       const cardGroup = new THREE.Group();
       const imageMaterial = new THREE.MeshBasicMaterial({
         map: textures[index % textures.length],
-        color: 0xd8d0cc,
+        color: 0xffffff,
         transparent: true,
         opacity: 0.56,
         side: THREE.DoubleSide,
@@ -190,7 +190,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       });
       const image = new THREE.Mesh(new THREE.PlaneGeometry(4.9, 3.05), imageMaterial);
       const backingMaterial = new THREE.MeshBasicMaterial({
-        color: 0x24161b,
+        color: 0x20309a,
         transparent: true,
         opacity: 0.72,
         side: THREE.DoubleSide,
