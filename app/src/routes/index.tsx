@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BrandTunnel } from "@/components/brand-tunnel";
 import { KineticBand } from "@/components/kinetic-band";
 import { ProjectReel } from "@/components/project-reel";
+import { ServicesAccordion } from "@/components/services-accordion";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
 
@@ -378,30 +379,7 @@ function Index() {
             <p>From the first impression to the next opportunity, we bring together the right skills for the problem in front of you.</p>
           </div>
 
-          <div className="service-list">
-            {services.map((service, index) => (
-              <details className="service" key={service.name} name="services" open={index === 0 ? true : undefined}>
-                <summary>
-                  <span className="service-number">0{index + 1}</span>
-                  <h3>{service.name}</h3>
-                  <span className="service-lead">{service.lead}</span>
-                  <span className="service-preview" aria-hidden="true"><img src={service.preview} alt="" loading="lazy" /></span>
-                  <span className="expand" aria-hidden="true">+</span>
-                </summary>
-                <div className="service-content">
-                  <p>{service.body}</p>
-                  <ul>
-                    {service.items.map((item) => (
-                      <li key={item}>{service.name === "Grow" && item === "Performance Marketing" ? <TransitionLink href="/services/performance-marketing">{item}</TransitionLink> : service.name === "Grow" && item === "SEO & Search Visibility" ? <TransitionLink href="/services/seo-ai-search">{item}</TransitionLink> : service.name === "Build" && item === "Website Design & Development" ? <TransitionLink href="/services/websites">{item}</TransitionLink> : item}</li>
-                    ))}
-                  </ul>
-                  <TransitionLink href={service.href}>
-                    {service.cta} <span aria-hidden="true">↗</span>
-                  </TransitionLink>
-                </div>
-              </details>
-            ))}
-          </div>
+          <ServicesAccordion services={services} motionDisabled={reduced || motionPaused} />
         </section>
 
         <KineticBand />
