@@ -51,13 +51,14 @@ export function PageTransition() {
 }
 
 export function SiteHeader({
-  brandTone: _brandTone = "light",
+  brandTone = "light",
 }: {
   brandTone?: BrandTone;
 } = {}) {
   const [open, setOpen] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const scrollSentinelRef = useRef<HTMLSpanElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const previousOverflow = useRef("");
@@ -72,23 +73,14 @@ export function SiteHeader({
   }, [animating, open]);
 
   useEffect(() => {
-    const updateHeader = () => {
-      const hero = document.querySelector<HTMLElement>(
-        "main .hero, main .services-hero, main .growth-hero, main .service-detail-hero, main .creative-hero, main .insights-hero, main .interior-hero",
-      );
-      const headerHeight = document.querySelector<HTMLElement>(".header")?.offsetHeight ?? 76;
-      const passedHero = hero
-        ? hero.getBoundingClientRect().bottom <= headerHeight
-        : window.scrollY >= Math.min(window.innerHeight * 0.72, 640);
-      setScrolled(passedHero);
-    };
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    window.addEventListener("resize", updateHeader);
-    return () => {
-      window.removeEventListener("scroll", updateHeader);
-      window.removeEventListener("resize", updateHeader);
-    };
+    const sentinel = scrollSentinelRef.current;
+    if (!sentinel) return;
+    setScrolled(window.scrollY > 16);
+    const observer = new IntersectionObserver(([entry]) => {
+      setScrolled(!entry.isIntersecting);
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   useLayoutEffect(() => {
@@ -206,9 +198,11 @@ export function SiteHeader({
   };
 
   const wordmark = "BFO";
-  const headerBrandTone: BrandTone = "light";
+  const headerBrandTone: BrandTone = open || scrolled ? "light" : brandTone;
 
   return (
+    <>
+    <span ref={scrollSentinelRef} className="header-scroll-sentinel" aria-hidden="true" />
     <header className={`header brand-${headerBrandTone} ${open ? "menu-active" : ""} ${scrolled ? "scrolled" : ""}`}>
       <Brand tone={headerBrandTone} />
       <nav className="desktop-navigation" aria-label="Primary navigation">
@@ -329,6 +323,7 @@ export function SiteHeader({
         </div>
       </nav>
     </header>
+    </>
   );
 }
 

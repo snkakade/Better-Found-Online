@@ -2550,6 +2550,24 @@ section[id] {
   height: 100%;
 }
 
+/* HTML artwork is the static fallback. Animated chapters are drawn inside
+ * the tunnel itself, so there is only one image for each approaching chapter. */
+.tunnel-journey[data-tunnel-ready="true"] .story-art,
+.tunnel-journey[data-tunnel-ready="true"] .story-orbit,
+.tunnel-journey[data-tunnel-ready="true"] .story-axis {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.tunnel-journey[data-tunnel-ready="true"] .story-stage-inner::before,
+.tunnel-journey[data-tunnel-ready="true"] .story-stage-inner::after {
+  display: none;
+}
+
+.tunnel-journey[data-tunnel-ready="true"] .story-stage { background: transparent; }
+.tunnel-journey[data-chapter-active="true"] .brand-tunnel-vignette { opacity: 0.2; }
+.tunnel-journey[data-chapter-active="true"] .journey-veil { opacity: 0.12 !important; }
+
 .brand-tunnel-atmosphere {
   position: absolute;
   inset: 0;
@@ -2567,6 +2585,7 @@ section[id] {
     linear-gradient(90deg, rgba(32, 48, 154, 0.96) 0%, rgba(32, 48, 154, 0.68) 33%, rgba(32, 48, 154, 0.08) 69%),
     radial-gradient(circle at 55% 48%, transparent 17%, rgba(32, 48, 154, 0.12) 54%, rgba(32, 48, 154, 0.82) 100%);
   pointer-events: none;
+  transition: opacity 300ms ease;
 }
 
 .journey-veil {
@@ -3062,20 +3081,28 @@ section[id] {
   }
 }
 
-/* Unified site navigation --------------------------------------------------
- * A calm, opaque royal-blue surface protects the identity and controls from every
- * hero, image and scrolling text state. */
+/* Navigation overlays the opening hero, then settles onto solid blue after
+ * the first scroll. The sentinel changes state without per-frame React updates. */
+.header-scroll-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 16px;
+  pointer-events: none;
+}
+
 .header {
-  --nav-height: 72px;
+  --nav-height: 80px;
   --nav-surface: #20309A;
   --nav-text: #FFFFFF;
   --nav-accent: #BB232B;
   height: var(--nav-height);
   padding: 0 clamp(24px, 4vw, 64px);
   border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .1);
-  background: var(--nav-surface);
-  box-shadow: 0 6px 20px rgba(32, 48, 154, .12);
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   transition:
@@ -3086,7 +3113,8 @@ section[id] {
 }
 
 .header.scrolled:not(.menu-active),
-.header.scrolled.brand-dark:not(.menu-active) {
+.header.scrolled.brand-dark:not(.menu-active),
+.header.menu-active {
   border-bottom-color: rgba(255, 255, 255, .12);
   background: var(--nav-surface);
   box-shadow: 0 6px 20px rgba(32, 48, 154, .16);
@@ -3094,10 +3122,14 @@ section[id] {
   -webkit-backdrop-filter: none;
 }
 
+.header.brand-dark:not(.scrolled):not(.menu-active) {
+  --nav-text: var(--brand-blue);
+}
+
 .header > .brand {
-  gap: 12px;
-  color: var(--silver);
-  font-size: 17px;
+  gap: 14px;
+  color: var(--nav-text);
+  font-size: 20px;
   font-weight: 560;
   line-height: 1;
   white-space: nowrap;
@@ -3108,9 +3140,17 @@ section[id] {
 }
 
 .header > .brand .brand-mark {
-  width: 42px;
-  height: 46px;
+  width: 46px;
+  height: 50px;
 }
+
+.header.brand-dark > .brand .brand-mark {
+  background: var(--nav-text);
+  -webkit-mask: url("/assets/brand/mark-dark.svg") center / contain no-repeat;
+  mask: url("/assets/brand/mark-dark.svg") center / contain no-repeat;
+}
+
+.header.brand-dark > .brand .brand-mark img { visibility: hidden; }
 
 .header > .brand > span:last-child > span {
   display: inline;
@@ -3122,23 +3162,23 @@ section[id] {
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: clamp(28px, 3vw, 52px);
+  gap: clamp(32px, 3.5vw, 60px);
   margin-left: auto;
 }
 
 .desktop-navigation-links {
   display: flex;
   align-items: center;
-  gap: clamp(22px, 2.1vw, 36px);
+  gap: clamp(28px, 2.5vw, 44px);
 }
 
 .desktop-navigation-links > a,
 .desktop-services > .desktop-services-trigger {
   position: relative;
-  padding: 11px 0;
-  color: rgba(255, 255, 255, .76);
-  font-size: 14px;
-  font-weight: 430;
+  padding: 13px 0;
+  color: var(--nav-text);
+  font-size: 18px;
+  font-weight: 450;
   letter-spacing: -.012em;
   transition: color 220ms ease;
 }
@@ -3167,6 +3207,11 @@ section[id] {
 .desktop-services:hover > .desktop-services-trigger::after,
 .desktop-services:focus-within > .desktop-services-trigger::after {
   right: 0;
+}
+
+.desktop-navigation a:focus-visible {
+  outline: 2px solid var(--nav-text);
+  outline-offset: 6px;
 }
 
 .desktop-services {
@@ -3228,11 +3273,11 @@ section[id] {
 
 .desktop-services-menu a {
   display: flex;
-  min-height: 44px;
+  min-height: 48px;
   align-items: center;
   padding: 10px 12px;
-  color: rgba(255, 255, 255, .74);
-  font-size: 13px;
+  color: rgba(255, 255, 255, .9);
+  font-size: 15px;
   line-height: 1.25;
   transition: background-color 180ms ease, color 180ms ease;
 }
@@ -3255,14 +3300,14 @@ section[id] {
 
 .desktop-navigation-cta {
   display: inline-flex;
-  min-height: 42px;
+  min-height: 46px;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 24px;
   border: 1px solid var(--nav-accent);
   background: var(--nav-accent);
   color: var(--silver);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 560;
   line-height: 1;
   white-space: nowrap;
@@ -3290,6 +3335,7 @@ section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .header,
   .desktop-services-trigger svg,
   .desktop-services-menu {
     transition: none;
@@ -3375,13 +3421,13 @@ section[id] {
 
 @media (max-width: 760px) {
   .header {
-    --nav-height: 64px;
+    --nav-height: 68px;
     padding: 0 16px;
   }
 
   .header > .brand {
     gap: 9px;
-    font-size: 13px;
+    font-size: 15px;
     line-height: 0.98;
   }
 

@@ -77,12 +77,18 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 90);
     camera.position.set(0, 0, 9.6);
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: false,
-      powerPreference: "high-performance",
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: false,
+        powerPreference: "high-performance",
+      });
+    } catch {
+      // The chapter images remain available as ordinary HTML when WebGL is unavailable.
+      return;
+    }
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.86;
@@ -104,6 +110,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       roughness: 0.32,
       transparent: true,
       opacity: 0.72,
+      depthWrite: false,
     });
     const sculpture = new THREE.Mesh(
       new THREE.TorusKnotGeometry(2.25, 0.42, 150, 18, 2, 3),
@@ -171,8 +178,17 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     }
 
     const textureLoader = new THREE.TextureLoader();
+    let disposed = false;
+    let loadedTextures = 0;
     const textures = textureSources.map((source) => {
-      const texture = textureLoader.load(source, () => renderer.render(scene, camera));
+      const texture = textureLoader.load(source, () => {
+        if (disposed) return;
+        loadedTextures += 1;
+        if (loadedTextures === textureSources.length && !reducedMotion && !paused) {
+          journey.dataset.tunnelReady = "true";
+        }
+        renderer.render(scene, camera);
+      });
       texture.colorSpace = THREE.SRGBColorSpace;
       texture.minFilter = THREE.LinearFilter;
       return texture;
@@ -205,6 +221,39 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       return { group: cardGroup, material: imageMaterial, backing: backingMaterial };
     });
 
+    // These are scene objects, not images crossfading over the canvas. Each
+    // chapter travels from the vanishing point to the reading position, then
+    // past the camera, using the same perspective and fog as the tunnel.
+    const chapterCards = textures.map((texture) => {
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        toneMapped: false,
+      });
+      const group = new THREE.Group();
+      group.add(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material));
+      group.visible = false;
+      scene.add(group);
+      return { group, material, targetProgress: 0, progress: 0 };
+    });
+    const chapterTriggers = reducedMotion || paused ? [] : Array.from(journey.querySelectorAll<HTMLElement>(".story-beat")).map((beat, index) => {
+      const chapter = chapterCards[index];
+      const chapterTrigger = ScrollTrigger.create({
+        trigger: beat,
+        start: "top 80%",
+        end: "bottom 50%",
+        invalidateOnRefresh: true,
+        onUpdate: (self) => { chapter.targetProgress = self.progress; },
+        onRefresh: (self) => { chapter.targetProgress = self.progress; },
+      });
+      chapter.targetProgress = chapter.progress = chapterTrigger.progress;
+      return chapterTrigger;
+    });
+
     let targetProgress = 0;
     let currentProgress = 0;
     const trigger = ScrollTrigger.create({
@@ -235,6 +284,12 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
 
     let travelDistance = 20;
     let sceneSpread = 1;
+    const chapterDepth = 7.5;
+    const chapterPosition = new THREE.Vector3();
+    const chapterRestPosition = new THREE.Vector2();
+    let chapterMaxWidth = 1;
+    let chapterMaxHeight = 1;
+    let pixelsToWorld = 1;
     const resize = () => {
       const rect = section.getBoundingClientRect();
       const width = Math.max(1, rect.width);
@@ -254,6 +309,21 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       });
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      const stage = journey.querySelector<HTMLElement>(".story-stage");
+      const inner = journey.querySelector<HTMLElement>(".story-stage-inner");
+      if (stage && inner) {
+        const stageRect = stage.getBoundingClientRect();
+        const innerRect = inner.getBoundingClientRect();
+        const stickyTop = Number.parseFloat(getComputedStyle(stage).top) || 0;
+        const halfViewHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * chapterDepth;
+        pixelsToWorld = halfViewHeight * 2 / height;
+        chapterRestPosition.set(
+          ((innerRect.left + innerRect.width / 2) / width * 2 - 1) * halfViewHeight * camera.aspect,
+          (1 - (stickyTop + stageRect.height / 2) / height * 2) * halfViewHeight,
+        );
+        chapterMaxWidth = innerRect.width * 0.92;
+        chapterMaxHeight = stageRect.height * 0.72;
+      }
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 768 ? 1.25 : 1.6));
       renderer.setSize(width, height, false);
       renderer.render(scene, camera);
@@ -283,6 +353,38 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       camera.position.z = THREE.MathUtils.lerp(10.2, 8.4, introEase) - travel;
       camera.rotation.z = Math.sin(currentProgress * Math.PI) * 0.018;
       camera.lookAt(camera.position.x * 0.08, camera.position.y * 0.05, camera.position.z - 12);
+      camera.updateMatrixWorld();
+
+      let chapterActive = false;
+      chapterCards.forEach((chapter, index) => {
+        chapter.progress += (chapter.targetProgress - chapter.progress) * 0.12;
+        const progress = chapter.progress;
+        const visible = !reducedMotion && !paused && progress > 0.001 && progress < 0.999;
+        chapter.group.visible = visible;
+        if (!visible) return;
+        chapterActive = true;
+        const approach = THREE.MathUtils.smoothstep(progress, 0.02, 0.46);
+        const departure = THREE.MathUtils.smoothstep(progress, 0.76, 1);
+        const image = textures[index].image as { width: number; height: number } | undefined;
+        const ratio = image ? image.width / image.height : 4 / 3;
+        const displayWidth = Math.min(chapterMaxWidth, chapterMaxHeight * ratio) * pixelsToWorld;
+        chapter.group.scale.set(displayWidth, displayWidth / ratio, 1);
+        chapterPosition.set(
+          chapterRestPosition.x * approach - displayWidth * departure * 0.85,
+          chapterRestPosition.y * approach + departure * 0.4,
+          -THREE.MathUtils.lerp(29, chapterDepth, approach) + departure * 5.7,
+        );
+        chapter.group.position.copy(camera.localToWorld(chapterPosition));
+        chapter.group.quaternion.copy(camera.quaternion);
+        chapter.group.rotateY((1 - approach) * -0.38 - departure * 0.18);
+        chapter.group.rotateZ((1 - approach) * 0.05 - departure * 0.04);
+        chapter.material.opacity = THREE.MathUtils.smoothstep(progress, 0.01, 0.2)
+          * (1 - THREE.MathUtils.smoothstep(progress, 0.86, 1));
+      });
+      const chapterState = chapterActive ? "true" : "false";
+      if (journey.dataset.chapterActive !== chapterState) journey.dataset.chapterActive = chapterState;
+      const sculptureOpacity = chapterActive ? 0.025 : 0.72;
+      sculptureMaterial.opacity += (sculptureOpacity - sculptureMaterial.opacity) * 0.12;
 
       world.rotation.z = Math.sin(motionTime * 0.12) * 0.012 + currentProgress * 0.028;
       sculpture.rotation.x = 0.72 + motionTime * 0.055;
@@ -294,16 +396,9 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
         portal.position.z = wrapAhead([-7, -19, -31][index], camera.position.z);
         portal.rotation.z = index * 0.22 + motionTime * (index % 2 ? -0.025 : 0.02);
       });
-      const activeStoryAssets = new Set(
-        (section.dataset.storyAssets ?? "")
-          .split(",")
-          .map((value) => Number.parseInt(value, 10))
-          .filter(Number.isFinite),
-      );
       cards.forEach((card, index) => {
-        const isChapterSource = activeStoryAssets.has(index % textureSources.length);
-        const imageOpacity = isChapterSource ? 0.04 : 0.56;
-        const backingOpacity = isChapterSource ? 0.08 : 0.7;
+        const imageOpacity = chapterActive ? 0 : 0.56;
+        const backingOpacity = chapterActive ? 0 : 0.7;
         card.material.opacity += (imageOpacity - card.material.opacity) * 0.075;
         card.backing.opacity += (backingOpacity - card.backing.opacity) * 0.075;
         card.group.position.z = wrapAhead(cardLayout[index].z, camera.position.z);
@@ -341,11 +436,15 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     render();
 
     return () => {
+      disposed = true;
+      delete journey.dataset.tunnelReady;
+      delete journey.dataset.chapterActive;
       running = false;
       window.cancelAnimationFrame(frame);
       visibilityObserver.disconnect();
       resizeObserver.disconnect();
       trigger.kill();
+      chapterTriggers.forEach((chapterTrigger) => chapterTrigger.kill());
       window.removeEventListener("pointermove", onPointerMove);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
       world.traverse((child) => {
@@ -357,6 +456,12 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
         if (child instanceof THREE.Sprite) child.material.dispose();
       });
       textures.forEach((texture) => texture.dispose());
+      chapterCards.forEach((chapter) => {
+        chapter.group.children.forEach((child) => {
+          if (child instanceof THREE.Mesh) child.geometry.dispose();
+        });
+        chapter.material.dispose();
+      });
       glowTexture?.dispose();
       glowMaterial?.dispose();
       renderer.dispose();

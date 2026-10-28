@@ -219,8 +219,6 @@ function Index() {
 
     const tick = (time: number) => lenis?.raf(time * 1000);
     if (lenis) gsap.ticker.add(tick);
-    const tunnelElement = root.current?.querySelector<HTMLElement>(".brand-tunnel");
-    let tunnelRevealCall: gsap.core.Tween | null = null;
 
     const ctx = gsap.context(() => {
       gsap.set(".story-intro-copy, .story-intro-note", { autoAlpha: 0 });
@@ -240,118 +238,15 @@ function Index() {
         .to(".hero-copy", { autoAlpha: 0, yPercent: -20, scale: 0.96, duration: 0.28 }, 0.08)
         .to(".journey-veil", { opacity: 0.54, duration: 0.34 }, 0.24)
         .to(".story-intro-copy", { autoAlpha: 1, y: 0, duration: 0.3 }, 0.4)
-        .to(".story-intro-note", { autoAlpha: 1, y: 0, duration: 0.26 }, 0.5)
-        .to(".brand-tunnel", { opacity: 0.78, duration: 0.2 }, 0.8);
-
-      const artworks = gsap.utils.toArray<HTMLElement>(".story-art");
-      gsap.set(artworks, {
-        autoAlpha: 0,
-        filter: "blur(10px)",
-        scale: 0.68,
-        transformPerspective: 1200,
-        z: -680,
-      });
-
-      const activateChapter = (index: number) => {
-        const target = artworks[index];
-        if (!target) return;
-
-        const opacity = artworks.map((artwork) => Number.parseFloat(gsap.getProperty(artwork, "opacity") as string) || 0);
-        const dominantIndex = opacity.reduce(
-          (strongest, value, artworkIndex) => value > opacity[strongest] ? artworkIndex : strongest,
-          0
-        );
-        const outgoing = dominantIndex === index ? null : artworks[dominantIndex];
-
-        setActiveStory(index);
-        tunnelRevealCall?.kill();
-        if (tunnelElement) {
-          tunnelElement.dataset.storyAssets = outgoing
-            ? `${dominantIndex},${index}`
-            : String(index);
-          if (outgoing) {
-            tunnelRevealCall = gsap.delayedCall(0.62, () => {
-              tunnelElement.dataset.storyAssets = String(index);
-            });
-          }
-        }
-        gsap.killTweensOf(artworks);
-
-        // A fast scroll can cross more than one chapter threshold before the
-        // previous crossfade has finished. Remove any half-visible intermediary
-        // immediately so only one outgoing and one incoming artwork can blend.
-        artworks.forEach((artwork, artworkIndex) => {
-          if (artworkIndex !== index && artwork !== outgoing) {
-            gsap.set(artwork, {
-              autoAlpha: 0,
-              filter: "blur(10px)",
-              scale: 0.68,
-              rotateY: 0,
-              z: -680,
-            });
-          }
-        });
-
-        if (opacity[index] < 0.05) {
-          gsap.set(target, {
-            autoAlpha: 0,
-            filter: "blur(10px)",
-            scale: 0.68,
-            rotateY: index % 2 === 0 ? -5 : 5,
-            z: -680,
-          });
-        }
-
-        const chapterTransition = gsap.timeline();
-        if (outgoing) {
-          chapterTransition.to(outgoing, {
-            autoAlpha: 0,
-            filter: "blur(7px)",
-            scale: 1.16,
-            z: 360,
-            duration: 0.54,
-            ease: "power2.in",
-            overwrite: true,
-          }, 0);
-        }
-        chapterTransition.to(target, {
-            autoAlpha: 1,
-            filter: "blur(0px)",
-            scale: 1,
-            rotateY: 0,
-            z: 0,
-            duration: 0.86,
-            ease: "power3.out",
-            overwrite: true,
-          }, outgoing ? 0.16 : 0);
-        gsap.to(".story-orbit", { rotate: index * 28, duration: 1, ease: "power2.out" });
-      };
-
-      const returnFirstChapterToTunnel = () => {
-        const firstArtwork = artworks[0];
-        if (!firstArtwork) return;
-        tunnelRevealCall?.kill();
-        tunnelElement?.removeAttribute("data-story-assets");
-        gsap.killTweensOf(firstArtwork);
-        gsap.to(firstArtwork, {
-          autoAlpha: 0,
-          filter: "blur(10px)",
-          scale: 0.68,
-          z: -680,
-          duration: 0.7,
-          ease: "power2.inOut",
-          overwrite: true,
-        });
-      };
+        .to(".story-intro-note", { autoAlpha: 1, y: 0, duration: 0.26 }, 0.5);
 
       gsap.utils.toArray<HTMLElement>(".story-beat").forEach((beat, index) => {
         ScrollTrigger.create({
           trigger: beat,
           start: "top 72%",
           end: "bottom 38%",
-          onEnter: () => activateChapter(index),
-          onEnterBack: () => activateChapter(index),
-          onLeaveBack: index === 0 ? returnFirstChapterToTunnel : undefined,
+          onEnter: () => setActiveStory(index),
+          onEnterBack: () => setActiveStory(index),
         });
       });
 
@@ -366,8 +261,6 @@ function Index() {
 
     return () => {
       ctx.revert();
-      tunnelRevealCall?.kill();
-      tunnelElement?.removeAttribute("data-story-assets");
       if (lenis) gsap.ticker.remove(tick);
       lenis?.destroy();
     };
