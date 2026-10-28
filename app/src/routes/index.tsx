@@ -237,7 +237,6 @@ function Index() {
         },
       })
         .to(".hero-copy", { autoAlpha: 0, yPercent: -20, scale: 0.96, duration: 0.28 }, 0.08)
-        .to(".journey-veil", { opacity: 0.54, duration: 0.34 }, 0.24)
         .to(".story-intro-copy", { autoAlpha: 1, y: 0, duration: 0.3 }, 0.4)
         .to(".story-intro-note", { autoAlpha: 1, y: 0, duration: 0.26 }, 0.5);
 
@@ -279,12 +278,9 @@ function Index() {
       <main id="main">
         <div className="tunnel-journey">
           <BrandTunnel paused={motionPaused} reducedMotion={reduced} />
-          <div className="journey-veil" aria-hidden="true" />
 
           <div className="hero-journey">
             <section className="hero" id="home" aria-labelledby="hero-title">
-              <div className="hero-backdrop" aria-hidden="true"><div className="hero-grain" /></div>
-
               <div className="hero-copy">
                 <p className="eyebrow">Web Design / SEO / Paid Ads / Creative</p>
                 <h1 id="hero-title">

@@ -2631,7 +2631,6 @@ section[id] {
 
 .tunnel-journey[data-tunnel-ready="true"] .story-stage { background: transparent; }
 .tunnel-journey[data-chapter-active="true"] .brand-tunnel-vignette { opacity: 0.2; }
-.tunnel-journey[data-chapter-active="true"] .journey-veil { opacity: 0.12 !important; }
 
 .brand-tunnel-atmosphere {
   position: absolute;
@@ -2653,18 +2652,6 @@ section[id] {
   transition: opacity 300ms ease;
 }
 
-.journey-veil {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  height: 100dvh;
-  margin-bottom: -100dvh;
-  background: linear-gradient(180deg, transparent 0%, rgba(32, 48, 154, 0.08) 46%, var(--deep) 100%);
-  opacity: 0.12;
-  pointer-events: none;
-  will-change: opacity;
-}
-
 .hero {
   position: relative;
   z-index: 2;
@@ -2673,27 +2660,6 @@ section[id] {
   min-height: 100svh;
   align-items: center;
   padding: 102px max(5vw, 28px) 54px;
-}
-
-.hero-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.hero-backdrop::after {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(32, 48, 154, 0.14), transparent 66%, rgba(32, 48, 154, 0.28));
-  content: "";
-}
-
-.hero-grain {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
-  opacity: 0.035;
 }
 
 .hero-copy {
@@ -2924,10 +2890,6 @@ section[id] {
     height: 100svh;
     margin-bottom: 0;
     opacity: 1 !important;
-  }
-
-  .journey-veil {
-    display: none;
   }
 
   .story-intro-copy,
