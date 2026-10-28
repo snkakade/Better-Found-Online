@@ -27,31 +27,28 @@ const storyChapters = [
   {
     id: "discover",
     label: "01",
-    name: "Find the signal",
-    title: "Find what matters. Fix what doesn't.",
+    name: "Website copy",
+    title: "Explain your services clearly.",
     body:
-      "We look at your business from the customer's perspective. What are they searching for? What makes you different? What's stopping them from taking action?",
-    detail: "Research / Positioning / Strategy",
+      "We clarify your offer and write your website copy so visitors can quickly see what you do and why to choose you.",
     image: "/assets/portals.webp",
   },
   {
     id: "shape",
     label: "02",
-    name: "Give it form",
-    title: "Make your value impossible to miss.",
+    name: "Web design",
+    title: "Make contacting your business easy.",
     body:
-      "We turn your offer into clear messaging and a distinctive digital experience. Every headline, layout, and interaction should help people understand why your business matters.",
-    detail: "Messaging / Design / Experience",
+      "We build mobile-friendly websites with clear service pages, visible contact options, and simple forms, so customers can reach you from any screen.",
     image: "/assets/macro.webp",
   },
   {
     id: "launch",
     label: "03",
-    name: "Make it move",
-    title: "Turn attention into action.",
+    name: "Search & ads",
+    title: "Get found when customers search.",
     body:
-      "A website is only part of the journey. We bring search, marketing, and the right digital tools together to make the next step easier.",
-    detail: "Development / Integration / Growth",
+      "SEO and paid ads connect relevant searches to focused landing pages. Inquiry tracking helps you see which channels bring in potential customers.",
     image: "/assets/connect.webp",
   },
 ];
@@ -312,7 +309,7 @@ function Index() {
             </section>
           </div>
 
-          <section className="story-sequence" aria-label="How we create momentum">
+          <section className="story-sequence" aria-label="Website copy, design, and marketing">
             <div className="story-stage">
               <div className="story-stage-inner" aria-hidden="true">
                 <div className="story-orbit orbit-a" />
@@ -333,7 +330,7 @@ function Index() {
                 <span className="story-stage-index">{storyChapters[activeStory]?.label} / 03</span>
                 <span className="story-stage-caption">{storyChapters[activeStory]?.name}</span>
               </div>
-              <nav className="story-stage-nav" aria-label="Choose a story chapter">
+              <nav className="story-stage-nav" aria-label="Explore how we help">
                 {storyChapters.map((chapter, index) => (
                   <button
                     key={chapter.id}
@@ -357,9 +354,7 @@ function Index() {
                   <div className="story-beat-copy">
                     <h3>{chapter.title}</h3>
                     <p>{chapter.body}</p>
-                    <p className="story-detail">{chapter.detail}</p>
                   </div>
-                  <span className="story-beat-rule" aria-hidden="true" />
                 </article>
               ))}
             </div>

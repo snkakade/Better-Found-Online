@@ -1030,27 +1030,11 @@ section[id] {
   letter-spacing: -0.04em;
 }
 
-.story-beat-copy > p:not(.story-detail) {
+.story-beat-copy > p {
   margin-top: 22px;
   color: var(--muted);
   font-size: 16px;
   line-height: 1.8;
-}
-
-.story-detail {
-  margin-top: 30px;
-  color: var(--microcopy);
-  font-family: Plex, monospace;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.story-beat-rule {
-  width: 44px;
-  height: 1px;
-  margin-top: 44px;
-  background: var(--rose);
 }
 
 .services {
@@ -2397,7 +2381,7 @@ section[id] {
     font-size: clamp(2.2rem, 9vw, 3.7rem);
   }
 
-  .story-beat-copy > p:not(.story-detail) {
+  .story-beat-copy > p {
     font-size: 15px;
   }
 
