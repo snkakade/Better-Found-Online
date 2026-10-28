@@ -175,7 +175,7 @@
 }
 
 .reel-copy > span {
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
   letter-spacing: 0.06em;
@@ -479,67 +479,67 @@
 
 .case-device { position: relative; }
 .case-device video { display: block; width: 100%; height: 100%; object-fit: contain; }
-.case-device-camera { position: absolute; z-index: 2; top: 5px; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: #101114; box-shadow: 0 0 0 1px rgba(255,255,255,.12); transform: translateX(-50%); }
+.case-device-camera { position: absolute; z-index: 2; top: 5px; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: #0b0c0f; box-shadow: 0 0 0 1px rgba(255,255,255,.08); transform: translateX(-50%); }
 
 .case-device-macbook {
   width: min(94%, 860px);
-  filter: drop-shadow(0 34px 30px rgba(7, 12, 48, 0.28));
+  filter: drop-shadow(0 30px 32px rgba(4, 1, 2, 0.34));
   transform: rotateX(1deg) rotateY(-2deg);
 }
 
 .case-device-macbook-lid {
   position: relative;
   padding: 11px 11px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(226, 232, 240, 0.3);
   border-radius: 16px 16px 6px 6px;
-  background: linear-gradient(145deg, #f8f8f6 0%, #d9dadd 20%, #b9bbc0 72%, #eef0f2 100%);
-  box-shadow: inset 0 1px rgba(255,255,255,.92), inset 0 -1px rgba(40,45,55,.22);
+  background: linear-gradient(145deg, #545961 0%, #171a1f 13%, #07090c 84%, #3a3f47 100%);
+  box-shadow: inset 0 1px rgba(255,255,255,.28), inset 0 -1px rgba(255,255,255,.08);
 }
 
-.case-device-macbook-screen { display: flex; aspect-ratio: 16 / 10; overflow: hidden; flex-direction: column; border: 1px solid rgba(0,0,0,.72); border-radius: 7px 7px 3px 3px; background: #090a0d; }
-.case-browser-bar { display: grid; grid-template-columns: 48px minmax(0, 1fr) 28px; align-items: center; flex: 0 0 25px; gap: 8px; padding: 0 8px; border-bottom: 1px solid rgba(32,48,154,.12); background: #FFFFFF; color: #20309A; font-family: Plex, monospace; font-size: 7px; }
+.case-device-macbook-screen { display: flex; aspect-ratio: 16 / 10; overflow: hidden; flex-direction: column; border: 1px solid rgba(255,255,255,.08); border-radius: 7px 7px 3px 3px; background: #050607; }
+.case-browser-bar { display: grid; grid-template-columns: 48px minmax(0, 1fr) 28px; align-items: center; flex: 0 0 25px; gap: 8px; padding: 0 8px; border-bottom: 1px solid rgba(23,17,19,.12); background: #ebe8e4; color: #514b4c; font-family: Plex, monospace; font-size: 7px; }
 .case-browser-controls { display: flex; gap: 4px; }
-.case-browser-controls i { width: 6px; height: 6px; border-radius: 50%; background: #FFFFFF; }
-.case-browser-controls i:first-child { background: #BB232B; }
-.case-browser-controls i:nth-child(2) { background: #BB232B; }
-.case-browser-controls i:last-child { background: #BB232B; }
-.case-browser-address { overflow: hidden; padding: 4px 10px; border: 1px solid rgba(32,48,154,.08); border-radius: 999px; background: rgba(255,255,255,.72); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.case-browser-controls i { width: 6px; height: 6px; border-radius: 50%; background: #c5bdb8; }
+.case-browser-controls i:first-child { background: #b96f66; }
+.case-browser-controls i:nth-child(2) { background: #d0a95f; }
+.case-browser-controls i:last-child { background: #7da27f; }
+.case-browser-address { overflow: hidden; padding: 4px 10px; border: 1px solid rgba(23,17,19,.08); border-radius: 999px; background: rgba(255,255,255,.72); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 .case-browser-menu { letter-spacing: 1px; text-align: right; }
-.case-browser-viewport { min-height: 0; flex: 1; overflow: hidden; background: #090a0d; }
+.case-browser-viewport { min-height: 0; flex: 1; overflow: hidden; background: #050607; }
 .case-browser-viewport video { object-fit: cover; object-position: top center; }
-.case-device-macbook-base { position: relative; display: block; width: 108%; height: 18px; margin-left: -4%; border-radius: 2px 2px 14px 14px; background: linear-gradient(180deg, #fafafa 0%, #d7d8db 18%, #b5b7bc 66%, #e7e8ea 100%); box-shadow: 0 12px 18px rgba(7,12,48,.3), inset 0 1px rgba(255,255,255,.92); clip-path: polygon(2% 0, 98% 0, 100% 72%, 97% 100%, 3% 100%, 0 72%); }
-.case-device-macbook-base::after { position: absolute; top: 0; left: 43%; width: 14%; height: 4px; border-radius: 0 0 5px 5px; background: linear-gradient(180deg, #a8aab0, #d8d9dc); content: ""; }
+.case-device-macbook-base { position: relative; display: block; width: 108%; height: 18px; margin-left: -4%; border-radius: 2px 2px 14px 14px; background: linear-gradient(180deg, #b7bac0 0%, #62676e 18%, #24282e 58%, #0d0f12 100%); box-shadow: 0 10px 14px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.45); clip-path: polygon(2% 0, 98% 0, 100% 72%, 97% 100%, 3% 100%, 0 72%); }
+.case-device-macbook-base::after { position: absolute; top: 0; left: 43%; width: 14%; height: 4px; border-radius: 0 0 5px 5px; background: rgba(15,16,18,.45); content: ""; }
 
 .case-device-tablet {
   width: min(72%, 650px);
   padding: 13px;
-  border: 1px solid rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(226, 232, 240, 0.32);
   border-radius: 29px;
-  background: linear-gradient(145deg, #f6f6f4 0%, #d5d6d9 19%, #aaaeb4 76%, #eef0f1 100%);
-  box-shadow: 0 34px 60px rgba(7, 12, 48, 0.34), inset 0 1px 1px rgba(255,255,255,.88), inset 0 -1px 1px rgba(35,39,47,.22);
+  background: linear-gradient(145deg, #4b5058 0%, #15181d 11%, #07090c 80%, #343940 100%);
+  box-shadow: 0 34px 70px rgba(3, 1, 2, 0.45), inset 0 1px 1px rgba(255,255,255,.3), inset 0 -1px 1px rgba(255,255,255,.08);
   transform: rotate(-2deg);
 }
 
-.case-device-tablet-screen { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(0,0,0,.76); border-radius: 18px; background: #090a0d; }
+.case-device-tablet-screen { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; background: #050607; }
 
 /* Mirrors the phone proportions and hardware details used on the Shrey portfolio. */
 .case-device-phone {
   width: min(34%, 300px);
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.34);
   border-radius: 48px;
-  background: linear-gradient(145deg, #fafaf8 0%, #d9dadd 18%, #aeb1b7 70%, #eef0f1 100%);
-  box-shadow: 0 34px 70px rgba(7, 12, 48, 0.4), inset 0 1px 1px rgba(255,255,255,.92), inset 0 -1px 1px rgba(35,39,47,.24);
+  background: linear-gradient(145deg, #454a52 0%, #15181d 16%, #07090c 70%, #30343b 100%);
+  box-shadow: 0 34px 80px rgba(1, 5, 10, 0.5), inset 0 1px 1px rgba(255,255,255,.34), inset 0 -1px 1px rgba(255,255,255,.08);
   isolation: isolate;
 }
 
 .case-device-phone::before,
-.case-device-phone::after { position: absolute; z-index: -1; width: 4px; border-radius: 3px; background: linear-gradient(90deg, #9da0a6, #e4e5e7); box-shadow: inset 1px 0 rgba(255,255,255,.62); content: ""; }
+.case-device-phone::after { position: absolute; z-index: -1; width: 4px; border-radius: 3px; background: #22262c; box-shadow: inset 1px 0 rgba(255,255,255,.12); content: ""; }
 .case-device-phone::before { top: 104px; left: -4px; height: 74px; }
 .case-device-phone::after { top: 132px; right: -4px; height: 96px; }
-.case-device-phone-screen { position: relative; aspect-ratio: 390 / 844; overflow: hidden; border: 1px solid rgba(0,0,0,.8); border-radius: 40px; background: #090a0d; }
+.case-device-phone-screen { position: relative; aspect-ratio: 390 / 844; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 40px; background: #070807; }
 .case-device-phone-screen video { opacity: 1; filter: saturate(.92) contrast(1.03); transform: none; }
-.case-device-phone-island { position: absolute; top: 10px; left: 50%; width: 31%; height: 24px; border: 1px solid rgba(255,255,255,.05); border-radius: 999px; background: #050608; box-shadow: 0 1px rgba(255,255,255,.08); transform: translateX(-50%); }
+.case-device-phone-island { position: absolute; top: 10px; left: 50%; width: 31%; height: 24px; border: 1px solid rgba(255,255,255,.04); border-radius: 999px; background: #030405; box-shadow: 0 1px rgba(255,255,255,.05); transform: translateX(-50%); }
 
 .case-visual--ensemble .case-device-macbook { position: absolute; z-index: 1; top: 7%; left: 10%; width: 82%; transform: rotateX(1deg) rotateY(-3deg); }
 .case-visual--ensemble .case-device-tablet { position: absolute; z-index: 2; right: 1%; bottom: 2%; width: 43%; transform: rotate(3deg); }
@@ -553,7 +553,7 @@
 }
 
 .case-copy > span {
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
   letter-spacing: 0.06em;
@@ -577,7 +577,7 @@
 
 .case-copy p { max-width: 460px; margin-top: 25px; color: var(--muted); line-height: 1.7; }
 .case-copy a { display: inline-block; width: max-content; margin-top: 24px; padding-bottom: 7px; border-bottom: 1px solid var(--rose); color: var(--silver); font-size: 12px; }
-.case-copy b { display: block; margin-top: 34px; color: var(--rose); font-family: Plex, monospace; font-size: 9px; font-weight: 400; }
+.case-copy b { display: block; margin-top: 34px; color: var(--microcopy); font-family: Plex, monospace; font-size: 9px; font-weight: 400; }
 
 .case-word {
   position: absolute;
@@ -612,7 +612,7 @@
 .work-paid-media-evidence figcaption { margin-top: 12px; color: var(--muted); font: 9px/1.6 Plex, monospace; letter-spacing: .06em; text-transform: uppercase; }
 .work-paid-media-evidence dl { display: grid; grid-column: 2; grid-row: 1; gap: 0; align-self: stretch; margin: 0; border-top: 1px solid var(--line); }
 .work-paid-media-evidence dl > div { display: grid; align-content: center; border-bottom: 1px solid var(--line); }
-.work-paid-media-evidence dt { color: var(--rose); font: 9px Plex, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.work-paid-media-evidence dt { color: var(--microcopy); font: 9px Plex, monospace; letter-spacing: .08em; text-transform: uppercase; }
 .work-paid-media-evidence dd { margin: 14px 0 0; font-size: clamp(2.7rem, 5vw, 5.8rem); line-height: .82; letter-spacing: -.06em; }
 .work-paid-media-evidence dd span { display: block; margin-top: 14px; color: var(--muted); font-size: .86rem; line-height: 1.3; letter-spacing: 0; }
 .work-paid-media-evidence > p { grid-column: 2; margin: -1rem 0 0; color: var(--muted); font-size: .78rem; line-height: 1.6; }
@@ -677,7 +677,7 @@
 .process-svg .process-guide { stroke: rgba(255, 255, 255, 0.09); stroke-width: 1; }
 .process-stages { display: grid; }
 .process-stage { display: grid; min-height: 48vh; align-content: center; grid-template-columns: 64px 1fr; column-gap: 24px; }
-.process-stage > span { grid-row: 1 / 3; color: var(--rose); font-family: Plex, monospace; font-size: 9px; }
+.process-stage > span { grid-row: 1 / 3; color: var(--microcopy); font-family: Plex, monospace; font-size: 9px; }
 .process-stage h3 { font-size: clamp(2.6rem, 5vw, 5.6rem); line-height: 0.95; letter-spacing: -0.055em; }
 .process-stage p { max-width: 480px; margin-top: 18px; color: var(--muted); font-size: 16px; line-height: 1.65; }
 

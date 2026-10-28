@@ -23,6 +23,7 @@
   --muted: rgba(255, 255, 255, 0.72);
   --rose: var(--brand-red);
   --line: rgba(255, 255, 255, 0.22);
+  --microcopy: rgba(255, 255, 255, 0.9);
 }
 
 html {
@@ -136,7 +137,7 @@ section[id] {
 
 .work-taxonomy {
   margin-top: 22px;
-  color: var(--rose) !important;
+  color: var(--microcopy) !important;
   font-family: Plex, monospace;
   font-size: 10px !important;
   letter-spacing: .08em;
@@ -157,7 +158,8 @@ section[id] {
 }
 
 .eyebrow {
-  color: var(--rose);
+  color: currentColor;
+  opacity: 0.86;
 }
 
 .skip-link {
@@ -863,7 +865,7 @@ section[id] {
 }
 
 .story-stage-step > span:first-child {
-  color: var(--rose);
+  color: var(--microcopy);
 }
 
 .story-stage-step:hover,
@@ -985,7 +987,7 @@ section[id] {
   position: absolute;
   z-index: 4;
   bottom: 9%;
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -1037,7 +1039,7 @@ section[id] {
 
 .story-detail {
   margin-top: 30px;
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 10px;
   letter-spacing: 0.04em;
@@ -1140,7 +1142,7 @@ section[id] {
 }
 
 .service-number {
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 10px;
 }
@@ -1206,13 +1208,14 @@ section[id] {
 
 .service-content > a {
   width: max-content;
-  color: var(--rose);
+  color: var(--microcopy);
   font-size: 12px;
 }
 
 .service-content > a span {
   display: inline-block;
   margin-left: 12px;
+  color: var(--rose);
   transition: transform 0.3s ease;
 }
 
@@ -1348,7 +1351,7 @@ section[id] {
 }
 
 .insight-category .tiny {
-  color: var(--rose);
+  color: var(--microcopy);
 }
 
 .insight h3 {
@@ -1489,7 +1492,7 @@ section[id] {
 
 .contact-field label,
 .contact-project-types legend {
-  color: var(--rose);
+  color: var(--microcopy);
   font: 9px Plex, monospace;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -1783,7 +1786,7 @@ section[id] {
 
 .footer-label {
   margin-bottom: 12px;
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
   letter-spacing: 0.1em;
@@ -2620,7 +2623,8 @@ section[id] {
 
 .hero-copy > .eyebrow {
   margin-bottom: 20px;
-  color: #BB232B;
+  color: var(--microcopy);
+  opacity: 1;
 }
 
 .hero h1 {
@@ -3245,7 +3249,7 @@ section[id] {
   margin-top: 8px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, .12);
-  color: var(--rose);
+  color: var(--microcopy);
   font-weight: 520;
 }
 
@@ -3535,7 +3539,7 @@ section[id] {
 
 .footer .footer-label {
   margin: 3px 0 9px;
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Outfit, sans-serif;
   font-size: 10.5px;
   font-weight: 500;

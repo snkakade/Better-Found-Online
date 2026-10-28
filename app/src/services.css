@@ -243,7 +243,7 @@
 }
 
 .services-hero-card small {
-  color: var(--rose);
+  color: var(--deep);
   font-family: Plex, monospace;
   font-size: 6px;
   letter-spacing: 0.07em;
@@ -277,7 +277,7 @@
 .service-result > span {
   display: block;
   margin-bottom: 18px;
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
   letter-spacing: 0.08em;
@@ -350,7 +350,7 @@
 .service-chapter-label,
 .services-system-label,
 .engagements-label {
-  color: var(--rose);
+  color: var(--microcopy);
   font-size: 15px;
   line-height: 1.2;
 }
@@ -571,7 +571,7 @@
 }
 
 .engagement-card > span {
-  color: var(--rose);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
 }
@@ -586,7 +586,7 @@
 .engagement-card b {
   display: block;
   margin-top: 16px;
-  color: var(--rose);
+  color: var(--microcopy);
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.08em;

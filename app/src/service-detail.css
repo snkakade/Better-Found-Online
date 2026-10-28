@@ -2316,6 +2316,32 @@
 .performance-closing-links span { color: var(--rose); font: 9px Plex, monospace; }
 .performance-closing-links strong { font-size: clamp(.74rem, .82vw, .9rem); font-weight: 400; }
 
+/* Red remains the action accent; compact reporting labels use high-contrast white on blue. */
+.performance-marketing-page :is(
+  .performance-process li > span,
+  .performance-proof-no-media > span,
+  .performance-proof-case-heading > span,
+  .performance-proof-narrative dt,
+  .performance-proof-status > span,
+  .performance-campaign-map-label,
+  .performance-results-support article > span,
+  .performance-results-grid article > span,
+  .performance-result-group > header div > span:not(.performance-platform-badge),
+  .performance-proof-value > span,
+  .performance-result-dossier > span,
+  .performance-proof-case-heading > div > p,
+  .performance-results-feature-brand span,
+  .performance-proof-motion span,
+  .performance-result-reading > span,
+  .performance-campaign-evidence-card figcaption span,
+  .performance-consumer-brand > span,
+  .performance-related nav a > span:first-child,
+  .performance-related-cta,
+  .performance-brand-signoff,
+  .performance-closing-links span,
+  .performance-metric-strip dt
+) { color: var(--microcopy); }
+
 @media (max-width: 1180px) {
   .performance-marketing-page .performance-closing--connected { grid-template-columns: 150px minmax(0, 1fr); }
   .performance-closing-links { grid-template-columns: repeat(2, 1fr); }

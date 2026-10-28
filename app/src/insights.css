@@ -350,12 +350,14 @@
   gap: 8px;
   width: max-content;
   margin-top: 10px;
-  color: var(--insights-accent);
+  color: var(--microcopy);
   font-family: Plex, monospace;
   font-size: 9px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
+
+.insights-card-body a svg { color: var(--insights-accent); }
 
 .insights-closing {
   display: flex;
