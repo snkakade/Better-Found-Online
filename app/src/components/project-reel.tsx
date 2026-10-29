@@ -1,65 +1,13 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { TransitionLink } from "@/components/site-chrome";
+import { WebsitePreview } from "@/components/website-preview";
 
 const projects = [
   { title: "Premium presentation. Clear purpose.", name: "CharterX", type: "Website / Digital Experience", video: "/assets/service-pages/websites/charterx.webm", mp4: "/assets/service-pages/websites/charterx.mp4", text: "A polished website experience that brings structure and character to specialist yacht services while presenting the offer clearly." },
   { title: "A specialist product, made easier to explore.", name: "Say Vanilla", type: "Website Strategy / Design / Development", video: "/assets/service-pages/websites/say-vanilla.webm", mp4: "/assets/service-pages/websites/say-vanilla.mp4", text: "A tactile website that gives an ingredient-led brand space to explain its product, build confidence, and make discovery feel effortless." },
   { title: "Stand out in a market full of sameness.", name: "Tech Sales Sourced", type: "Positioning / Website Development", video: "/assets/service-pages/websites/tech-sales.webm", mp4: "/assets/service-pages/websites/tech-sales.mp4", text: "Focused messaging and clear journeys help a specialist recruitment business communicate its value to hiring teams and candidates." },
 ];
-
-function ProjectPreview({ name, video, mp4 }: { name: string; video: string; mp4: string }) {
-  const preview = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const element = preview.current;
-    if (!element) return;
-    const region = element.closest<HTMLElement>(".work-reel");
-    if (!region) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    element.playbackRate = 0.78;
-
-    if (reducedMotion.matches) {
-      element.pause();
-      element.currentTime = 0;
-      return;
-    }
-
-    let sectionVisible = false;
-    let mediaRequested = false;
-    const updatePlayback = () => {
-      if (sectionVisible && document.visibilityState === "visible") {
-        if (!mediaRequested) {
-          mediaRequested = true;
-          element.load();
-        }
-        void element.play().catch(() => undefined);
-      } else {
-        element.pause();
-      }
-    };
-
-    const observer = new IntersectionObserver(([entry]) => {
-      sectionVisible = entry.isIntersecting;
-      updatePlayback();
-    }, { rootMargin: "50% 0px", threshold: 0.01 });
-
-    observer.observe(region);
-    document.addEventListener("visibilitychange", updatePlayback);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", updatePlayback);
-    };
-  }, []);
-
-  return (
-    <video ref={preview} autoPlay muted loop playsInline preload="auto" aria-label={`${name} desktop website preview`}>
-      <source src={video} type="video/webm" />
-      <source src={mp4} type="video/mp4" />
-    </video>
-  );
-}
 
 export function ProjectReel() {
   const section = useRef<HTMLElement>(null);
@@ -82,9 +30,8 @@ export function ProjectReel() {
     const region = section.current;
     const root = track.current;
     if (!region || !root) return;
-    const finePointer = window.matchMedia("(min-width: 801px) and (hover: hover) and (pointer: fine)");
+    const finePointer = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!finePointer.matches || reduceMotion.matches) return;
 
     const cards = Array.from(root.querySelectorAll<HTMLElement>(".reel-card"));
     let frame = 0;
@@ -93,6 +40,11 @@ export function ProjectReel() {
     let maxScroll = 0;
 
     const measure = () => {
+      if (!finePointer.matches || reduceMotion.matches) {
+        region.style.removeProperty("height");
+        delete region.dataset.scrollDriven;
+        return;
+      }
       region.dataset.scrollDriven = "true";
       maxScroll = Math.max(0, root.scrollWidth - root.clientWidth);
       travel = Math.max(maxScroll * 0.92, window.innerHeight * 1.35);
@@ -116,16 +68,20 @@ export function ProjectReel() {
     };
 
     const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
+      if (finePointer.matches && !reduceMotion.matches && !frame) frame = window.requestAnimationFrame(update);
     };
 
     measure();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", measure);
+    finePointer.addEventListener("change", measure);
+    reduceMotion.addEventListener("change", measure);
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", measure);
+      finePointer.removeEventListener("change", measure);
+      reduceMotion.removeEventListener("change", measure);
       region.style.removeProperty("height");
       delete region.dataset.scrollDriven;
     };
@@ -143,7 +99,7 @@ export function ProjectReel() {
         <div className="reel-track" ref={track}>
           {projects.map((project) => (
             <article className="reel-card" key={project.title}>
-              <div className="reel-image"><ProjectPreview name={project.name} video={project.video} mp4={project.mp4} /></div>
+              <div className="reel-image"><WebsitePreview src={project.video} label={`${project.name} desktop website preview`} /></div>
               <div className="reel-copy"><span>{project.type}</span><b>{project.name}</b><h3>{project.title}</h3><p>{project.text}</p></div>
             </article>
           ))}

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
+import { WebsitePreview } from "@/components/website-preview";
 import "@/service-growth-pages.css";
 import "@/website-page.css";
 
@@ -233,38 +234,6 @@ function Schema() {
   );
 }
 
-function ViewportVideo({
-  src,
-  label,
-  preload = "metadata",
-}: {
-  src: string;
-  label: string;
-  preload?: "auto" | "metadata";
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) void video.play().catch(() => undefined);
-        else video.pause();
-      },
-      { threshold: 0.28 },
-    );
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <video ref={videoRef} muted loop playsInline preload={preload} aria-label={label}>
-      <source src={src} type="video/webm" />
-    </video>
-  );
-}
-
 function WebsitesPage() {
   const [filter, setFilter] = useState("All Projects");
   const visible =
@@ -304,9 +273,8 @@ function WebsitesPage() {
           <figure className="website-phone-hero">
             <div className="case-device case-device-phone">
               <div className="case-device-phone-screen">
-                <ViewportVideo
+                <WebsitePreview
                   src="/assets/work/say-vanilla-mobile.webm"
-                  preload="auto"
                   label="Say Vanilla mobile website preview on an iPhone"
                 />
                 <span className="case-device-phone-island" aria-hidden="true" />
@@ -345,7 +313,7 @@ function WebsitesPage() {
               return (
                 <article className="project-card" key={project.name}>
                   <div className="project-media">
-                    <ViewportVideo src={project.video} label={`${project.name} website preview`} />
+                    <WebsitePreview src={project.video} label={`${project.name} website preview`} />
                   </div>
                   <div className="project-copy">
                     <span>

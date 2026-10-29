@@ -147,6 +147,7 @@ function Index() {
   const root = useRef<HTMLDivElement>(null);
   const [activeStory, setActiveStory] = useState(0);
   const [reduced, setReduced] = useState(false);
+  const [compact, setCompact] = useState(false);
   const [motionPaused, setMotionPaused] = useState(false);
   const [inquiryReady, setInquiryReady] = useState(false);
   const [projectTypeError, setProjectTypeError] = useState("");
@@ -177,16 +178,19 @@ function Index() {
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const smallScreen = window.matchMedia("(max-width: 900px)");
     const apply = () => {
       setReduced(query.matches);
+      setCompact(smallScreen.matches);
     };
     apply();
     query.addEventListener("change", apply);
-    return () => query.removeEventListener("change", apply);
+    smallScreen.addEventListener("change", apply);
+    return () => { query.removeEventListener("change", apply); smallScreen.removeEventListener("change", apply); };
   }, []);
 
   useEffect(() => {
-    if (!reduced && !motionPaused) return;
+    if (!reduced && !motionPaused && !compact) return;
     const beats = root.current?.querySelectorAll<HTMLElement>(".story-beat");
     if (!beats?.length) return;
 
@@ -205,10 +209,11 @@ function Index() {
 
     beats.forEach((beat) => observer.observe(beat));
     return () => observer.disconnect();
-  }, [reduced, motionPaused]);
+  }, [reduced, motionPaused, compact]);
 
   useEffect(() => {
-    if (reduced || motionPaused) return;
+    // The mobile reading path must never depend on a scroll-triggered reveal.
+    if (reduced || motionPaused || window.matchMedia("(max-width: 900px)").matches) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const smoothScroll = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)").matches;
@@ -261,10 +266,10 @@ function Index() {
       if (lenis) gsap.ticker.remove(tick);
       lenis?.destroy();
     };
-  }, [reduced, motionPaused]);
+  }, [reduced, motionPaused, compact]);
 
   return (
-    <div ref={root} className={`${motionPaused ? "site motion-paused" : "site"}${reduced ? " reduced-motion" : ""}`}>
+    <div ref={root} className={`home-page ${motionPaused ? "site motion-paused" : "site"}${reduced ? " reduced-motion" : ""}`}>
       <PageTransition />
       <PageSchema name="Web Design, SEO & Marketing | Better Found Online" path="/" description="Better Found Online builds websites and creates search, advertising, and digital experiences for service businesses and growing brands in the U.S. and beyond." />
       <a className="skip-link" href="#main">
@@ -274,7 +279,7 @@ function Index() {
 
       <main id="main">
         <div className="tunnel-journey">
-          <BrandTunnel paused={motionPaused} reducedMotion={reduced} />
+          <BrandTunnel paused={motionPaused} reducedMotion={reduced} compactLayout={compact} />
 
           <div className="hero-journey">
             <section className="hero" id="home" aria-labelledby="hero-title">
@@ -350,6 +355,7 @@ function Index() {
             <div className="story-beats">
               {storyChapters.map((chapter, index) => (
                 <article key={chapter.id} className="story-beat">
+                  <img className="story-beat-media" src={chapter.image} alt="" width="1200" height="750" loading="eager" decoding="async" />
                   <p className="eyebrow">{chapter.label} <span>/ {chapter.name}</span></p>
                   <div className="story-beat-copy">
                     <h3>{chapter.title}</h3>
@@ -370,7 +376,7 @@ function Index() {
             <p>From the first impression to the next opportunity, we bring together the right skills for the problem in front of you.</p>
           </div>
 
-          <ServicesAccordion services={services} motionDisabled={reduced || motionPaused} />
+          <ServicesAccordion services={services} motionDisabled={reduced || motionPaused || compact} />
         </section>
 
         <KineticBand />

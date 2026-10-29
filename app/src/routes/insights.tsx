@@ -95,7 +95,7 @@ function InsightsPage() {
 
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>(".insights-page [data-insight-reveal]");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia("(max-width: 900px), (prefers-reduced-motion: reduce)").matches) {
       items.forEach((item) => item.classList.add("is-visible"));
       return;
     }

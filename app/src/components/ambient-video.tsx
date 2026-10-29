@@ -59,6 +59,7 @@ export function AmbientVideo({ src, poster, label, width, height }: AmbientVideo
     if (!video) return;
     if (video.paused) {
       preference.current = "playing";
+      if (video.error) video.load();
       void video.play().catch(() => setPlaying(false));
     } else {
       preference.current = "paused";
@@ -68,10 +69,6 @@ export function AmbientVideo({ src, poster, label, width, height }: AmbientVideo
 
   return (
     <div className={`service-video${width === height ? " service-video--square" : ""}`}>
-      {failed ? (
-        <img src={poster} alt={label} width={width} height={height} />
-      ) : (
-        <>
           <video
             ref={videoRef}
             src={src}
@@ -83,14 +80,14 @@ export function AmbientVideo({ src, poster, label, width, height }: AmbientVideo
             playsInline
             preload="none"
             aria-label={label}
-            onPlay={() => setPlaying(true)}
+            onPlaying={() => { setPlaying(true); setFailed(false); }}
             onPause={() => setPlaying(false)}
-            onError={() => setFailed(true)}
+            onError={() => { setFailed(true); setPlaying(false); }}
           />
           <button
             className="service-video-toggle"
             type="button"
-            aria-label={`${playing ? "Pause" : "Play"} ${label}`}
+            aria-label={`${failed ? "Retry" : playing ? "Pause" : "Play"} ${label}`}
             onClick={togglePlayback}
           >
             {playing ? (
@@ -99,8 +96,6 @@ export function AmbientVideo({ src, poster, label, width, height }: AmbientVideo
               <Play size={18} weight="fill" aria-hidden="true" />
             )}
           </button>
-        </>
-      )}
     </div>
   );
 }

@@ -2,6 +2,67 @@
 
 Branch: `new-colour`. Public website only; no console, database, or main-branch changes.
 
+## Follow-up: rendering and iPhone video failures
+
+The earlier checks below missed real rendering failures reported in the user's
+iPhone screenshots. Layout measurements alone did not catch invisible GSAP
+reveals, a stale accordion height, or a video with no painted frame. This
+follow-up corrects those paths rather than treating the earlier audit as a
+physical-device pass.
+
+- Homepage scroll reveals no longer hide mobile headings, service rows, or
+  insight cards. Mobile content is visible from the initial HTML/CSS state.
+- The three mobile chapters now use ordinary document flow, with their own
+  eagerly loaded artwork. The duplicate sticky stage, counter, and navigation
+  labels are not rendered visually on mobile. The tunnel remains in the hero;
+  it no longer competes with chapter copy. Desktop tunnel choreography remains.
+- Mobile service disclosures use native details without cancellable height
+  animations. Closed panels explicitly leave layout; open panels size to content.
+- Homepage project videos have definite 16:10 media boxes, not percentage
+  heights inside indefinite grid rows. This removes the large blank video area.
+- Ten existing website/device recordings now have smaller H.264 Main/yuv420p,
+  fast-start MP4 derivatives. Real videos remain on iPhone; they are not replaced
+  by static photos. Exact encoded-frame covers appear only while video prepares.
+  A visible play/retry action remains until playback starts, including a stalled
+  request or blocked autoplay. Videos become visible after a painted video frame.
+- Website-page projects and Work device screens share this playback path. A
+  failed device no longer blocks the other previews in a readiness polling loop.
+- The creative showcase starts its visible mobile video without waiting for the
+  hidden duplicate half to buffer. Creative films, before/after examples, and
+  search/advertising clips retain real playable media and a user-gesture path.
+- Removed the showcase edit's 3.1-second black ending in a separate web-loop
+  derivative. No picture content was cropped; the original file is unchanged.
+- Restored the SEO hero video on phones and kept the advertising video on short
+  screens. Balanced the website hero line wrapping and made the scrolled mobile
+  header opaque immediately.
+
+Follow-up verification:
+
+- Rechecked all 16 public routes at 320, 390, 440, and 768 px, including scrolled
+  positions. In-view headings/body text and ancestor visibility were checked,
+  not just element dimensions. Reviewed rendered screenshots of the problem
+  sections, service pages, website projects, Work devices, creative footage,
+  insights, and legal pages. No hidden in-view text, broken displayed images, or
+  page-level horizontal overflow was found in these checks.
+- Observed advancing playback time and painted footage in the homepage reel,
+  website projects, Work phone, creative showcase/films/before-after, and
+  SEO/advertising clips. Offscreen previews pause.
+- Interrupted MP4 downloads, verified the real play action stayed available,
+  restored the connection, and started the video through that action. The
+  recovered CharterX preview reached readyState 4 and advanced normally.
+- All ten derivatives have validated codecs/pixel format and size limits.
+  Frame-zero cover files are byte-for-byte matches to FFmpeg extraction from
+  their encoded clips. The trimmed showcase loop ends before the black tail.
+- 47 Node regression tests, UI contract checks, TypeScript, and the Pages build
+  pass. Bun is unavailable locally; equivalent npm/Node checks were used.
+
+These are Chrome responsive-rendering and media-recovery checks, not a claim
+of a physical iPhone/Safari run. No physical iPhone or Safari automation surface
+was available. iOS Low Power Mode can prevent autoplay; the explicit play action
+is the supported user-gesture recovery, not a promise to bypass browser policy.
+
+## Earlier audit (retained for history)
+
 ## Coverage
 
 All 16 public routes were checked at 320 x 568, 390 x 844, 430 x 932, and 768 x 1024:

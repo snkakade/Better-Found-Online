@@ -122,7 +122,7 @@ function ServicesPage() {
     CustomEase.create("servicesHop2", "0.9, 0, 0.1, 1");
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const compactMotion = reduceMotion || window.matchMedia("(max-width: 800px)").matches;
+    const compactMotion = reduceMotion || window.matchMedia("(max-width: 900px)").matches;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = compactMotion ? previousOverflow : "hidden";
 

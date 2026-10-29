@@ -61,6 +61,8 @@
 .proof-orbit-card[data-focus="true"] { right: 8px; left: auto; transform: translate3d(0, 12.5%, 0); }
 .proof-orbit-card[style] { right: auto; left: 0; }
 .proof-orbit-media { position: relative; width: 100%; height: 100%; min-height: 0; }
+.proof-video-play { position: absolute; z-index: 3; left: 8px; right: 8px; bottom: 12px; min-height: 48px; border: 2px solid var(--proof-white); background: var(--proof-red); color: var(--proof-white); font: 600 1rem Outfit, sans-serif; }
+.proof-video-play:focus-visible { outline: 3px solid var(--proof-red); outline-offset: 3px; }
 .proof-orbit-media video,
 .proof-orbit-media img {
   position: absolute;

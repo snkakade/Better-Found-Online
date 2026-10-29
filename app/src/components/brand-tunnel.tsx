@@ -6,6 +6,7 @@ import * as THREE from "three";
 type BrandTunnelProps = {
   paused?: boolean;
   reducedMotion?: boolean;
+  compactLayout?: boolean;
 };
 
 const textureSources = [
@@ -55,7 +56,7 @@ function makeGlowTexture() {
   return texture;
 }
 
-export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunnelProps) {
+export function BrandTunnel({ paused = false, reducedMotion = false, compactLayout = false }: BrandTunnelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +65,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     const section = sectionRef.current;
     const journey = section?.closest<HTMLElement>(".tunnel-journey");
     if (!canvas || !section || !journey) return;
+    const compact = compactLayout || window.matchMedia("(max-width: 900px)").matches;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -184,7 +186,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       const texture = textureLoader.load(source, () => {
         if (disposed) return;
         loadedTextures += 1;
-        if (loadedTextures === textureSources.length && !reducedMotion && !paused) {
+        if (loadedTextures === textureSources.length && !reducedMotion && !paused && !compact) {
           journey.dataset.tunnelReady = "true";
         }
         renderer.render(scene, camera);
@@ -240,7 +242,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       scene.add(group);
       return { group, material, targetProgress: 0, progress: 0 };
     });
-    const chapterTriggers = reducedMotion || paused ? [] : Array.from(journey.querySelectorAll<HTMLElement>(".story-beat")).map((beat, index) => {
+    const chapterTriggers = reducedMotion || paused || compact ? [] : Array.from(journey.querySelectorAll<HTMLElement>(".story-beat")).map((beat, index) => {
       const chapter = chapterCards[index];
       const chapterTrigger = ScrollTrigger.create({
         trigger: beat,
@@ -466,7 +468,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       glowMaterial?.dispose();
       renderer.dispose();
     };
-  }, [paused, reducedMotion]);
+  }, [paused, reducedMotion, compactLayout]);
 
   return (
     <div className="brand-tunnel" ref={sectionRef} aria-hidden="true">

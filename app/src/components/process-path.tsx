@@ -14,7 +14,7 @@ export function ProcessPath() {
   const line = useRef<SVGPathElement>(null);
 
   useEffect(() => {
-    if (!root.current || !line.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!root.current || !line.current || window.matchMedia("(max-width: 900px), (prefers-reduced-motion: reduce)").matches) return;
     gsap.registerPlugin(ScrollTrigger);
     const length = line.current.getTotalLength();
     gsap.set(line.current, { strokeDasharray: length, strokeDashoffset: length });

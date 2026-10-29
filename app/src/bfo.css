@@ -1007,6 +1007,8 @@ section[id] {
   padding: 5vh 0;
 }
 
+.story-beat-media { display: none; }
+
 .story-beat {
   display: flex;
   min-height: 82vh;
@@ -1240,7 +1242,7 @@ section[id] {
 
 .service-link:hover { border-color: var(--rose); }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
   .service-list:not(.service-list--still) .service[open] .service-description {
     animation: service-detail-enter 420ms cubic-bezier(.22, 1, .36, 1) both;
   }

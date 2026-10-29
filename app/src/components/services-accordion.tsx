@@ -25,7 +25,7 @@ export function ServicesAccordion({ services, motionDisabled = false }: {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!root.current || motionDisabled) return;
+    if (!root.current || motionDisabled || window.matchMedia("(max-width: 900px)").matches) return;
     const panels = Array.from(root.current.querySelectorAll<HTMLDetailsElement>(".service"));
     const motions = new Map<HTMLDetailsElement, { animation: Animation; opening: boolean }>();
 

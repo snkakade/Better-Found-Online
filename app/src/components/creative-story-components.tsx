@@ -20,6 +20,7 @@ export interface CreativeCapability {
 
 export function InlineProjectVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [needsPlay, setNeedsPlay] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -31,7 +32,7 @@ export function InlineProjectVideo({ src, poster, className }: { src: string; po
         video.pause();
         return;
       }
-      video.play().catch(() => undefined);
+      video.play().catch(error => { if (error.name !== "AbortError") setNeedsPlay(true); });
     };
     const observer = new IntersectionObserver(([entry]) => syncPlayback(entry.isIntersecting), { rootMargin: "160px 0px", threshold: 0.12 });
     const handleMotionChange = () => syncPlayback(observer ? video.getBoundingClientRect().top < window.innerHeight : true);
@@ -45,7 +46,7 @@ export function InlineProjectVideo({ src, poster, className }: { src: string; po
     };
   }, []);
 
-  return <video ref={videoRef} className={className} muted loop playsInline preload="metadata" poster={poster} aria-hidden="true"><source src={src} type="video/mp4" /></video>;
+  return <video ref={videoRef} className={className} muted loop playsInline preload="metadata" poster={poster} controls={needsPlay} aria-label="Creative project video" onPlaying={() => setNeedsPlay(false)} onError={() => setNeedsPlay(true)}><source src={src} type="video/mp4" /></video>;
 }
 
 export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
@@ -155,6 +156,7 @@ export function CreativeTransformation() {
 
 export function CreativeCapabilityCarousel({ capabilities }: { capabilities: CreativeCapability[] }) {
   const [active, setActive] = useState(0);
+  const [needsPlay, setNeedsPlay] = useState(true);
   const slider = useRef<HTMLDivElement>(null);
   const slideTitles = useRef<HTMLDivElement>(null);
   const slideImages = useRef<HTMLDivElement>(null);
@@ -163,6 +165,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
   const currentIndex = useRef(1);
   const handleSlider = useRef<() => void>(() => undefined);
   const handleMediaHover = useRef<(expanded: boolean) => void>(() => undefined);
+  const handleVideoPlay = useRef<() => void>(() => undefined);
 
   useEffect(() => {
     let disposed = false;
@@ -178,7 +181,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       [imgTop.current, imgBottom.current].forEach(container => {
         container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
           const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
-          if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf && video.style.opacity === "1") void video.play().catch(() => undefined);
+          if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf) void video.play().catch(error => { if (!disposed && error.name !== "AbortError") setNeedsPlay(true); });
           else video.pause();
         });
       });
@@ -235,6 +238,12 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       const sourceIndex = (imageNumber - 2 + totalSlides) % totalSlides;
       const item = capabilities[sourceIndex];
       if (!item || !imgTop.current || !imgBottom.current) return;
+      setNeedsPlay(true);
+      // Keep the selected artwork visible while its actual video prepares.
+      // Never leave an old slide or an empty blue box behind a loading gate.
+      [imgTop.current, imgBottom.current].forEach(container => {
+        container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => { video.pause(); video.remove(); });
+      });
 
       const createVideo = (className: string) => {
         const video = document.createElement("video");
@@ -249,6 +258,8 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         video.style.opacity = "0";
         video.setAttribute("aria-hidden", "true");
         video.tabIndex = -1;
+        video.addEventListener("playing", () => { if (!disposed && requestId === mediaRequest) setNeedsPlay(false); });
+        video.addEventListener("error", () => { if (!disposed && requestId === mediaRequest) setNeedsPlay(true); });
         return video;
       };
 
@@ -269,10 +280,10 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       imgTop.current.appendChild(videoTop);
       imgBottom.current.appendChild(videoBottom);
 
-      let readyCount = 0;
+      let revealed = false;
       const revealPreparedVideo = () => {
-        readyCount += 1;
-        if (readyCount < 2) return;
+        if (revealed || videoTop.readyState < 2 || (!compactVideo.matches && videoBottom.readyState < 2)) return;
+        revealed = true;
 
         if (disposed || requestId !== mediaRequest) {
           videoTop.pause();
@@ -309,10 +320,19 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         });
       };
 
-      videoTop.addEventListener("canplay", revealPreparedVideo, { once: true });
-      videoBottom.addEventListener("canplay", revealPreparedVideo, { once: true });
+      // A display:none duplicate may never emit canplay on iPhone. Start the
+      // visible clip immediately and never wait on the hidden mobile half.
+      videoTop.addEventListener("loadeddata", revealPreparedVideo, { once: true });
+      videoBottom.addEventListener("loadeddata", revealPreparedVideo, { once: true });
+      handleVideoPlay.current = () => {
+        [videoTop, ...(compactVideo.matches ? [] : [videoBottom])].forEach(video => {
+          if (video.error || video.readyState === 0) video.load();
+          void video.play().catch(() => setNeedsPlay(true));
+        });
+      };
       videoTop.load();
-      videoBottom.load();
+      if (!compactVideo.matches) videoBottom.load();
+      syncPlayback();
     };
 
     handleSlider.current = () => {
@@ -379,7 +399,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         aria-label="Creative production video showcase. Select the showcase to advance."
         aria-live="polite"
         onClick={(event) => {
-          if ((event.target as HTMLElement).closest("a")) return;
+          if ((event.target as HTMLElement).closest("a,button,video")) return;
           handleSlider.current();
         }}
         onKeyDown={(event) => {
@@ -405,9 +425,11 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
           onPointerEnter={() => handleMediaHover.current(true)}
           onPointerLeave={() => handleMediaHover.current(false)}
         >
+          <img className="slider-loading-artwork" src={item?.poster ?? item?.image} alt="" loading="eager" decoding="async" />
           <div className="img-top" ref={imgTop} />
           <div className="img-bottom" ref={imgBottom} />
         </div>
+        {needsPlay && <button className="slider-media-play" type="button" onClick={() => handleVideoPlay.current()}>Play video</button>}
         <div className="modular-slider-kicker" aria-hidden="true">
           <span>Better Found Online</span>
           <span>Creative Production</span>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { WebsitePreview } from "@/components/website-preview";
 
 const cases = [
   {
@@ -39,12 +40,9 @@ const cases = [
 
 type CaseDevice = (typeof cases)[number]["devices"][number];
 
-function DevicePreview({ device, registerVideo, synchronized = false }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; synchronized?: boolean }) {
+function DevicePreview({ device, registerVideo, playbackRate }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; playbackRate: number }) {
   const video = (
-    <video ref={registerVideo} loop muted playsInline preload="none" aria-label={device.label}>
-      {device.kind === "macbook" && <source src={device.src.replace(/\.webm$/, ".mp4")} type="video/mp4" />}
-      <source src={device.src} type="video/webm" />
-    </video>
+    <WebsitePreview src={device.src} label={device.label} registerVideo={registerVideo} playbackRate={playbackRate} fit={device.kind === "macbook" ? "cover" : "contain"} />
   );
 
   if (device.kind === "phone") {
@@ -62,44 +60,22 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
   const root = useRef<HTMLDivElement>(null);
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
   const synchronized = devices.length > 1;
+  const requestedRate = "playbackRate" in devices[0] ? devices[0].playbackRate : undefined;
+  const basePlaybackRate = requestedRate ?? (synchronized ? 0.72 : 0.78);
 
   useEffect(() => {
-    const requestedRate = "playbackRate" in devices[0] ? devices[0].playbackRate : undefined;
-    const basePlaybackRate = requestedRate ?? (synchronized ? 0.72 : 0.78);
-    let readyTimer = 0;
-    let syncTimer = 0;
-    let hasEntered = false;
+    if (!synchronized) return;
+    let visible = false;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const media = videos.current.filter((video): video is HTMLVideoElement => Boolean(video));
-
-    const startTogether = () => {
-      if (media.length !== devices.length || media.some((video) => video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA)) return false;
-      media.forEach((video) => {
-        video.pause();
-        video.currentTime = 0;
-        video.playbackRate = basePlaybackRate;
-      });
-      void Promise.all(media.map((video) => video.play().catch(() => undefined)));
-      return true;
-    };
-
-    const startWhenReady = () => {
-      window.clearInterval(readyTimer);
-      media.forEach((video) => {
-        video.playbackRate = basePlaybackRate;
-        video.load();
-        void video.play().catch(() => undefined);
-      });
-      if (startTogether()) return;
-      readyTimer = window.setInterval(() => {
-        if (startTogether()) window.clearInterval(readyTimer);
-      }, 80);
-    };
-
+    // Each preview owns loading/playback and has its own poster. A failed device
+    // must never hold the other devices behind an all-ready polling gate.
     const keepTogether = () => {
+      if (!visible || document.hidden || reducedMotion.matches) return;
       const master = media[0];
       if (!master || master.paused || master.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
       media.slice(1).forEach((video) => {
-        if (video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) void video.play().catch(() => undefined);
+        if (video.paused || video.error || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
         const difference = master.currentTime - video.currentTime;
         if (Math.abs(difference) > 0.75) {
           video.currentTime = master.currentTime;
@@ -110,41 +86,18 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
       });
     };
 
-    const handleVisibility = () => {
-      if (document.visibilityState !== "visible" || !media[0]) return;
-      media.slice(1).forEach((video) => {
-        video.currentTime = media[0]!.currentTime;
-        video.playbackRate = basePlaybackRate;
-      });
-    };
-
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        if (!hasEntered) {
-          hasEntered = true;
-          startWhenReady();
-        } else {
-          media.forEach((video) => void video.play().catch(() => undefined));
-        }
-      } else {
-        media.forEach((video) => video.pause());
-      }
-    // Start the next panel's preview before the horizontal track brings it on screen.
-    // The generous horizontal margin prevents a late first frame without keeping
-    // every off-screen video running for the entire page visit.
-    }, { rootMargin: "80% 1000%", threshold: 0.01 });
+      visible = entry.isIntersecting;
+    }, { threshold: 0.01 });
 
     if (root.current) observer.observe(root.current);
-    if (synchronized) syncTimer = window.setInterval(keepTogether, 250);
-    document.addEventListener("visibilitychange", handleVisibility);
+    const syncTimer = window.setInterval(keepTogether, 250);
 
     return () => {
-      window.clearInterval(readyTimer);
       window.clearInterval(syncTimer);
       observer.disconnect();
-      document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [devices.length, synchronized]);
+  }, [basePlaybackRate, synchronized]);
 
   return (
     <div className="case-device-stage" ref={root}>
@@ -152,7 +105,7 @@ function DeviceSet({ devices }: { devices: readonly CaseDevice[] }) {
         <DevicePreview
           device={device}
           key={device.src}
-          synchronized={synchronized}
+          playbackRate={basePlaybackRate}
           registerVideo={(video) => { videos.current[index] = video; }}
         />
       ))}
@@ -169,7 +122,7 @@ export function HorizontalCases() {
     gsap.registerPlugin(ScrollTrigger);
     const context = gsap.context(() => {
       ScrollTrigger.matchMedia({
-        "(min-width: 801px)": () => {
+        "(min-width: 901px)": () => {
           const panels = gsap.utils.toArray<HTMLElement>(".case-panel");
           gsap.to(track.current, {
             xPercent: -100 * (panels.length - 1) / panels.length,
