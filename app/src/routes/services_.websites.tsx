@@ -90,20 +90,20 @@ const projects = [
 
 const value = [
   [
-    "Explain what you offer.",
-    "Clear headlines and service pages help visitors see what you do, who it is for, and why to choose you.",
+    "Messaging and content",
+    "A clear service-page structure, copy requirements, and space for real project or business evidence.",
   ],
   [
-    "Show why customers can trust you.",
-    "Real projects, relevant credentials, and useful business information give visitors evidence, not just promises.",
+    "Mobile layouts and accessibility",
+    "Layouts for desktop and phone, readable type, keyboard navigation, and appropriately sized media.",
   ],
   [
-    "Make inquiries and bookings simple.",
-    "Visible contact buttons, straightforward forms, and agreed booking tools give interested visitors a clear next step.",
+    "Forms and integrations",
+    "Agreed forms, booking tools, store, or CRM connections, with the inquiry path checked before launch.",
   ],
   [
-    "Work across phones and desktops.",
-    "Responsive pages, optimized media, accessible controls, and search-friendly structure are planned into the build.",
+    "Search foundations and launch checks",
+    "Page titles, descriptions, semantic headings, and checks of key links and forms before handover.",
   ],
 ];
 const relatedServices = [
@@ -134,34 +134,20 @@ const relatedServices = [
 ];
 const formats = [
   [
-    "01",
     "Landing Pages",
-    "One offer. One audience. One clear action.",
-    "Messaging / Design / Responsive Development / Conversion Path",
+    "One offer or campaign, with a focused message and one inquiry, booking, or purchase action.",
   ],
   [
-    "02",
     "Business Websites",
-    "Make the whole business easier to understand.",
-    "Website Strategy / UX / Design / Development / Search Foundations",
+    "Service pages, project examples, and contact journeys. Content management and integrations can be included in the agreed scope.",
   ],
   [
-    "03",
-    "Growth Platforms",
-    "A stronger foundation for a growing business.",
-    "Content Systems / Integrations / Customer Journeys / Analytics",
-  ],
-  [
-    "04",
     "Ecommerce Websites",
-    "Make shopping easier from browsing to checkout.",
-    "Product Presentation / Store UX / Commerce Integrations / Testing",
+    "Product pages, browsing, and checkout. Payments, shipping, taxes, and platform fees are confirmed during scoping.",
   ],
   [
-    "05",
     "Website Redesign",
-    "Keep what's working. Improve what isn't.",
-    "Website Review / Content Structure / UX / Visual Redesign / Development",
+    "Improve an existing site's copy, navigation, mobile layouts, or inquiry journey. Review current content and search foundations before changes.",
   ],
 ];
 const faqs = [
@@ -334,53 +320,6 @@ function WebsitesPage() {
             </figcaption>
           </figure>
         </section>
-        <section className="website-benefits section-pad" aria-labelledby="website-benefits-title">
-          <header>
-            <h2 id="website-benefits-title">Help visitors understand, trust, and contact you.</h2>
-            <p>
-              We bring copy, design, and development together around the decisions your customers
-              need to make.
-            </p>
-          </header>
-          <div className="website-benefit-grid">
-            {value.map(([heading, copy]) => (
-              <article key={heading}>
-                <h3>{heading}</h3>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section className="website-scope section-pad" aria-labelledby="website-scope-title">
-          <div>
-            <h2 id="website-scope-title">A clear scope makes a better start.</h2>
-            <p>
-              Before work begins, we agree on what is included, what you need to supply, and what
-              the project will cost.
-            </p>
-            <TransitionLink className="primary-btn" href="/#contact">
-              Discuss Your Website
-            </TransitionLink>
-          </div>
-          <dl>
-            <div>
-              <dt>Pages &amp; content</dt>
-              <dd>Key pages, copywriting, and the images or video needed.</dd>
-            </div>
-            <div>
-              <dt>Tools &amp; connections</dt>
-              <dd>Forms, booking, ecommerce, and selected CRM integrations.</dd>
-            </div>
-            <div>
-              <dt>Budget &amp; timeline</dt>
-              <dd>Project fees, content deadlines, reviews, and launch dependencies.</dd>
-            </div>
-            <div>
-              <dt>Ownership &amp; ongoing costs</dt>
-              <dd>Handover, maintenance, hosting, and any software or licensing fees.</dd>
-            </div>
-          </dl>
-        </section>
         <section className="project-section section-pad" id="website-projects">
           <header>
             <h2>See the websites we’ve built.</h2>
@@ -432,7 +371,7 @@ function WebsitesPage() {
                         <dt>Approach</dt>
                         <dd>{project.approach}</dd>
                       </dl>
-                      <TransitionLink href="/work">View Website Project</TransitionLink>
+                      <TransitionLink href="/work">See More Website Work</TransitionLink>
                     </details>
                   </div>
                 </article>
@@ -443,92 +382,76 @@ function WebsitesPage() {
             These are selected projects from our founder's portfolio. Publication and project
             attribution remain subject to applicable client permissions.
           </p>
+          <div className="website-project-next">
+            <p>Have a similar website in mind?</p>
+            <TransitionLink className="primary-btn" href="/#contact">
+              Discuss Your Website
+            </TransitionLink>
+          </div>
         </section>
-        <section className="format-section section-pad">
+        <section className="website-formats section-pad" aria-labelledby="website-formats-title">
           <header>
-            <p className="eyebrow">What we build</p>
-            <h2>
-              The right website.
-              <br />
-              Not more website than you need.
-            </h2>
+            <h2 id="website-formats-title">Choose the website your business needs.</h2>
             <p>
-              Different businesses need different levels of complexity. We start with the problem,
-              then determine the right structure and scope.
+              A campaign page, full business site, online store, or redesign. We scope the pages and
+              features around your goal.
             </p>
           </header>
-          <div>
-            {formats.map(([n, l, h, s]) => (
-              <article key={n}>
-                <span>{n}</span>
-                <div>
-                  <h3>{l}</h3>
-                  <p>{h}</p>
-                  <small>Typical scope: {s}</small>
-                </div>
+          <div className="website-format-list">
+            {formats.map(([heading, copy]) => (
+              <article key={heading}>
+                <h3>{heading}</h3>
+                <p>{copy}</p>
               </article>
             ))}
           </div>
-          <TransitionLink className="text-cta" href="/#contact">
-            Discuss Your Website
-          </TransitionLink>
         </section>
-        <section className="split-editorial section-pad">
-          <figure>
-            <img
-              src="/assets/service-pages/editorial/responsive-web-system.jpg"
-              alt="Responsive website system shown across screen sizes"
-              width="1400"
-              height="900"
-              loading="lazy"
-            />
-          </figure>
-          <div>
-            <p className="eyebrow">The details make the difference</p>
-            <h2>
-              Built to feel different.
-              <br />
-              Designed to make sense.
-            </h2>
-            <p>
-              Typography, layout, movement, and responsive interactions create distinctive
-              experiences without making visitors work harder.
-            </p>
-            <ul>
-              <li>
-                <b>Purposeful motion</b> guides attention.
-              </li>
-              <li>
-                <b>Responsive by design</b> keeps every screen useful.
-              </li>
-              <li>
-                <b>Fast where it matters</b> through optimized assets and code.
-              </li>
-              <li>
-                <b>Accessible interactions</b> remain understandable and usable.
-              </li>
-            </ul>
-          </div>
-        </section>
-        <section className="website-related section-pad" aria-labelledby="website-related-title">
+        <section className="website-benefits section-pad" aria-labelledby="website-benefits-title">
           <header>
-            <h2 id="website-related-title">Support your website with the right services.</h2>
+            <h2 id="website-benefits-title">What goes into your website.</h2>
             <p>
-              Need help getting found, creating content, or following up? Explore the services that
-              fit your next priority.
+              Page structure, responsive design, agreed integrations, and launch checks are scoped
+              together.
             </p>
           </header>
-          <div className="website-related-grid">
-            {relatedServices.map((service) => (
-              <article key={service.name}>
-                <h3>{service.name}</h3>
-                <p>{service.body}</p>
-                <TransitionLink className="website-service-link" href={service.href}>
-                  {service.action}
-                </TransitionLink>
+          <div className="website-benefit-grid">
+            {value.map(([heading, copy]) => (
+              <article key={heading}>
+                <h3>{heading}</h3>
+                <p>{copy}</p>
               </article>
             ))}
           </div>
+        </section>
+        <section className="website-scope section-pad" aria-labelledby="website-scope-title">
+          <div>
+            <h2 id="website-scope-title">A clear scope makes a better start.</h2>
+            <p>
+              Before work begins, we agree on what is included, what you need to supply, and what
+              the project will cost.
+            </p>
+            <TransitionLink className="primary-btn" href="/#contact">
+              Discuss Your Website
+            </TransitionLink>
+          </div>
+          <dl>
+            <div>
+              <dt>Pages &amp; content</dt>
+              <dd>Key pages, copywriting, and the images or video needed.</dd>
+            </div>
+            <div>
+              <dt>Tools &amp; connections</dt>
+              <dd>Forms, booking, ecommerce, and selected CRM integrations.</dd>
+            </div>
+            <div>
+              <dt>Budget &amp; timeline</dt>
+              <dd>Project fees, content deadlines, reviews, and launch dependencies.</dd>
+            </div>
+            <div>
+              <dt>Ownership &amp; ongoing costs</dt>
+              <dd>Handover, maintenance, hosting, and any software or licensing fees.</dd>
+            </div>
+          </dl>
         </section>
         <section className="faq-section section-pad">
           <header>
@@ -544,24 +467,34 @@ function WebsitesPage() {
             ))}
           </div>
         </section>
+        <section className="website-related section-pad" aria-labelledby="website-related-title">
+          <header>
+            <h2 id="website-related-title">Need help beyond the website?</h2>
+            <p>Search, paid ads, creative, and CRM support can be scoped separately.</p>
+          </header>
+          <div className="website-related-grid">
+            {relatedServices.map((service) => (
+              <article key={service.name}>
+                <h3>{service.name}</h3>
+                <p>{service.body}</p>
+                <TransitionLink className="website-service-link" href={service.href}>
+                  {service.action}
+                </TransitionLink>
+              </article>
+            ))}
+          </div>
+        </section>
         <section className="growth-closing section-pad">
-          <p className="eyebrow">Ready to build something better?</p>
-          <h2>
-            Make your business
-            <br />
-            <em>worth a closer look.</em>
-          </h2>
+          <h2>Planning a website or redesign?</h2>
           <p>
-            Whether you're launching something new or replacing a website that no longer fits, tell
-            us what needs to change.
+            Share your current website, target customers, and what needs to change. We’ll review the
+            requirements before suggesting a scope.
           </p>
           <div className="growth-actions">
             <TransitionLink className="primary-btn" href="/#contact">
               Discuss Your Website
             </TransitionLink>
-            <TransitionLink href="/work">Explore Our Work</TransitionLink>
           </div>
-          <small>Get found. Get chosen.</small>
         </section>
       </main>
       <SiteFooter />
