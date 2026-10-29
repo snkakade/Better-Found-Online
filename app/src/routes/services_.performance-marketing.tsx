@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Broadcast, ChartLineUp, CursorClick, MagnifyingGlass, Strategy } from "@phosphor-icons/react";
 import { InformationScrollStory } from "@/components/information-scroll-story";
+import { AmbientVideo } from "@/components/ambient-video";
+import { searchAdsMedia } from "@/search-ads-media";
 import { PerformanceProofCards } from "@/components/performance-proof-cards";
 import { campaignEvidence } from "@/performance-evidence";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
@@ -88,7 +90,7 @@ function PerformanceMarketingPage() {
               <a className="story-link" href="#results">See Campaign Results <ArrowDown size={16} weight="light" /></a>
             </div>
           </div>
-          <figure className="service-detail-hero-media"><img src="/assets/world/poster.webp" alt="Abstract metallic composition representing connected campaign planning" width="1200" height="1200" /></figure>
+          <figure className="service-detail-hero-media service-video-frame"><AmbientVideo {...searchAdsMedia.advertising} /></figure>
         </section>
 
 

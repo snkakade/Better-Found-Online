@@ -1,0 +1,125 @@
+.service-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--brand-blue);
+}
+
+.service-video--square {
+  aspect-ratio: 1;
+}
+
+.service-video > video,
+.service-video > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.service-video-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--brand-white);
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: var(--brand-white);
+  cursor: pointer;
+}
+
+.service-video-toggle:hover {
+  background: var(--brand-red);
+}
+
+.service-video-toggle:focus-visible {
+  outline: 3px solid var(--brand-white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--brand-blue);
+}
+
+.seo-service-page .seo-growth-hero .seo-hero-video {
+  padding: 96px 4vw 42px;
+}
+
+.seo-hero-video .service-video {
+  max-width: 720px;
+}
+
+.seo-service-page .search-journey--video {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: 6vw;
+  min-height: 0;
+  padding-block: clamp(56px, 5vw, 80px) !important;
+}
+
+.search-journey--video::after {
+  display: none;
+}
+
+.search-journey--video h2 {
+  max-width: 16ch;
+}
+
+.search-journey--video .search-customer-video {
+  width: min(100%, 520px);
+  margin: 0;
+  justify-self: end;
+}
+
+.performance-marketing-page .service-detail-hero-media.service-video-frame {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  transform: none;
+}
+
+.service-detail-hero-media.service-video-frame::after {
+  content: none;
+}
+
+@media (max-width: 900px) {
+  .seo-service-page .seo-growth-hero .seo-hero-video {
+    min-height: 0;
+    padding: 0 5.5vw 56px;
+  }
+  .seo-service-page .search-journey--video {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .search-journey--video h2 {
+    max-width: none;
+  }
+  .search-journey--video .search-customer-video {
+    width: min(100%, 440px);
+    justify-self: start;
+  }
+  .performance-marketing-page .service-detail-hero {
+    gap: 32px;
+    height: auto;
+    align-content: center;
+  }
+  .performance-marketing-page .service-detail-hero-media.service-video-frame {
+    max-width: 620px;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 600px) {
+  .seo-service-page .seo-growth-hero .seo-hero-video {
+    display: none;
+  }
+  .performance-marketing-page .service-detail-hero {
+    gap: 24px;
+  }
+}
