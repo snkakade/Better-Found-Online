@@ -1,193 +1,183 @@
-export type PerformanceMetric = {
-  label: string;
-  value: string;
-};
+import { useRef, useState, type KeyboardEvent } from "react";
+import { TransitionLink } from "@/components/site-chrome";
+import type { CampaignReport } from "@/performance-evidence";
+import "@/performance-evidence.css";
 
-export type PerformanceEvidenceAsset = {
-  src: string;
-  alt: string;
-  platform: "Google Ads" | "Amazon Ads";
-  period: string;
-  width: number;
-  height: number;
-  caption: string;
-};
-
-export type PerformanceProofCard = {
-  category: string;
-  headline: string;
-  challenge: string;
-  approach: string;
-  evidenceLabel: string;
-  evidenceNote: string;
-  metrics?: PerformanceMetric[];
-  evidence?: PerformanceEvidenceAsset[];
-  resultGroups?: {
-    title: string;
-    headline: string;
-    period: string;
-    metrics: PerformanceMetric[];
-    explanation: string;
-    evidence: PerformanceEvidenceAsset;
-  }[];
-  whyItMatters?: string;
-  cta?: string;
-};
-
-type PerformanceProofCardsProps = {
-  items: PerformanceProofCard[];
+export function PerformanceProofCards({
+  items,
+  disclosure,
+}: {
+  items: readonly CampaignReport[];
   disclosure: string;
-};
+}) {
+  const [active, setActive] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
-function PlatformBadge({ platform }: { platform: PerformanceEvidenceAsset["platform"] }) {
+  const navigateReports = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next: number;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % items.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp")
+      next = (index - 1 + items.length) % items.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = items.length - 1;
+    else return;
+    event.preventDefault();
+    setActive(next);
+    tabs.current[next]?.focus();
+  };
+
   return (
-    <span className={`performance-platform-badge ${platform === "Google Ads" ? "performance-platform-google" : "performance-platform-amazon"}`}>
-      <img
-        src={platform === "Google Ads" ? "/assets/platforms/google-ads-logo.webp" : "/assets/platforms/amazon-ads-logo.webp"}
-        alt={`${platform} logo`}
-        width={platform === "Google Ads" ? 512 : 4730}
-        height={platform === "Google Ads" ? 256 : 1220}
-      />
-    </span>
-  );
-}
+    <section
+      className="campaign-evidence section-pad"
+      id="results"
+      aria-labelledby="campaign-evidence-title"
+    >
+      <header className="campaign-evidence-heading">
+        <h2 id="campaign-evidence-title">Ad spend. Recorded results. Source reports.</h2>
+        <p>
+          Three anonymized reports from two businesses. See what was spent, what each platform
+          recorded, and what the numbers can tell you.
+        </p>
+      </header>
 
-function ProofNarrative({ item }: { item: PerformanceProofCard }) {
-  return (
-    <div className="performance-proof-narrative">
-      <dl>
-        <div><dt>Challenge</dt><dd>{item.challenge}</dd></div>
-        <div><dt>Approach</dt><dd>{item.approach}</dd></div>
-      </dl>
-      <div className="performance-proof-status">
-        <span>{item.evidenceLabel}</span>
-        <p>{item.evidenceNote}</p>
-      </div>
-    </div>
-  );
-}
-
-export function PerformanceProofCards({ items, disclosure }: PerformanceProofCardsProps) {
-  return (
-    <section className="performance-proof" id="results" aria-labelledby="performance-proof-title">
-      <div className="performance-proof-heading">
-        <div className="performance-proof-heading-copy">
-          <p className="eyebrow">Selected campaign work</p>
-          <h2 id="performance-proof-title">Selected campaign work.</h2>
-          <p>Two anonymized examples connecting the business problem, media decision, source report, and outcome each campaign measured.</p>
-        </div>
-      </div>
-
-      <div className="performance-proof-list">
-        {items.map((item, itemIndex) => (
-          <article className={`performance-proof-case performance-proof-case--${itemIndex === 0 ? "industrial" : "consumer"}`} key={item.headline}>
-            <header className="performance-proof-case-heading">
-              <span><b>{String(itemIndex + 1).padStart(2, "0")}</b>{item.category}</span>
-              <div>
-                <p>Campaign brief</p>
-                <h3>{item.headline}</h3>
-              </div>
-            </header>
-
-            <div className={`performance-proof-story performance-proof-story--${itemIndex === 0 ? "campaign" : "source"}`}>
-              {itemIndex === 0 ? (
-                <figure className="performance-campaign-evidence-card">
-                  <img src="/assets/world/poster.webp" alt="Abstract metallic forms representing two connected campaign systems" width="1200" height="1200" loading="lazy" />
-                  <figcaption><span>Campaign evidence</span><strong>02 connected systems</strong></figcaption>
-                </figure>
-              ) : item.resultGroups?.[0] ? (
-                <div className="performance-consumer-source">
-                  <div className="performance-consumer-visual">
-                    <figure>
-                      <div className="performance-evidence-media">
-                        <img src={item.resultGroups[0].evidence.src} alt={item.resultGroups[0].evidence.alt} width={item.resultGroups[0].evidence.width} height={item.resultGroups[0].evidence.height} loading="lazy" decoding="async" />
-                      </div>
-                      <figcaption>{item.resultGroups[0].evidence.caption}</figcaption>
-                    </figure>
-                    <ProofNarrative item={item} />
-                  </div>
-                  <aside>
-                    <div className="performance-consumer-brand">
-                      <PlatformBadge platform={item.resultGroups[0].evidence.platform} />
-                      <span>Source report / {item.resultGroups[0].period}</span>
-                    </div>
-                    <h4>{item.resultGroups[0].headline}</h4>
-                    <dl className="performance-metric-strip" aria-label={`${item.resultGroups[0].title} platform-reported metrics`}>
-                      {item.resultGroups[0].metrics.map((metric) => <div key={`${metric.label}-${metric.value}`}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>)}
-                    </dl>
-                    <p className="performance-consumer-reading">{item.resultGroups[0].explanation}</p>
-                  </aside>
-                </div>
-              ) : null}
-              {itemIndex === 0 ? <ProofNarrative item={item} /> : null}
-            </div>
-
-            {item.resultGroups?.filter((_, groupIndex) => !(itemIndex === 1 && groupIndex === 0)).map((group) => (
-              <section className="performance-result-group" key={group.title} aria-label={`${item.category}: ${group.title}`}>
-                <header>
-                  <div><PlatformBadge platform={group.evidence.platform} /><span>{group.title}</span><small>{group.period}</small></div>
-                  <h4>{group.headline}</h4>
-                </header>
-                <div className="performance-result-stage">
-                  <div className="performance-result-visual">
-                    <figure>
-                      <div className="performance-evidence-media">
-                        <img src={group.evidence.src} alt={group.evidence.alt} width={group.evidence.width} height={group.evidence.height} loading="lazy" decoding="async" />
-                      </div>
-                      <figcaption>{group.evidence.caption}</figcaption>
-                    </figure>
-                    {itemIndex === 0 && item.whyItMatters ? (
-                      <footer className="performance-proof-case-footer performance-proof-case-footer--inline">
-                        <div className="performance-proof-value"><span>The commercial point</span><p>{item.whyItMatters}</p></div>
-                        {item.cta ? <a className="performance-proof-cta" href="/#contact">{item.cta} <span aria-hidden="true">↗</span></a> : null}
-                      </footer>
-                    ) : null}
-                  </div>
-                  <aside className="performance-result-dossier">
-                    <span>Source report</span>
-                    <dl className="performance-metric-strip" aria-label={`${group.title} platform-reported metrics`}>
-                      {group.metrics.map((metric) => <div key={`${metric.label}-${metric.value}`}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>)}
-                    </dl>
-                    <div className="performance-result-reading"><span>What the figures tell us</span><p>{group.explanation}</p></div>
-                  </aside>
-                </div>
-              </section>
-            ))}
-
-            {!item.resultGroups?.length && item.metrics?.length ? (
-              <dl className="performance-metric-strip" aria-label={`${item.category} platform-reported metrics`}>
-                {item.metrics.map((metric) => <div key={`${metric.label}-${metric.value}`}><dt>{metric.label}</dt><dd>{metric.value}</dd></div>)}
-              </dl>
-            ) : null}
-
-            {!item.resultGroups?.length && item.evidence?.length ? (
-              <div className={`performance-evidence-gallery performance-evidence-gallery--${item.evidence.length}`}>
-                {item.evidence.map((asset) => (
-                  <figure key={asset.src}>
-                    <div className="performance-evidence-media">
-                      <img src={asset.src} alt={asset.alt} width={asset.width} height={asset.height} loading="lazy" decoding="async" />
-                      <div className="performance-evidence-meta">
-                        <PlatformBadge platform={asset.platform} />
-                        <span>{asset.period}</span>
-                      </div>
-                    </div>
-                    <figcaption>{asset.caption}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : !item.resultGroups?.length ? (
-              <div className="performance-proof-no-media"><span>Approach only</span><p>No result screenshot was supplied for this example, so no result is claimed.</p></div>
-            ) : null}
-
-            {itemIndex !== 0 ? <footer className="performance-proof-case-footer">
-              {item.whyItMatters ? <div className="performance-proof-value"><span>The commercial point</span><p>{item.whyItMatters}</p></div> : null}
-              {item.cta ? <a className="performance-proof-cta" href="/#contact">{item.cta} <span aria-hidden="true">↗</span></a> : null}
-            </footer> : null}
-          </article>
+      <div className="campaign-report-tabs" role="tablist" aria-label="Choose a campaign report">
+        {items.map((item, index) => (
+          <button
+            type="button"
+            role="tab"
+            id={`report-tab-${item.id}`}
+            aria-controls={`report-panel-${item.id}`}
+            aria-selected={active === index}
+            tabIndex={active === index ? 0 : -1}
+            key={item.id}
+            ref={(element) => {
+              tabs.current[index] = element;
+            }}
+            onClick={() => setActive(index)}
+            onKeyDown={(event) => navigateReports(event, index)}
+          >
+            <span>{item.tabLabel}</span>
+            <strong>{item.tabMetric}</strong>
+          </button>
         ))}
       </div>
 
-      <p className="performance-proof-disclosure">{disclosure}</p>
+      {items.map((item, index) => (
+        <div
+          className="campaign-report-panel"
+          role="tabpanel"
+          id={`report-panel-${item.id}`}
+          aria-labelledby={`report-tab-${item.id}`}
+          tabIndex={0}
+          hidden={active !== index}
+          key={item.id}
+        >
+          <header className="campaign-report-heading">
+            <h3>{item.title}</h3>
+            <p>{item.context}</p>
+            <p className="campaign-report-period">
+              <b>{item.platform}</b>
+              <span>{item.period}</span>
+              <span>Indian rupees (INR)</span>
+            </p>
+          </header>
+
+          <dl className="campaign-key-metrics" aria-label={`${item.tabLabel} reported results`}>
+            {item.keyMetrics.map((metric) => (
+              <div key={metric.label}>
+                <dt>{metric.label}</dt>
+                <dd>
+                  {metric.value.endsWith(" million") ? (
+                    <>
+                      {metric.value.slice(0, -8)}{" "}
+                      <span className="campaign-metric-unit">million</span>
+                    </>
+                  ) : (
+                    metric.value
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="campaign-report-body">
+            <div className="campaign-report-source">
+              <figure>
+                <a
+                  className="campaign-report-preview"
+                  href={item.evidence.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open the full-size ${item.tabLabel} source report in a new tab`}
+                >
+                  <img
+                    src={item.evidence.src}
+                    alt={item.evidence.alt}
+                    width={item.evidence.width}
+                    height={item.evidence.height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+                <figcaption>
+                  Original platform report. Business identifiers have been redacted.
+                </figcaption>
+              </figure>
+              <a
+                className="campaign-source-action"
+                href={item.evidence.src}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`View the full-size ${item.tabLabel} source report in a new tab`}
+              >
+                View Full-Size Report
+              </a>
+              <details className="campaign-report-details">
+                <summary>More report figures &amp; calculations</summary>
+                <dl>
+                  {item.secondaryMetrics.map((metric) => (
+                    <div key={metric.label}>
+                      <dt>{metric.label}</dt>
+                      <dd>{metric.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {item.calculation && <p>{item.calculation}</p>}
+              </details>
+            </div>
+
+            <div className="campaign-report-reading">
+              <div>
+                <h4>What the figures mean</h4>
+                <p>{item.interpretation}</p>
+              </div>
+              <div>
+                <h4>Work carried out</h4>
+                <ul>
+                  {item.work.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="campaign-report-limit">
+                <h4>What this does not prove</h4>
+                <p>{item.limitation}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <div className="campaign-evidence-next">
+        <div>
+          <h3>Have campaigns to review?</h3>
+          <p>Tell us what you sell, where you advertise, and which result you need to measure.</p>
+        </div>
+        <TransitionLink className="primary-btn" href="/#contact">
+          Discuss Your Growth Goals
+        </TransitionLink>
+      </div>
+      <p className="campaign-evidence-disclosure">{disclosure}</p>
     </section>
   );
 }

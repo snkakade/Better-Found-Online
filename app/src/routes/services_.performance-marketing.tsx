@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Broadcast, ChartLineUp, CursorClick, MagnifyingGlass, Strategy } from "@phosphor-icons/react";
 import { InformationScrollStory } from "@/components/information-scroll-story";
-import { PerformanceProofCards, type PerformanceProofCard } from "@/components/performance-proof-cards";
+import { PerformanceProofCards } from "@/components/performance-proof-cards";
+import { campaignEvidence } from "@/performance-evidence";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 
 const pageTitle = "Performance Marketing & Paid Ads | Better Found Online";
@@ -24,102 +25,6 @@ export const Route = createFileRoute("/services_/performance-marketing")({
   }),
 });
 
-const campaignEvidence: PerformanceProofCard[] = [
-  {
-    category: "Industrial manufacturing / Google Ads",
-    headline: "Bringing overlooked product lines into the search conversation.",
-    challenge: "An established industrial manufacturer was recognized for a limited part of its product range. Other business units needed a stronger presence where potential buyers were actively searching.",
-    approach: "Google Search campaigns were organized around the less-visible product categories and relevant buyer intent. The initial media plan was expanded as the campaign developed, with Meta advertising subsequently introduced as an additional channel.",
-    evidenceLabel: "Google Ads campaign report",
-    evidenceNote: "90-day platform report. Conversion actions are tracked, not verified sales or qualified leads.",
-    resultGroups: [{
-      title: "The reported results",
-      headline: "₹203K spent. 266 tracked conversions. 90 days.",
-      period: "90-day reporting period",
-      metrics: [
-        { label: "Google Ads spend", value: "₹203K" },
-        { label: "Impressions", value: "25.3K" },
-        { label: "Clicks", value: "4.30K" },
-        { label: "Average CPC", value: "₹47.21" },
-        { label: "Tracked conversions", value: "266" },
-        { label: "Cost / tracked conversion", value: "₹763.38" },
-        { label: "Reporting period", value: "90 days" },
-      ],
-      explanation: "The campaign recorded meaningful search activity and tracked conversion actions around previously underrepresented product categories.",
-      evidence: {
-        src: "/assets/performance-evidence/industrial-search-report.png",
-        alt: "Anonymized Google Ads dashboard showing a 90-day industrial search campaign summary",
-        platform: "Google Ads",
-        period: "15 Jul-12 Oct 2026",
-        width: 2048,
-        height: 620,
-        caption: "Industrial B2B Google Ads report, 90 days. ₹203K spend, 4.30K clicks, and 266 platform-tracked conversions.",
-      },
-    }],
-    whyItMatters: "When a business offers more than its customers know about, targeted search campaigns can give underrepresented services or product categories a clearer route to relevant demand.",
-    cta: "Discuss a B2B Search Campaign",
-  },
-  {
-    category: "Consumer technology / Search + Ecommerce",
-    headline: "Connect the channels. Understand the returns.",
-    challenge: "A consumer technology brand wanted to improve advertising performance while gradually expanding its investment across search and ecommerce channels. Measurement issues needed attention before the team could rely on the reported results.",
-    approach: "The work began with reviewing and correcting website tracking. Paid search activity across Google and Microsoft Advertising was complemented by marketplace campaigns and broader awareness activity.",
-    evidenceLabel: "Google Ads + Amazon Ads reporting",
-    evidenceNote: "Google and Amazon use separate reporting periods. Their figures are never combined into one return calculation.",
-    resultGroups: [
-      {
-        title: "Google Ads performance",
-        headline: "₹11.86 million in platform-recorded conversion value.",
-        period: "90-day reporting period",
-        metrics: [
-          { label: "Advertising spend", value: "₹2.75 million" },
-          { label: "Impressions", value: "839K" },
-          { label: "Tracked conversions", value: "5.84K" },
-          { label: "Conversion value", value: "₹11.86 million" },
-          { label: "Average CPC", value: "₹7.92" },
-          { label: "Cost / tracked conversion", value: "≈ ₹471.28" },
-          { label: "Value / cost ratio", value: "4.31x" },
-        ],
-        explanation: "The report recorded conversion activity and associated value alongside campaign spending, giving the team a clearer basis for evaluating paid search.",
-        evidence: {
-          src: "/assets/performance-evidence/consumer-search-report.png",
-          alt: "Google Ads campaign dashboard with the account identity permanently redacted",
-          platform: "Google Ads",
-          period: "15 Jul-12 Oct 2026",
-          width: 2048,
-          height: 1150,
-          caption: "Google Ads report, 90 days. ₹2.75 million spend and ₹11.86 million in platform-recorded conversion value.",
-        },
-      },
-      {
-        title: "Amazon Ads performance",
-        headline: "9.80x reported ROAS across 43.6K attributed purchases.",
-        period: "13 October 2025 to 13 October 2026",
-        metrics: [
-          { label: "Advertising spend", value: "₹5.55 million" },
-          { label: "Clicks", value: "366K" },
-          { label: "Average CPC", value: "₹15.14" },
-          { label: "Attributed purchases", value: "43.6K" },
-          { label: "Reported sales", value: "₹54.34 million" },
-          { label: "ACOS", value: "10.21%" },
-          { label: "ROAS", value: "9.80x" },
-        ],
-        explanation: "The marketplace report shows substantial attributed purchase activity relative to advertising spend. ROAS compares attributed sales with media spend; it is not the same as profit or ROI.",
-        evidence: {
-          src: "/assets/performance-evidence/consumer-marketplace-report.png",
-          alt: "Anonymized Amazon Ads dashboard showing marketplace campaign reporting",
-          platform: "Amazon Ads",
-          period: "13 Oct 2025-13 Oct 2026",
-          width: 2048,
-          height: 973,
-          caption: "Amazon Ads report, October 2025 to October 2026. 43.6K attributed purchases and 9.80x ROAS.",
-        },
-      },
-    ],
-    whyItMatters: "More channels mean more decisions. Addressing tracking first makes it easier to understand each channel's contribution and keep campaign decisions connected to the commercial objective.",
-    cta: "Build a More Accountable Media Plan",
-  },
-];
 
 const campaignSystem = [
   { label: "Paid search", outcome: "Capture demand", icon: MagnifyingGlass },
@@ -186,31 +91,6 @@ function PerformanceMarketingPage() {
           <figure className="service-detail-hero-media"><img src="/assets/world/poster.webp" alt="Abstract metallic composition representing connected campaign planning" width="1200" height="1200" /></figure>
         </section>
 
-        <section className="performance-results-strip section-pad" aria-labelledby="headline-results-title">
-          <header>
-            <p className="eyebrow">Selected campaign results</p>
-            <h2 id="headline-results-title">Real campaigns. Measurable actions.</h2>
-            <p>A look at what paid advertising can accomplish when campaign planning, measurement, and execution work together.</p>
-          </header>
-          <div className="performance-results-stage">
-            <article className="performance-results-feature">
-              <div className="performance-results-feature-orbit" aria-hidden="true"><i /><i /><i /><b /></div>
-              <div className="performance-results-feature-brand"><img src="/assets/platforms/amazon-ads-logo.webp" alt="Amazon Ads" width="4730" height="1220" /><span>Marketplace campaign / 12 months</span></div>
-              <strong>9.80x</strong>
-              <h3>Reported return on ad spend</h3>
-              <p>₹54.34 million in platform-reported sales from an anonymized consumer software marketplace campaign.</p>
-            </article>
-            <div className="performance-results-support">
-              <article><span>01 / Marketplace</span><strong>43.6K</strong><h3>Attributed purchases</h3><p>13 Oct 2025-13 Oct 2026</p></article>
-              <article className="performance-results-google"><span>02 / B2B search</span><img src="/assets/platforms/google-ads-logo.webp" alt="Google Ads" width="512" height="256" /><strong>266</strong><h3>Tracked conversions</h3><p>Industrial equipment campaign / 90 days</p></article>
-              <article><span>03 / B2B search</span><strong>₹47.21</strong><h3>Average cost per click</h3><p>4.30K clicks / 25.3K impressions</p></article>
-            </div>
-          </div>
-          <div className="performance-results-footer">
-            <a href="#results">Explore the Results <ArrowDown size={16} weight="light" /></a>
-            <small>Figures reflect anonymized platform reports from selected specialist-led campaigns. Google Ads and Amazon Ads results cover different reporting periods. Platform attribution does not establish incremental sales or net profit.</small>
-          </div>
-        </section>
 
         <PerformanceProofCards
           items={campaignEvidence}
