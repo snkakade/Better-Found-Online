@@ -46,7 +46,7 @@ test("landscape showcase videos stay full-frame, with actions outside the footag
 });
 
 test("showcase playback stops offscreen, in hidden tabs, and for reduced motion", () => {
-  assert.match(creative, /visible && !document\.hidden && !motionPreference\.matches && !hiddenHalf/);
+  assert.match(creative, /allowed = visible && !document\.hidden && !motionPreference\.matches && !hiddenHalf/);
   assert.match(creative, /playbackObserver\.disconnect\(\)/);
   assert.match(creative, /removeEventListener\("visibilitychange", syncPlayback\)/);
   assert.match(creative, /compactVideo\.removeEventListener\("change", syncPlayback\)/);

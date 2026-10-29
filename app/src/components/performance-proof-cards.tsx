@@ -1,5 +1,6 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import { TransitionLink } from "@/components/site-chrome";
+import { AdPlatformMark } from "@/components/ad-platform-mark";
 import type { CampaignReport } from "@/performance-evidence";
 import "@/performance-evidence.css";
 
@@ -56,8 +57,8 @@ export function PerformanceProofCards({
             onClick={() => setActive(index)}
             onKeyDown={(event) => navigateReports(event, index)}
           >
-            <span>{item.tabLabel}</span>
-            <strong>{item.tabMetric}</strong>
+            <AdPlatformMark platform={item.platform === "Amazon Ads" ? "amazon" : "google"} decorative />
+            <span className="campaign-tab-copy"><span>{item.tabLabel}</span><strong>{item.tabMetric}</strong></span>
           </button>
         ))}
       </div>
@@ -76,7 +77,7 @@ export function PerformanceProofCards({
             <h3>{item.title}</h3>
             <p>{item.context}</p>
             <p className="campaign-report-period">
-              <b>{item.platform}</b>
+              <AdPlatformMark platform={item.platform === "Amazon Ads" ? "amazon" : "google"} />
               <span>{item.period}</span>
               <span>Indian rupees (INR)</span>
             </p>

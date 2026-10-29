@@ -23,13 +23,15 @@ test("mobile services use native details instead of a cancellable height animati
   assert.match(mobile, /insight:not\(\[open\]\) > \.article-body \{ display: none/);
 });
 
-test("mobile project media has a definite aspect ratio and a real video play/retry path", () => {
+test("mobile project media keeps its aspect ratio and retries autoplay without player UI", () => {
   assert.match(mobile, /home-page \.reel-image \{[^}]+aspect-ratio: 16 \/ 10/);
   assert.match(preview, /requestVideoFrameCallback/);
   assert.match(preview, /muted loop playsInline preload="metadata"/);
-  assert.match(preview, /useState<"play" \| "retry" \| null>\("play"\)/);
-  assert.match(preview, /video\.error \|\| video\.readyState === 0\) video\.load\(\)/);
-  assert.match(preview, /video\.play\(\)/);
+  assert.match(preview, /useAutoplayVideo\(videoRef/);
+  const autoplay = source("hooks/use-autoplay-video.ts");
+  assert.match(autoplay, /video\.error\) video\.load\(\)/);
+  assert.match(autoplay, /video\.play\(\)/);
+  assert.doesNotMatch(preview, /<button|website-preview-play|controls=/);
   assert.doesNotMatch(preview, /failed \? <img/);
   assert.match(source("components/website-preview.css"), /data-ready="true"\]\s*> video \{ opacity: 1/);
 });
@@ -38,7 +40,7 @@ test("creative mobile playback never waits for a hidden video half to buffer", (
   const creative = source("components/creative-story-components.tsx");
   assert.match(creative, /!compactVideo\.matches && videoBottom\.readyState < 2/);
   assert.match(creative, /if \(!compactVideo\.matches\) videoBottom\.load\(\)/);
-  assert.match(creative, /handleVideoPlay\.current =/);
+  assert.match(creative, /document\.addEventListener\("pointerup", resumePlayback/);
   assert.doesNotMatch(creative, /readyCount < 2/);
   assert.doesNotMatch(source("components/ambient-video.tsx"), /failed \? \(/);
   assert.doesNotMatch(source("components/creative-proof-reel/creative-proof-reel.tsx"), /return failed/);

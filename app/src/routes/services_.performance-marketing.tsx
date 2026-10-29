@@ -4,6 +4,7 @@ import { InformationScrollStory } from "@/components/information-scroll-story";
 import { AmbientVideo } from "@/components/ambient-video";
 import { searchAdsMedia } from "@/search-ads-media";
 import { PerformanceProofCards } from "@/components/performance-proof-cards";
+import { AdPlatformMark, type AdPlatform } from "@/components/ad-platform-mark";
 import { campaignEvidence } from "@/performance-evidence";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 
@@ -28,9 +29,9 @@ export const Route = createFileRoute("/services_/performance-marketing")({
 });
 
 
-const campaignSystem = [
-  { label: "Paid search", outcome: "Capture demand", icon: MagnifyingGlass },
-  { label: "Paid social", outcome: "Build interest", icon: Broadcast },
+const campaignSystem: { label: string; outcome: string; icon: typeof MagnifyingGlass; platforms?: AdPlatform[] }[] = [
+  { label: "Paid search", outcome: "Capture demand", icon: MagnifyingGlass, platforms: ["google", "microsoft"] },
+  { label: "Paid social", outcome: "Build interest", icon: Broadcast, platforms: ["meta", "linkedin"] },
   { label: "Creative and landing pages", outcome: "Turn attention into action", icon: CursorClick },
   { label: "Tracking and attribution", outcome: "See what happened", icon: ChartLineUp },
   { label: "Media planning", outcome: "Choose the next move", icon: Strategy },
@@ -127,7 +128,8 @@ function PerformanceMarketingPage() {
             {campaignSystem.map((item) => {
               const Icon = item.icon;
               return <article key={item.label}>
-                <Icon aria-hidden="true" size={34} weight="light" />
+                {item.platforms ? <div className="ad-platform-group">{item.platforms.map(platform => <AdPlatformMark key={platform} platform={platform} />)}</div>
+                  : <Icon aria-hidden="true" size={34} weight="light" />}
                 <div><h3>{item.label}</h3><p>{item.outcome}</p></div>
               </article>;
             })}
@@ -158,6 +160,7 @@ function PerformanceMarketingPage() {
           <div>
             <p className="eyebrow">Another campaign approach</p>
             <span>Residential real estate / Google + Meta</span>
+            <div className="ad-platform-group performance-approach-platforms"><AdPlatformMark platform="google" /><AdPlatformMark platform="meta" /></div>
             <div className="performance-approach-signal" aria-hidden="true">
               <i><b>Intent</b></i><i><b>Discovery</b></i><i><b>Inquiry</b></i>
             </div>

@@ -1,0 +1,25 @@
+.site .ad-platform-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  gap: 6px;
+  width: 108px;
+  height: 48px;
+  padding: 8px 10px;
+  border: 1px solid rgb(32 48 154 / .12);
+  border-radius: 6px;
+  background: #fff;
+  color: #20309a;
+  vertical-align: middle;
+}
+.site .ad-platform-mark > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.site .ad-platform-mark > span { font: 600 .8125rem/1 Outfit, sans-serif; letter-spacing: -.02em; }
+.site .ad-platform-mark--google { padding: 2px 8px; }
+.site .ad-platform-mark--linkedin > img { width: 25px; height: 24px; }
+.site .ad-platform-mark--meta > svg { flex: 0 0 auto; color: #0866ff; }
+.site .ad-platform-group { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.site .performance-approach-platforms { margin-top: 20px; }
+@media (max-width: 380px) {
+  .site .ad-platform-mark { width: 96px; height: 44px; padding-inline: 6px; }
+}

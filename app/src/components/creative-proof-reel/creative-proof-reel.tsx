@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useProofOrbit } from "./use-proof-orbit";
+import { useAutoplayVideo } from "@/hooks/use-autoplay-video";
 import "./creative-proof-reel.css";
 
 export interface CreativeProofVideo {
@@ -15,40 +16,8 @@ export interface CreativeProofVideo {
 
 function ProofVideo({ video, active }: { video: CreativeProofVideo; active: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [needsPlay, setNeedsPlay] = useState(true);
-  const manualPlay = useRef(false);
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let visible = false;
-    const sync = () => {
-      if (active && visible && !document.hidden && (!motion.matches || manualPlay.current) && !element.error) {
-        void element.play().catch(error => { if (error.name !== "AbortError") setNeedsPlay(true); });
-      } else element.pause();
-      if (active && motion.matches && !manualPlay.current) setNeedsPlay(true);
-    };
-    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
-    observer.observe(element);
-    motion.addEventListener("change", sync);
-    document.addEventListener("visibilitychange", sync);
-    return () => {
-      observer.disconnect(); element.pause();
-      motion.removeEventListener("change", sync);
-      document.removeEventListener("visibilitychange", sync);
-    };
-  }, [active, video.src]);
-  return <>
-    <video ref={ref} src={video.src} poster={video.poster} width="540" height="960" muted loop playsInline preload="metadata" aria-label={`${video.label} before and after`} onPlaying={() => setNeedsPlay(false)} onError={() => setNeedsPlay(true)} />
-    {needsPlay && active && <button className="proof-video-play" type="button" aria-label={`Play ${video.label.toLowerCase()} video`} onClick={(event) => {
-      event.stopPropagation();
-      const element = ref.current;
-      if (!element) return;
-      manualPlay.current = true;
-      if (element.error || element.readyState === 0) element.load();
-      void element.play().catch(() => setNeedsPlay(true));
-    }}>Play video</button>}
-  </>;
+  useAutoplayVideo(ref, { src: video.src, enabled: active });
+  return <video ref={ref} src={video.src} poster={video.poster} width="540" height="960" autoPlay={active} muted loop playsInline preload="metadata" aria-label={`${video.label} before and after`} />;
 }
 
 /** Preserve redesign: existing Outfit, white/royal blue, upright sharp geometry.

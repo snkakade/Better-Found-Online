@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TransitionLink } from "@/components/site-chrome";
+import { useAutoplayVideo } from "@/hooks/use-autoplay-video";
 export { CreativeProofReel } from "@/components/creative-proof-reel/creative-proof-reel";
 
 export interface CreativeCapability {
@@ -20,33 +21,8 @@ export interface CreativeCapability {
 
 export function InlineProjectVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [needsPlay, setNeedsPlay] = useState(true);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncPlayback = (isVisible = true) => {
-      if (motionPreference.matches || !isVisible) {
-        video.pause();
-        return;
-      }
-      video.play().catch(error => { if (error.name !== "AbortError") setNeedsPlay(true); });
-    };
-    const observer = new IntersectionObserver(([entry]) => syncPlayback(entry.isIntersecting), { rootMargin: "160px 0px", threshold: 0.12 });
-    const handleMotionChange = () => syncPlayback(observer ? video.getBoundingClientRect().top < window.innerHeight : true);
-
-    observer.observe(video);
-    motionPreference.addEventListener("change", handleMotionChange);
-    return () => {
-      observer.disconnect();
-      motionPreference.removeEventListener("change", handleMotionChange);
-      video.pause();
-    };
-  }, []);
-
-  return <video ref={videoRef} className={className} muted loop playsInline preload="metadata" poster={poster} controls={needsPlay} aria-label="Creative project video" onPlaying={() => setNeedsPlay(false)} onError={() => setNeedsPlay(true)}><source src={src} type="video/mp4" /></video>;
+  useAutoplayVideo(videoRef, { src });
+  return <video ref={videoRef} className={className} autoPlay muted loop playsInline preload="metadata" poster={poster} aria-label="Creative project video"><source src={src} type="video/mp4" /></video>;
 }
 
 export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
@@ -156,7 +132,6 @@ export function CreativeTransformation() {
 
 export function CreativeCapabilityCarousel({ capabilities }: { capabilities: CreativeCapability[] }) {
   const [active, setActive] = useState(0);
-  const [needsPlay, setNeedsPlay] = useState(true);
   const slider = useRef<HTMLDivElement>(null);
   const slideTitles = useRef<HTMLDivElement>(null);
   const slideImages = useRef<HTMLDivElement>(null);
@@ -165,7 +140,6 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
   const currentIndex = useRef(1);
   const handleSlider = useRef<() => void>(() => undefined);
   const handleMediaHover = useRef<(expanded: boolean) => void>(() => undefined);
-  const handleVideoPlay = useRef<() => void>(() => undefined);
 
   useEffect(() => {
     let disposed = false;
@@ -181,7 +155,9 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       [imgTop.current, imgBottom.current].forEach(container => {
         container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
           const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
-          if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf) void video.play().catch(error => { if (!disposed && error.name !== "AbortError") setNeedsPlay(true); });
+          const allowed = visible && !document.hidden && !motionPreference.matches && !hiddenHalf;
+          video.autoplay = allowed;
+          if (allowed && !video.error) void video.play().catch(() => undefined);
           else video.pause();
         });
       });
@@ -191,6 +167,15 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
     document.addEventListener("visibilitychange", syncPlayback);
     motionPreference.addEventListener("change", syncPlayback);
     compactVideo.addEventListener("change", syncPlayback);
+    const resumePlayback = () => {
+      [imgTop.current, imgBottom.current].forEach(container => container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
+        const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
+        if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf && video.error) video.load();
+      }));
+      syncPlayback();
+    };
+    document.addEventListener("pointerup", resumePlayback, { passive: true });
+    window.addEventListener("online", resumePlayback);
 
     const updateActiveSlide = () => {
       slideTitles.current?.querySelectorAll<HTMLElement>(".title").forEach((el, index) => {
@@ -238,7 +223,6 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       const sourceIndex = (imageNumber - 2 + totalSlides) % totalSlides;
       const item = capabilities[sourceIndex];
       if (!item || !imgTop.current || !imgBottom.current) return;
-      setNeedsPlay(true);
       // Keep the selected artwork visible while its actual video prepares.
       // Never leave an old slide or an empty blue box behind a loading gate.
       [imgTop.current, imgBottom.current].forEach(container => {
@@ -252,14 +236,15 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         if (item.poster) video.poster = item.poster;
         video.autoplay = false;
         video.muted = true;
+        video.defaultMuted = true;
+        video.controls = false;
         video.loop = true;
         video.playsInline = true;
         video.preload = "metadata";
         video.style.opacity = "0";
         video.setAttribute("aria-hidden", "true");
         video.tabIndex = -1;
-        video.addEventListener("playing", () => { if (!disposed && requestId === mediaRequest) setNeedsPlay(false); });
-        video.addEventListener("error", () => { if (!disposed && requestId === mediaRequest) setNeedsPlay(true); });
+        video.addEventListener("canplay", syncPlayback);
         return video;
       };
 
@@ -324,12 +309,6 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       // visible clip immediately and never wait on the hidden mobile half.
       videoTop.addEventListener("loadeddata", revealPreparedVideo, { once: true });
       videoBottom.addEventListener("loadeddata", revealPreparedVideo, { once: true });
-      handleVideoPlay.current = () => {
-        [videoTop, ...(compactVideo.matches ? [] : [videoBottom])].forEach(video => {
-          if (video.error || video.readyState === 0) video.load();
-          void video.play().catch(() => setNeedsPlay(true));
-        });
-      };
       videoTop.load();
       if (!compactVideo.matches) videoBottom.load();
       syncPlayback();
@@ -373,6 +352,8 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
       document.removeEventListener("visibilitychange", syncPlayback);
       motionPreference.removeEventListener("change", syncPlayback);
       compactVideo.removeEventListener("change", syncPlayback);
+      document.removeEventListener("pointerup", resumePlayback);
+      window.removeEventListener("online", resumePlayback);
       handleMediaHover.current = () => undefined;
       if (activeTimer) clearTimeout(activeTimer);
       if (gsapInstance) {
@@ -429,7 +410,6 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
           <div className="img-top" ref={imgTop} />
           <div className="img-bottom" ref={imgBottom} />
         </div>
-        {needsPlay && <button className="slider-media-play" type="button" onClick={() => handleVideoPlay.current()}>Play video</button>}
         <div className="modular-slider-kicker" aria-hidden="true">
           <span>Better Found Online</span>
           <span>Creative Production</span>

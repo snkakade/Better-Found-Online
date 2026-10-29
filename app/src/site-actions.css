@@ -1,57 +1,69 @@
-/* Shared public-site actions. Explicit selectors preserve ordinary navigation,
-   article links, media controls, cookie choices, and the separate admin UI.
-   Root + site scope takes precedence over legacy page-local button scales. */
-:root
-  .site
-  :is(
-    .primary-btn,
-    .desktop-navigation-cta,
-    .services-hero-action,
-    .footer-project-link,
-    .site-menu-cta > a,
-    .contact-form-actions > button[type="submit"],
-    .story-link,
-    .text-link,
-    .text-cta,
-    .service-link,
-    .website-service-link,
-    .whatsapp-link,
-    .growth-actions > a,
-    .interior-hero-actions > a,
-    .service-chapter-actions > a,
-    .performance-inline-cta,
-    .performance-proof-cta,
-    .campaign-source-action,
-    .scroll63-hero-outro-cta,
-    .performance-results-footer > a,
-    .performance-closing-actions > a,
-    .service-detail-closing > a,
-    .services-closing > a,
-    .interior-contact > a,
-    .insights-closing > a,
-    .insights-card-body > a,
-    .article-body > a,
-    .case-copy > a,
-    .project-notes > a,
-    .work-paid-media > div > div > a,
-    .creative-capability-copy > a,
-    .creative-growth article > a,
-    .modular-slider-footer .links > a,
-    .service-detail-related nav > a,
-    .related-section > div > a,
-    .guidance-grid article > a,
-    .evidence-section article > a,
-    .channel-choice article > a,
-    .content-section > a
-  ) {
-  --action-fill: transparent;
+/* Public-site actions, not the console/app kit. Preserve existing labels,
+   destinations and form handlers. Design variance 6 / motion 3 / density 4.
+   10px action corners; round menu/disclosure controls keep their own geometry. */
+:root .site {
+  --button-radius: 10px;
+  --button-bg-top: var(--brand-red);
+  --button-bg-bottom: var(--brand-red);
+  --button-text: var(--brand-white);
+  --button-highlight: rgb(255 255 255 / .34);
+  --button-inset-shadow: rgb(32 48 154 / .3);
+  --button-contact-shadow: rgb(32 48 154 / .26);
+  --button-ambient-shadow: rgb(187 35 43 / .24);
+  --button-hover-duration: 220ms;
+  --button-press-duration: 120ms;
+  --button-hover-offset: -1px;
+  --button-press-offset: 1px;
+  --button-primary-shadow:
+    inset 0 1px 0 var(--button-highlight),
+    inset 0 -2px 0 var(--button-inset-shadow),
+    0 2px 3px var(--button-contact-shadow),
+    0 8px 20px -7px var(--button-ambient-shadow);
+  --button-secondary-shadow:
+    inset 0 1px 0 rgb(255 255 255 / .24),
+    inset 0 -1px 0 rgb(32 48 154 / .12),
+    0 1px 2px rgb(32 48 154 / .12);
+}
+
+@supports (color: color-mix(in srgb, red, white)) {
+  :root .site {
+    --button-bg-top: color-mix(in srgb, var(--brand-red) 94%, var(--brand-white));
+    --button-bg-bottom: color-mix(in srgb, var(--brand-red) 88%, var(--brand-blue));
+  }
+}
+
+/* The repeated site class intentionally wins over legacy route styles,
+   including stylesheets loaded after navigation, without !important. */
+:root .site.site :is(
+  .bfo-action, .primary-btn, .desktop-navigation-cta, .services-hero-action,
+  .footer-project-link, .site-menu-cta > a,
+  .contact-form-actions > button[type="submit"],
+  .story-link, .text-link, .text-cta, .service-link, .website-service-link,
+  .whatsapp-link, .growth-actions > a, .interior-hero-actions > a,
+  .service-chapter-actions > a, .performance-inline-cta, .performance-proof-cta,
+  .campaign-source-action, .scroll63-hero-outro-cta,
+  .performance-results-footer > a, .performance-closing-actions > a,
+  .service-detail-closing > a, .services-closing > a, .interior-contact > a,
+  .insights-closing > a, .insights-card-body > a, .article-body > a,
+  .case-copy > a, .project-notes > a, .work-paid-media > div > div > a,
+  .creative-capability-copy > a, .creative-growth article > a,
+  .modular-slider-footer .links > a, .service-detail-related:not(.performance-related) nav > a,
+  .related-section > div > a, .guidance-grid article > a,
+  .evidence-section article > a, .channel-choice article > a, .content-section > a,
+  .reel-all
+) {
   --action-label: inherit;
+  --action-fill: transparent;
   --action-border: currentColor;
-  --action-hover-fill: var(--brand-red);
-  --action-hover-label: var(--brand-white);
-  --action-hover-border: var(--brand-red);
+  --action-surface: none;
+  --action-shadow: var(--button-secondary-shadow);
+  --action-current-shadow: var(--action-shadow);
+  --action-offset: 0px;
+  --action-hover-shadow: inset 0 1px 0 rgb(255 255 255 / .4), inset 0 -1px 0 rgb(32 48 154 / .12), 0 3px 6px rgb(32 48 154 / .16);
+  --action-press-shadow: inset 0 2px 4px rgb(32 48 154 / .25);
   display: inline-flex;
   position: relative;
+  isolation: isolate;
   align-items: center;
   justify-content: center;
   flex: 0 1 auto;
@@ -60,187 +72,150 @@
   min-width: 0;
   max-width: 100%;
   min-height: var(--action-height, 56px);
+  margin-bottom: 0;
   padding: var(--action-padding, 15px 24px);
-  border: 2px solid var(--action-border);
-  border-radius: 0;
-  background: var(--action-fill);
+  border: 1.5px solid var(--action-border);
+  border-radius: var(--button-radius);
+  background-color: var(--action-fill);
+  background-image: var(--action-surface);
+  box-shadow: var(--action-current-shadow);
   color: var(--action-label);
-  font-family: Outfit, sans-serif;
-  font-size: 16px;
-  font-weight: 650;
-  line-height: 1.3;
-  letter-spacing: -0.015em;
+  font: 650 1rem/1.3 Outfit, sans-serif;
+  letter-spacing: -.015em;
   text-align: center;
   text-decoration: none;
   text-transform: none;
-  white-space: normal;
+  white-space: nowrap;
   cursor: pointer;
+  transform: none;
+  translate: 0 var(--action-offset);
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition:
-    transform 180ms ease,
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease;
+  transition: translate var(--button-hover-duration) ease,
+    box-shadow var(--button-hover-duration) ease,
+    border-color var(--button-hover-duration) ease,
+    background-color var(--button-hover-duration) ease;
 
-  &:hover {
-    background: var(--action-hover-fill);
-    border-color: var(--action-hover-border);
-    color: var(--action-hover-label);
-    transform: translateY(-2px);
+  & > svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    pointer-events: none;
+    transition: transform var(--button-hover-duration) ease;
+  }
+
+  @media (max-width: 600px) {
+    white-space: normal;
+    text-wrap: balance;
   }
 
   &:focus-visible {
-    outline: 3px solid var(--brand-white);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px var(--brand-blue);
+    outline: 2px solid var(--brand-white);
+    outline-offset: 2px;
+    box-shadow: var(--action-current-shadow), 0 0 0 5px var(--brand-blue);
   }
 
-  &:active {
-    transform: translateY(0) scale(0.98);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]) {
+      --action-offset: var(--button-hover-offset);
+      --action-current-shadow: var(--action-hover-shadow);
+    }
+    &:hover > svg { transform: translateX(2px); }
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]) {
+    --action-offset: var(--button-press-offset);
+    --action-current-shadow: var(--action-press-shadow);
+    transition-duration: var(--button-press-duration);
   }
 
   &:is(:disabled, [aria-disabled="true"]) {
-    opacity: 0.55;
+    opacity: .5;
     cursor: not-allowed;
-    transform: none;
+    --action-offset: 0px;
+    box-shadow: inset 0 1px 0 var(--button-highlight);
   }
-
-  &[aria-busy="true"] {
-    cursor: progress;
-  }
-
-  /* No decorative CTA arrows; preserve real form-action icons. */
-  &:not(button) > svg,
-  & > span[aria-hidden="true"] {
-    display: none;
-  }
-
-  @media (hover: none) {
-    &:hover {
-      transform: none;
-    }
-    &:active {
-      transform: scale(.98);
-    }
-  }
+  &[aria-busy="true"] { cursor: progress; opacity: .8; --action-offset: 0px; }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    &:hover,
-    &:active {
-      transform: none;
-    }
+    &, & > svg { transition: none; }
+    &:hover, &:active { --action-offset: 0px; }
+    &:hover > svg { transform: none; }
+  }
+
+  @media (forced-colors: active) {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+    &:focus-visible { outline: 2px solid Highlight; box-shadow: none; }
   }
 }
 
-:root
-  .site
-  :is(
-    .primary-btn,
-    .desktop-navigation-cta,
-    .services-hero-action-primary,
-    .footer-project-link,
-    .site-menu-cta > a,
-    .contact-form-actions > button[type="submit"],
-    .performance-inline-cta,
-    .scroll63-hero-outro-cta,
-    .text-cta,
-    .performance-closing-actions > a,
-    .service-detail-closing > a,
-    .services-closing > a,
-    .interior-contact > a,
-    .insights-closing > a
-  ) {
+/* Primary: lit tomato-red surface, blue-tinted shade, white label. */
+:root .site.site.site :is(
+  .bfo-action--primary, .primary-btn, .desktop-navigation-cta,
+  .services-hero-action-primary, .footer-project-link, .site-menu-cta > a,
+  .contact-form-actions > button[type="submit"], .performance-inline-cta,
+  .scroll63-hero-outro-cta, .text-cta, .whatsapp-link,
+  .performance-closing-actions > a, .service-detail-closing > a,
+  .services-closing > a, .interior-contact > a, .insights-closing > a,
+  .article-body > a[href="#contact"], .content-section > a[href="/#contact"]
+) {
   --action-fill: var(--brand-red);
-  --action-label: var(--brand-white);
+  --action-label: var(--button-text);
   --action-border: var(--brand-red);
-  --action-hover-fill: var(--brand-white);
-  --action-hover-label: var(--brand-blue);
-  --action-hover-border: var(--brand-blue);
+  --action-surface: linear-gradient(180deg, var(--button-bg-top), var(--button-bg-bottom));
+  --action-shadow: var(--button-primary-shadow);
+  --action-hover-shadow: inset 0 1px 0 rgb(255 255 255 / .44), inset 0 -2px 0 var(--button-inset-shadow), 0 3px 4px var(--button-contact-shadow), 0 10px 24px -8px rgb(187 35 43 / .34);
+  --action-press-shadow: inset 0 2px 4px rgb(32 48 154 / .38), inset 0 -1px 0 rgb(255 255 255 / .1);
 }
 
-:root .site .desktop-navigation-cta {
-  --action-height: 52px;
-  --action-padding: 13px 24px;
-  white-space: nowrap;
+/* Secondary: quiet fill, crisp outline, one restrained inner highlight. */
+@supports (color: color-mix(in srgb, red, white)) {
+  :root .site.site.site :is(
+    .bfo-action--secondary, .story-link, .text-link, .service-link,
+    .website-service-link, .services-hero-action-secondary, .growth-actions > a:not(.primary-btn),
+    .interior-hero-actions > a:not(.primary-btn), .service-chapter-actions > a,
+    .campaign-source-action, .case-copy > a, .project-notes > a,
+    .modular-slider-footer .links > a, .creative-growth article > a,
+    .guidance-grid article > a, .evidence-section article > a, .channel-choice article > a
+  ) { --action-fill: color-mix(in srgb, currentColor 5%, transparent); }
 }
 
-:root
-  .site
-  :is(
-    .hero-actions,
-    .growth-actions,
-    .interior-hero-actions,
-    .service-detail-actions,
-    .creative-actions,
-    .service-chapter-actions
-  ) {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-}
+/* Image-backed showcase links get a solid scrim, not contrast by chance. */
+:root .site.site.site .modular-slider-footer .links > a { --action-fill: var(--brand-blue); --action-label: var(--brand-white); }
 
-:root .site .performance-closing-actions {
-  width: fit-content;
-  max-width: 100%;
+/* Tertiary: no raised slab for reading links and compact navigation actions. */
+:root .site.site.site :is(.bfo-action--tertiary, .reel-all, .insights-card-body > a) {
+  --action-fill: transparent;
+  --action-surface: none;
+  --action-shadow: none;
+  --action-hover-shadow: none;
+  --action-press-shadow: none;
+  min-height: 44px;
+  padding: 8px 0;
   border: 0;
+  border-bottom: 2px solid currentColor;
+  border-radius: 0;
+  font-size: .9375rem;
+  justify-content: flex-start;
 }
 
-:root .site .performance-related-cta {
-  display: inline-flex;
-  padding: 10px 14px;
-  border: 2px solid var(--brand-white);
-  color: var(--brand-white);
-  font-family: Outfit, sans-serif;
-  font-size: 14px;
-  font-weight: 650;
-  line-height: 1.3;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-:root .site .performance-related nav a:hover,
-:root .site .performance-related nav a:focus-visible {
-  color: var(--brand-white);
-}
+:root .site.site .desktop-navigation-cta { --action-height: 52px; --action-padding: 13px 24px; }
+:root .site.site .performance-closing-actions { width: fit-content; max-width: 100%; border: 0; }
+:root .site.site .performance-related-cta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1.5px solid currentColor; border-radius: var(--button-radius); font: 650 .9375rem/1.3 Outfit, sans-serif; box-shadow: var(--button-secondary-shadow); }
+:root .site .performance-related nav a:hover, :root .site .performance-related nav a:focus-visible { color: var(--brand-white); }
+:root .site :is(.hero-actions,.growth-actions,.interior-hero-actions,.service-detail-actions,.creative-actions,.service-chapter-actions) { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
 
 @media (max-width: 600px) {
-  :root
-    .site
-    :is(
-      .hero-actions,
-      .services-hero-cta,
-      .growth-actions,
-      .interior-hero-actions,
-      .service-detail-actions,
-      .creative-actions
-    ) {
-    gap: 12px;
-    --action-width: 100%;
-    --action-height: 52px;
-    --action-padding: 13px 16px;
-  }
+  :root .site :is(.hero-actions,.services-hero-cta,.growth-actions,.interior-hero-actions,.service-detail-actions,.creative-actions) { gap: 12px; --action-width: 100%; --action-height: 52px; --action-padding: 13px 16px; }
+  :root .site :is(.footer-project-link,.contact-form-actions > button[type="submit"],.website-related-grid,.website-scope,.service-chapter-actions) { --action-width: 100%; --action-height: 52px; --action-padding: 13px 16px; }
+  :root .site .performance-related nav a { grid-template-columns: 28px minmax(0,1fr); gap: 12px; }
+  :root .site .performance-related-cta { grid-column: 2; justify-self: start; }
+}
 
-  :root .site :is(.footer-project-link, .contact-form-actions > button[type="submit"]) {
-    --action-width: 100%;
-  }
-
-  :root .site :is(.website-related-grid, .website-scope, .service-chapter-actions) {
-    --action-width: 100%;
-    --action-height: 52px;
-    --action-padding: 13px 16px;
-  }
-
-  :root .site .performance-related nav a {
-    grid-template-columns: 28px minmax(0, 1fr);
-    gap: 12px;
-  }
-
-  :root .site .performance-related-cta {
-    grid-column: 2;
-    justify-self: start;
-  }
+@media (prefers-reduced-motion: reduce) {
+  :root .site { --button-hover-offset: 0px; --button-press-offset: 0px; }
 }

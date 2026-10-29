@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useAutoplayVideo } from "@/hooks/use-autoplay-video";
 import { ImageAccordion } from "@/components/image-accordion";
 import { KineticBand } from "@/components/kinetic-band";
 import { ProcessPath } from "@/components/process-path";
@@ -19,19 +20,10 @@ export const Route = createFileRoute("/studio")({
 function StudioBeliefVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) void video.play().catch(() => undefined);
-      else video.pause();
-    }, { rootMargin: "25% 0px", threshold: 0.08 });
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
+  useAutoplayVideo(videoRef, { src: "/assets/world/hero.mp4" });
 
   return (
-    <video ref={videoRef} muted loop playsInline preload="none" poster="/assets/world/poster.webp">
+    <video ref={videoRef} autoPlay muted loop playsInline preload="metadata" poster="/assets/world/poster.webp">
       <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
       <source src="/assets/world/hero.mp4" type="video/mp4" />
     </video>

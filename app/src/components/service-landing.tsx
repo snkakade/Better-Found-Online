@@ -129,7 +129,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
                   <li key={link.href}>
                     <Icon className="service-related-option-icon" size={28} weight="light" aria-hidden="true" />
                     <div><h3>{option.heading}</h3><p>{option.description}</p></div>
-                    <TransitionLink className="primary-btn" href={link.href}>{option.action}</TransitionLink>
+                    <TransitionLink className="story-link" href={link.href}>{option.action}</TransitionLink>
                   </li>
                 );
               })}

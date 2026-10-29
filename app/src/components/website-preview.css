@@ -4,5 +4,3 @@
 :root .site .website-preview > img { opacity: 1; visibility: visible; }
 :root .site .website-preview > video { opacity: 0; background: transparent; }
 :root .site .website-preview[data-ready="true"] > video { opacity: 1; }
-:root .site .website-preview-play { position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; min-width: 48px; padding: 12px 16px; border: 2px solid var(--brand-white); border-radius: 0; background: var(--brand-red); color: var(--brand-white); font: 600 1rem/1.2 Outfit, sans-serif; white-space: nowrap; cursor: pointer; }
-:root .site .website-preview-play:focus-visible { outline: 3px solid var(--silver); outline-offset: 4px; }

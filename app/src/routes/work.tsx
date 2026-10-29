@@ -27,8 +27,8 @@ function WorkPage() {
             <p>From specialist service businesses to distinctive brands, explore digital projects built around clear positioning, considered design, and practical customer journeys.</p>
             <p className="work-taxonomy">Website Design / SEO / Performance Marketing</p>
             <div className="interior-hero-actions">
-              <a className="primary-btn" href="#cases">View Selected Work</a>
-              <TransitionLink href="/#contact">Discuss Your Project</TransitionLink>
+              <a className="story-link" href="#cases">View Selected Work</a>
+              <TransitionLink className="primary-btn" href="/#contact">Discuss Your Project</TransitionLink>
             </div>
           </div>
           <div className="work-hero-collage" aria-hidden="true">

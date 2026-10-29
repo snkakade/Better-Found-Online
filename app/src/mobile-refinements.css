@@ -168,7 +168,6 @@
   :root .creative-page .modular-video-showcase .img-top { clip-path: none !important; }
   :root .creative-page .modular-video-showcase .img-bottom { display: none; }
   :root .creative-page .modular-video-showcase .slider-video { object-fit: contain; filter: none; clip-path: none !important; transform: none !important; }
-  :root .creative-page .modular-video-showcase .slider-media-play { position: static; transform: none; width: 100%; }
   :root .creative-page .modular-video-showcase .modular-slider-kicker { display: none; }
   :root .creative-page .modular-video-showcase .modular-slider-footer { position: static; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 0; background: none; }
   :root .creative-page .modular-video-showcase .links { display: grid; grid-template-columns: 1fr; width: 100%; gap: 12px; }
