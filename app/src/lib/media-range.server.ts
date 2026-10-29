@@ -1,14 +1,23 @@
 /** Pages' asset binding may return 200 for Range requests. Safari probes MP4s
  * with byte ranges, so provide a streaming single-range response in that case.
  * Existing 206/304/error responses and ordinary assets are left alone. */
-export function applyMediaRange(request: Request, response: Response): Response {
+function fixedLength(body: ReadableStream<Uint8Array> | null, length: number) {
+  const Fixed = (globalThis as typeof globalThis & { FixedLengthStream?: new (length: number) => { readable: ReadableStream<Uint8Array>; writable: WritableStream<Uint8Array> } }).FixedLengthStream;
+  if (!body || !Fixed) return body;
+  const stream = new Fixed(length);
+  void body.pipeTo(stream.writable).catch(() => undefined);
+  return stream.readable;
+}
+
+export function applyMediaRange(request: Request, response: Response, knownSize?: number): Response {
   if (response.status !== 200) return response;
-  const size = Number(response.headers.get("content-length"));
+  const size = Number(response.headers.get("content-length") ?? knownSize);
   const encoding = response.headers.get("content-encoding");
   if (!Number.isSafeInteger(size) || size <= 0 || (encoding && encoding !== "identity")) return response;
   const headers = new Headers(response.headers);
   headers.set("accept-ranges", "bytes");
-  const full = () => new Response(response.body, { status: 200, headers });
+  headers.set("content-length", String(size));
+  const full = () => new Response(fixedLength(response.body, size), { status: 200, headers });
   if (request.method !== "GET" || !response.body) return full();
   const match = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get("range")?.trim() ?? "");
   if (!match || (!match[1] && !match[2])) return full();
@@ -57,5 +66,5 @@ export function applyMediaRange(request: Request, response: Response): Response 
     },
     cancel(reason) { return reader.cancel(reason); },
   });
-  return new Response(body, { status: 206, headers });
+  return new Response(fixedLength(body, end - start + 1), { status: 206, headers });
 }

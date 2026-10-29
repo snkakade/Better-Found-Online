@@ -58,7 +58,7 @@ Follow-up verification:
 - All ten derivatives have validated codecs/pixel format and size limits.
   Frame-zero cover files are byte-for-byte matches to FFmpeg extraction from
   their encoded clips. The trimmed showcase loop ends before the black tail.
-- 57 Node regression tests, UI contract checks, TypeScript, and the Pages build
+- 59 Node regression tests, UI contract checks, TypeScript, and the Pages build
   pass. Bun is unavailable locally; equivalent npm/Node checks were used.
 
 These are Chrome responsive-rendering and media-recovery checks, not a claim

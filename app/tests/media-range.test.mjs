@@ -1,9 +1,22 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { statSync } from "node:fs";
 import { applyMediaRange } from "../src/lib/media-range.server.ts";
+import { mediaAssetSizes } from "../src/media-asset-sizes.ts";
 
 const request = (range, extra = {}) => new Request("https://example.com/assets/video.mp4", { headers: { ...(range ? { range } : {}), ...extra } });
 const asset = () => new Response("0123456789", { headers: { "content-length": "10", "content-type": "video/mp4", etag: '"clip-v1"', "last-modified": "Wed, 28 Oct 2026 12:00:00 GMT" } });
+
+test("deployed video byte lengths match every canonical media file", () => {
+  for (const [path, bytes] of Object.entries(mediaAssetSizes)) assert.equal(statSync(new URL(`../public${path}`, import.meta.url)).size, bytes, path);
+});
+
+test("uses verified asset metadata when Pages omits Content-Length", async () => {
+  const response = applyMediaRange(request("bytes=0-1"), new Response("0123456789"), 10);
+  assert.equal(response.status, 206);
+  assert.equal(response.headers.get("content-length"), "2");
+  assert.equal(await response.text(), "01");
+});
 
 for (const [range, expected, contentRange] of [
   ["bytes=0-1", "01", "bytes 0-1/10"],

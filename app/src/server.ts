@@ -4,6 +4,7 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applySecurityHeaders } from "./lib/security-headers.server";
 import { applyMediaRange } from "./lib/media-range.server";
+import { mediaAssetSizes } from "./media-asset-sizes";
 import { handleConsoleApi } from "./lib/console-api.server";
 import type { D1Database } from "@cloudflare/workers-types";
 
@@ -181,7 +182,7 @@ export default {
       if ((request.method === "GET" || request.method === "HEAD") && isStaticAsset && env.ASSETS) {
         const response = await env.ASSETS.fetch(request);
         const publicVideo = !consoleHost && pathname.startsWith("/assets/") && /\.(mp4|webm|m4v)$/i.test(pathname);
-        return applySecurityHeaders(publicVideo ? applyMediaRange(request, response) : response);
+        return applySecurityHeaders(publicVideo ? applyMediaRange(request, response, mediaAssetSizes[pathname]) : response);
       }
 
       const handler = await getServerEntry();

@@ -1,0 +1,28 @@
+// Exact deployed byte lengths: Pages omits Content-Length on some bindings.
+// The regression test checks every value against its source asset.
+export const mediaAssetSizes: Record<string, number> = {
+  "/assets/website-previews/charterx-tablet.mp4": 3753139,
+  "/assets/website-previews/charterx.mp4": 2177276,
+  "/assets/website-previews/dr-shweta.mp4": 1155982,
+  "/assets/website-previews/hello-honey-bunny.mp4": 1538738,
+  "/assets/website-previews/say-vanilla-phone.mp4": 1511182,
+  "/assets/website-previews/say-vanilla.mp4": 1460689,
+  "/assets/website-previews/tech-sales-desktop.mp4": 2248066,
+  "/assets/website-previews/tech-sales-phone.mp4": 1872541,
+  "/assets/website-previews/tech-sales-tablet.mp4": 2871691,
+  "/assets/website-previews/tech-sales.mp4": 1262923,
+  "/assets/creative-work/campaign-film-rev.mp4": 2159300,
+  "/assets/creative-work/campaign-film-tts.mp4": 1140049,
+  "/assets/creative-work/finished-interview-edit.mp4": 1143107,
+  "/assets/creative-work/finished-interview-loop.mp4": 1113135,
+  "/assets/creative-work/interview-before-after.mp4": 787268,
+  "/assets/creative-work/social-edit-before-after.mp4": 1783995,
+  "/assets/creative-work/talking-head-before-after.mp4": 888985,
+  "/assets/search-ads/ad-spend-review.mp4": 1178457,
+  "/assets/search-ads/customer-search.mp4": 798287,
+  "/assets/search-ads/google-search.mp4": 404754,
+  "/assets/world/hero-mobile-scrub.mp4": 1459732,
+  "/assets/world/hero-mobile.mp4": 692546,
+  "/assets/world/hero-scrub.mp4": 4596414,
+  "/assets/world/hero.mp4": 3549858,
+};
