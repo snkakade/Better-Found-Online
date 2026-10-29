@@ -5,13 +5,11 @@ import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type 
 import { CookieSettingsButton } from "@/components/analytics-consent";
 
 const navigation = [
-  ["Work", "/work"],
   ["Paid Ads", "/services/performance-marketing"],
   ["SEO & AI Search", "/services/seo-ai-search"],
   ["Websites", "/services/websites"],
   ["Creative Production", "/creative-production"],
   ["Social Media", "/services/social-media-management"],
-  ["All Services", "/services"],
 ];
 
 type BrandTone = "light" | "dark" | "wine" | "rose" | "badge";
@@ -35,6 +33,10 @@ function transitionTo(event: MouseEvent<HTMLAnchorElement>, href: string) {
     return;
   }
   if (target.pathname === "/studio") {
+    window.location.assign(target.href);
+    return;
+  }
+  if (window.matchMedia("(max-width: 900px), (prefers-reduced-motion: reduce)").matches) {
     window.location.assign(target.href);
     return;
   }
@@ -94,7 +96,7 @@ export function SiteHeader({
     const socialLines = menu.querySelectorAll<HTMLElement>(".site-menu-meta p, .site-menu-meta a");
     const video = menu.querySelector<HTMLElement>(".site-menu-video");
     const letters = menu.querySelectorAll<HTMLElement>(".site-menu-wordmark span");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 760px)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 1100px)").matches;
     const animationTargets: gsap.TweenTarget[] = [
       menu,
       ...Array.from(links),
@@ -122,6 +124,7 @@ export function SiteHeader({
     previousOpen.current = open;
 
     if (reduceMotion) {
+      if (open) previousOverflow.current = document.body.style.overflow;
       gsap.set(menu, {
         clipPath: open
           ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
@@ -132,7 +135,11 @@ export function SiteHeader({
       gsap.set(video, { clipPath: open ? "inset(0% 0% 0% 0%)" : "inset(100% 0% 0% 0%)" });
       gsap.set(letters, { y: open ? 0 : 500, rotateY: open ? 0 : 90, scale: open ? 1 : 0.75 });
       document.body.style.overflow = open ? "hidden" : previousOverflow.current;
-      return;
+      const focusFrame = requestAnimationFrame(() => {
+        if (open) menu.querySelector<HTMLAnchorElement>(".site-menu-link a")?.focus();
+        else toggleRef.current?.focus();
+      });
+      return () => cancelAnimationFrame(focusFrame);
     }
 
     if (open) {
@@ -184,10 +191,11 @@ export function SiteHeader({
 
   const trapFocus = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key !== "Tab" || !open) return;
-    const focusable = menuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+    const focusable = menuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), summary');
     if (!focusable?.length) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
+    const visible = Array.from(focusable).filter(element => element.getClientRects().length > 0);
+    const first = visible[0];
+    const last = visible[visible.length - 1];
     if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
       toggleRef.current?.focus();
@@ -237,8 +245,8 @@ export function SiteHeader({
         onClick={() => setOpen((value) => !value)}
         onKeyDown={(event) => {
           if (open && event.key === "Tab" && event.shiftKey) {
-            const focusable = menuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
-            const last = focusable?.[focusable.length - 1];
+            const focusable = menuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), summary');
+            const last = focusable && Array.from(focusable).filter(element => element.getClientRects().length > 0).at(-1);
             if (last) {
               event.preventDefault();
               last.focus();
@@ -264,11 +272,18 @@ export function SiteHeader({
         <div className="site-menu-col site-menu-primary">
           <Brand tone="light" />
           <div className="site-menu-links">
-            {navigation.map(([label, href]) => (
-              <div className="site-menu-link" key={href}>
-                <TransitionLink href={href} onClick={() => setOpen(false)}>{label}</TransitionLink>
-              </div>
-            ))}
+            <div className="site-menu-link"><TransitionLink href="/work" onClick={() => setOpen(false)}>Work</TransitionLink></div>
+            <div className="site-menu-link">
+              <details className="site-menu-services">
+                <summary>Services <CaretDown size={22} aria-hidden="true" /></summary>
+                <div className="site-menu-service-links">
+                  {navigation.map(([label, href]) => <TransitionLink key={href} href={href} onClick={() => setOpen(false)}>{label}</TransitionLink>)}
+                  <TransitionLink href="/services" onClick={() => setOpen(false)}>View All Services</TransitionLink>
+                </div>
+              </details>
+            </div>
+            <div className="site-menu-link"><TransitionLink href="/studio" onClick={() => setOpen(false)}>Studio</TransitionLink></div>
+            <div className="site-menu-link"><TransitionLink href="/insights" onClick={() => setOpen(false)}>Insights</TransitionLink></div>
             <div className="site-menu-link site-menu-cta">
               <TransitionLink href="/#contact" onClick={() => setOpen(false)}>Discuss Your Project <ArrowUpRight size={28} weight="light" /></TransitionLink>
             </div>

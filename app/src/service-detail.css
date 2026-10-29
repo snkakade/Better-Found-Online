@@ -2743,6 +2743,29 @@
   letter-spacing: -.055em;
 }
 
+.creative-step-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.creative-step-rail button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: 500 1rem/1.3 Outfit, sans-serif;
+  cursor: pointer;
+}
+.creative-step-rail button span { font-size: .75rem; }
+.creative-step-rail button > span:first-child { display: grid; width: 24px; height: 24px; place-content: center; border: 0; color: inherit; }
+.creative-step-rail button[aria-pressed="true"] { border-color: var(--brand-red); background: var(--brand-red); color: var(--brand-white); }
+.creative-step-rail button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
 .creative-page .creative-film video {
   object-fit: contain;
   transform: none;

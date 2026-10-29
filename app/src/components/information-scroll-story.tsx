@@ -48,10 +48,13 @@ export function InformationScrollStory({
   const root = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!root.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!root.current) return;
 
     gsap.registerPlugin(ScrollTrigger, SplitText);
     const element = root.current;
+    const media = gsap.matchMedia();
+    // Touch layouts read in document order. Only larger, motion-enabled screens pin.
+    media.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
     const smoothScroll = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)").matches;
     const lenis = smoothScroll ? new Lenis() : null;
     const ticker = (time: number) => lenis?.raf(time * 1000);
@@ -153,6 +156,8 @@ export function InformationScrollStory({
       lenis?.off("scroll", onLenisScroll);
       lenis?.destroy();
     };
+    });
+    return () => media.revert();
   }, [scrollScreens]);
 
   return (

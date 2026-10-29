@@ -31,11 +31,16 @@
 .cookie-settings { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-transform: inherit; cursor: pointer; }
 .cookie-settings:hover, .cookie-settings:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 720px) {
-  .consent-panel { right: 8px; bottom: 8px; width: calc(100vw - 16px); gap: 10px; padding: 13px 14px; }
-  .consent-copy h2 { margin-bottom: 4px; font-size: 18px; }
-  .consent-copy > p:not(.consent-eyebrow) { font-size: 10px; line-height: 1.38; }
-  .consent-copy a { min-height: 28px; margin-top: 2px; padding-block: 7px; }
+  .consent-panel { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); width: calc(100vw - 24px); max-height: calc(100svh - 92px); overflow-y: auto; gap: 12px; padding: 16px; }
+  .consent-eyebrow { color: inherit; font-size: 11px; }
+  .consent-copy h2 { margin-bottom: 8px; font-size: 22px; }
+  .consent-copy > p:not(.consent-eyebrow) { color: rgb(255 255 255 / .85); font-size: 14px; line-height: 1.5; }
+  .consent-copy a { min-height: 44px; margin-top: 2px; padding-block: 12px; font-size: 14px; }
+  .consent-options strong { font-size: 14px; }
+  .consent-options small { color: rgb(255 255 255 / .8); font-size: 13px; line-height: 1.45; }
+  .consent-options label { min-height: 48px; }
+  .consent-options input { width: 22px; height: 22px; }
   .consent-actions { grid-template-columns: 1fr 1fr; min-width: 0; }
-  .consent-actions button { min-height: 44px; }
+  .consent-actions button { min-height: 48px; font-size: 14px; line-height: 1.3; }
 }
 

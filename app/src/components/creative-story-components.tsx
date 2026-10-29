@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StepRail } from "@/components/step-rail";
 import { TransitionLink } from "@/components/site-chrome";
 export { CreativeProofReel } from "@/components/creative-proof-reel/creative-proof-reel";
 
@@ -172,6 +171,23 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
     let mediaRequest = 0;
     const totalSlides = 7;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let visible = false;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactVideo = window.matchMedia("(max-width: 900px)");
+    const syncPlayback = () => {
+      [imgTop.current, imgBottom.current].forEach(container => {
+        container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
+          const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
+          if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf && video.style.opacity === "1") void video.play().catch(() => undefined);
+          else video.pause();
+        });
+      });
+    };
+    const playbackObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; syncPlayback(); }, { threshold: .1 });
+    if (slider.current) playbackObserver.observe(slider.current);
+    document.addEventListener("visibilitychange", syncPlayback);
+    motionPreference.addEventListener("change", syncPlayback);
+    compactVideo.addEventListener("change", syncPlayback);
 
     const updateActiveSlide = () => {
       slideTitles.current?.querySelectorAll<HTMLElement>(".title").forEach((el, index) => {
@@ -225,7 +241,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         video.className = className;
         video.src = item.video;
         if (item.poster) video.poster = item.poster;
-        video.autoplay = true;
+        video.autoplay = false;
         video.muted = true;
         video.loop = true;
         video.playsInline = true;
@@ -258,7 +274,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         readyCount += 1;
         if (readyCount < 2) return;
 
-        if (requestId !== mediaRequest) {
+        if (disposed || requestId !== mediaRequest) {
           videoTop.pause();
           videoBottom.pause();
           videoTop.remove();
@@ -278,8 +294,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
         videoBottom.currentTime = videoTop.currentTime;
         videoTop.style.opacity = "1";
         videoBottom.style.opacity = "1";
-        videoTop.play().catch(() => undefined);
-        videoBottom.play().catch(() => undefined);
+        syncPlayback();
 
         if (reducedMotion || !gsapInstance) return;
 
@@ -334,6 +349,10 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
 
     return () => {
       disposed = true;
+      playbackObserver.disconnect();
+      document.removeEventListener("visibilitychange", syncPlayback);
+      motionPreference.removeEventListener("change", syncPlayback);
+      compactVideo.removeEventListener("change", syncPlayback);
       handleMediaHover.current = () => undefined;
       if (activeTimer) clearTimeout(activeTimer);
       if (gsapInstance) {
@@ -364,6 +383,7 @@ export function CreativeCapabilityCarousel({ capabilities }: { capabilities: Cre
           handleSlider.current();
         }}
         onKeyDown={(event) => {
+          if ((event.target as HTMLElement).closest("a,button")) return;
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             handleSlider.current();
@@ -413,13 +433,9 @@ export function CreativeProcessStory({ process }: { process: string[][] }) {
         <p className="eyebrow">Creative process</p>
         <h2 id="creative-process-title"><OrbitMotionText>A clear path from brief to delivery.</OrbitMotionText></h2>
       </header>
-      <StepRail
-        steps={process.map(([, title]) => ({ id: title, label: title }))}
-        current={current}
-        onStepChange={setCurrent}
-        aria-label="Creative production process"
-        className="creative-step-rail"
-      />
+      <nav aria-label="Creative production process" className="creative-step-rail">
+        {process.map(([number, title]) => <button type="button" key={title} aria-pressed={current === title} onClick={() => setCurrent(title)}><span>{number}</span>{title}</button>)}
+      </nav>
       {active ? <div className="creative-process-focus" aria-live="polite"><span>{active[0]}</span><h3>{active[1]}</h3><p>{active[2]}</p></div> : null}
     </section>
   );

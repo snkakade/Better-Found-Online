@@ -3491,6 +3491,64 @@ section[id] {
   }
 }
 
+/* Compact navigation keeps the core pages visible; service destinations are
+   progressively disclosed instead of becoming an oversized wall of links. */
+.site-menu-services summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 48px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: -.045em;
+  cursor: pointer;
+  list-style: none;
+}
+.site-menu-services summary::-webkit-details-marker { display: none; }
+.site-menu-services summary svg { flex: 0 0 auto; transition: transform 180ms ease; }
+.site-menu-services[open] summary svg { transform: rotate(180deg); }
+.site-menu-service-links { display: grid; gap: 4px; padding-block: 12px 20px; }
+.site-menu-link .site-menu-service-links a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  letter-spacing: -.015em;
+}
+.site-menu-services summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+@media (max-width: 1100px) {
+  .site-menu { display: block; overflow-x: hidden; overflow-y: auto; }
+  .site-menu .site-menu-col { width: 100%; height: auto; }
+  .site-menu .site-menu-primary { min-height: 0; align-items: stretch; gap: 28px; padding: 96px 20px 28px; border-right: 0; }
+  .site-menu .site-menu-primary > .brand { top: 20px; left: 20px; }
+  .site-menu .site-menu-links { display: grid; gap: 8px; }
+  .site-menu .site-menu-link { min-height: 0; margin: 0; overflow: visible; }
+  .site-menu .site-menu-link > a,
+  .site-menu .site-menu-services summary {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding-block: 4px;
+    font-size: 2rem;
+    line-height: 1.2;
+    letter-spacing: -.035em;
+  }
+  .site-menu .site-menu-cta { margin-top: 16px; }
+  .site-menu .site-menu-service-links a { font-size: 1rem; }
+  .site-menu .site-menu-video,
+  .site-menu .site-menu-wordmark { display: none; }
+  .site-menu .site-menu-secondary { gap: 24px; padding: 24px 20px max(24px, env(safe-area-inset-bottom)); }
+  .site-menu .site-menu-meta { grid-template-columns: 1fr; gap: 24px; }
+  .site-menu .site-menu-meta p,
+  .site-menu .site-menu-meta a { font-family: Outfit, sans-serif; font-size: .9375rem; line-height: 1.5; letter-spacing: 0; text-transform: none; overflow-wrap: anywhere; }
+  .site-menu .site-menu-meta a { display: flex; align-items: center; min-height: 44px; }
+  .site-menu .site-menu-meta .site-menu-meta-label { font-size: .8125rem; }
+  .site-menu .site-menu-meta .site-menu-social-link:not(a) { display: none; }
+}
+
 /* Editorial conversion footer ---------------------------------------------
  * The footer closes with one useful proposition, one conversion action and
  * a compact directory. Legal identifiers remain readable without becoming

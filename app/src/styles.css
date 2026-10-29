@@ -29,6 +29,7 @@
 @import "./maintenance.css";
 @import "./analytics-consent.css";
 @import "./site-actions.css";
+@import "./mobile-refinements.css";
 /* shadcn v4 base (scrollbar/scroll-fade utilities, toast base) for src/components/ui */
 @import "shadcn/tailwind.css";
 

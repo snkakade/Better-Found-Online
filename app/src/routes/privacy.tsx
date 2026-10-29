@@ -15,7 +15,7 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <div className="privacy-page legal-page">
+    <div className="site privacy-page legal-page">
       <PageTransition />
       <SiteHeader />
       <main id="main" className="privacy-content">
