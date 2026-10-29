@@ -284,9 +284,7 @@ function WebsitesPage() {
           <div>
             <p className="eyebrow">Website Design &amp; Development</p>
             <h1>
-              Your website should
-              <br />
-              <em>do more than look good.</em>
+              <span>Your website should do</span> <em>more than look good.</em>
             </h1>
             <p>
               Custom website design, development, and redesign for service businesses and growing

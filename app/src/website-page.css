@@ -1,4 +1,25 @@
 /* Website-page refinements. Keep shared service layouts unchanged. */
+.websites-growth-hero h1 > span,
+.websites-growth-hero h1 > em {
+  display: block;
+}
+
+@media (min-width: 901px) {
+  .websites-growth-hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  }
+
+  .websites-growth-hero h1 {
+    max-width: none;
+    font-size: clamp(2.25rem, 4.65vw, 5.65rem);
+  }
+
+  .websites-growth-hero h1 > span,
+  .websites-growth-hero h1 > em {
+    white-space: nowrap;
+  }
+}
+
 .websites-service-page .website-benefits,
 .websites-service-page .website-related {
   background: var(--brand-white);
