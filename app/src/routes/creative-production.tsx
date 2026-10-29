@@ -27,9 +27,9 @@ const capabilities = [
 ];
 
 const proofVideos = [
-  { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "Short-form edit", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
-  { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "Interview edit", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
-  { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "Social transformation", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
+  { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "Short-form edit", navLabel: "Short-form", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
+  { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "Interview edit", navLabel: "Interview", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
+  { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "Social transformation", navLabel: "Social edit", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
 ];
 
 const process = [

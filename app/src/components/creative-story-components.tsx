@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StepRail } from "@/components/step-rail";
 import { TransitionLink } from "@/components/site-chrome";
+export { CreativeProofReel } from "@/components/creative-proof-reel/creative-proof-reel";
 
 export interface CreativeCapability {
   number: string;
@@ -16,14 +17,6 @@ export interface CreativeCapability {
   video: string;
   poster?: string;
   sliderTitle: string;
-}
-
-export interface CreativeProofVideo {
-  src: string;
-  poster: string;
-  label: string;
-  title: string;
-  detail: string;
 }
 
 export function InlineProjectVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
@@ -54,24 +47,6 @@ export function InlineProjectVideo({ src, poster, className }: { src: string; po
   }, []);
 
   return <video ref={videoRef} className={className} muted loop playsInline preload="metadata" poster={poster} aria-hidden="true"><source src={src} type="video/mp4" /></video>;
-}
-
-export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) {
-  return (
-    <section className="creative-proof section-pad" aria-labelledby="creative-proof-title">
-      <header className="creative-proof-header">
-        <div><p className="eyebrow">Before / after</p><h2 id="creative-proof-title">See what the edit changes.</h2><p>Raw footage becomes clear, paced, platform-ready content.</p></div>
-      </header>
-      <div className="creative-proof-grid">
-        {videos.map((video, index) => (
-          <figure className={`creative-proof-card ${index === 0 ? "creative-proof-card--lead" : "creative-proof-card--support"}`} key={video.src}>
-            <div className="creative-proof-media"><InlineProjectVideo src={video.src} poster={video.poster} /></div>
-            <figcaption><span>{video.label}</span><h3>{video.title}</h3><p>{video.detail}</p></figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
