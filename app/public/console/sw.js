@@ -1,4 +1,4 @@
-const CACHE_NAME = "bfo-console-v6-canonical-host";
+const CACHE_NAME = "bfo-console-v7-blue-brand";
 const STATIC_ASSETS = [
   "/console/assets/css/admin.css",
   "/console/assets/js/admin.js",
@@ -10,9 +10,13 @@ const STATIC_ASSETS = [
   "/assets/fonts/Outfit.ttf",
   "/assets/fonts/Mono.ttf",
   "/console/assets/images/favicon-32.png",
+  "/console/assets/images/favicon-48.png",
+  "/console/assets/images/favicon.svg",
+  "/console/assets/images/favicon.ico",
   "/console/assets/images/apple-touch-icon.png",
   "/console/assets/images/icon-192.png",
-  "/console/assets/images/icon-512.png"
+  "/console/assets/images/icon-512.png",
+  "/console/assets/images/maskable.png"
 ];
 
 self.addEventListener("install", (event) => {
