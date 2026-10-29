@@ -1,8 +1,21 @@
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUpRight, Browser, CalendarCheck, Cube, FilmStrip, ImageSquare, Megaphone, PlayCircle } from "@phosphor-icons/react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { InformationScrollStory } from "@/components/information-scroll-story";
+import { serviceRelatedOptions } from "@/service-related-options";
+import type { RelatedServicePath } from "@/service-related-options";
+import "@/service-related-options.css";
 
-export type ServiceLink = { label: string; href: string };
+export type ServiceLink = { label: string; href: RelatedServicePath };
+
+const relatedServiceIcons = {
+  graphics: ImageSquare,
+  video: FilmStrip,
+  advertising: Megaphone,
+  social: CalendarCheck,
+  motion: PlayCircle,
+  creative: Cube,
+  website: Browser,
+};
 
 export type ServiceLandingData = {
   path: string;
@@ -18,6 +31,7 @@ export type ServiceLandingData = {
   deliverables: string[];
   approach: string;
   faq: Array<{ question: string; answer: string }>;
+  relatedHeading: string;
   related: ServiceLink[];
   cta: string;
   image: string;
@@ -104,9 +118,23 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           <div>{data.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
         </section>
 
-        <section className="service-detail-related section-pad" aria-labelledby="related-title">
-          <p className="eyebrow">Related services</p><h2 id="related-title">Connect the right pieces.</h2>
-          <nav aria-label="Related services">{data.related.map((link) => <TransitionLink href={link.href} key={link.href}>{link.label}<ArrowUpRight size={18} weight="light" /></TransitionLink>)}</nav>
+        <section className="service-related-options section-pad" aria-labelledby="related-title">
+          <header><h2 id="related-title">{data.relatedHeading}</h2></header>
+          <nav aria-label="Related services">
+            <ul>
+              {data.related.map((link) => {
+                const option = serviceRelatedOptions[link.href];
+                const Icon = relatedServiceIcons[option.icon];
+                return (
+                  <li key={link.href}>
+                    <Icon className="service-related-option-icon" size={28} weight="light" aria-hidden="true" />
+                    <div><h3>{option.heading}</h3><p>{option.description}</p></div>
+                    <TransitionLink className="primary-btn" href={link.href}>{option.action}</TransitionLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
         </section>
 
         <section className="service-detail-closing section-pad">

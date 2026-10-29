@@ -1,0 +1,99 @@
+.service-related-options.section-pad {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  align-items: start;
+  gap: clamp(32px, 4vw, 64px);
+  padding-block: clamp(56px, 5vw, 80px);
+  background: var(--brand-blue);
+  color: var(--brand-white);
+}
+
+.service-related-options h2 {
+  max-width: 13ch;
+  margin: 0;
+  font-size: clamp(2.25rem, 3.1vw, 3.75rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.service-related-options nav {
+  min-width: 0;
+}
+
+.service-related-options ul {
+  margin: 0;
+  padding: 0;
+  background: var(--brand-white);
+  color: var(--brand-blue);
+  list-style: none;
+}
+
+.service-related-options li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 28px;
+}
+
+.service-related-options li + li {
+  border-top: 1px solid rgb(32 48 154 / 20%);
+}
+
+.service-related-option-icon {
+  align-self: start;
+  margin-top: 4px;
+}
+
+.service-related-options h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.5vw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.service-related-options li p {
+  max-width: 48ch;
+  margin: 12px 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.service-related-options .primary-btn {
+  --action-width: 16rem;
+  justify-self: end;
+}
+
+@media (max-width: 1100px) {
+  .service-related-options.section-pad {
+    grid-template-columns: 1fr;
+  }
+  .service-related-options h2 {
+    max-width: 24ch;
+  }
+}
+
+@media (max-width: 700px) {
+  .service-related-options.section-pad {
+    gap: 28px;
+  }
+  .service-related-options li {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 16px;
+    padding: 24px 20px;
+  }
+  .service-related-options li p {
+    margin-top: 8px;
+    font-size: 0.9375rem;
+  }
+  .service-related-options .primary-btn {
+    --action-width: 100%;
+    --action-height: 52px;
+    --action-padding: 13px 16px;
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+}
