@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { orbitAngle, orbitFrame, orbitFrames, PROOF_DWELL_MS, PROOF_TRANSITION_MS } from "./proof-orbit";
+import { orbitSlot, orbitFrame, orbitFrames, queueScale, PROOF_DWELL_MS, PROOF_TRANSITION_MS } from "./proof-orbit";
 
 export function useProofOrbit(stageRef: RefObject<HTMLDivElement | null>, count: number, paused: boolean) {
   const [active, setActive] = useState(0);
@@ -19,7 +19,8 @@ export function useProofOrbit(stageRef: RefObject<HTMLDivElement | null>, count:
     if (!stage || count < 1) return;
     const cards = Array.from(stage.querySelectorAll<HTMLElement>(".proof-orbit-card"));
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const smallScreen = window.matchMedia("(max-width: 767px)");
+    const smallScreen = window.matchMedia("(max-width: 900px)");
+    const heading = stage.parentElement?.querySelector<HTMLElement>(".proof-orbit-header");
     let current = 0;
     let visible = false;
     let inFlight = false;
@@ -30,13 +31,15 @@ export function useProofOrbit(stageRef: RefObject<HTMLDivElement | null>, count:
     const geometry = () => ({
       width: stage.clientWidth, height: stage.clientHeight,
       cardWidth: cards[0].offsetWidth, cardHeight: cards[0].offsetHeight,
+      headingHeight: heading?.offsetHeight ?? 0, headingWidth: heading?.offsetWidth ?? 0,
       compact: smallScreen.matches,
     });
     const clearTimer = () => { clearTimeout(timer); timer = undefined; };
     const place = () => {
       const size = geometry();
+      stage.style.setProperty("--proof-queue-scale", String(queueScale(size)));
       cards.forEach((card, index) => {
-        const frame = orbitFrame(orbitAngle(index, current, count), size);
+        const frame = orbitFrame(orbitSlot(index, current, count), size);
         card.style.transform = frame.transform;
         card.style.opacity = String(frame.opacity);
         // Only these three local layers overlap; no site-wide stacking changes.
@@ -100,6 +103,7 @@ export function useProofOrbit(stageRef: RefObject<HTMLDivElement | null>, count:
     controller.current = { select, sync };
     preferenceChanged();
     resize.observe(stage);
+    if (heading) resize.observe(heading);
     observer.observe(stage);
     motion.addEventListener("change", preferenceChanged);
     smallScreen.addEventListener("change", preferenceChanged);
