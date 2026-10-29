@@ -32,6 +32,11 @@ physical-device pass.
   search/advertising clips retain real playable media and a user-gesture path.
 - Removed the showcase edit's 3.1-second black ending in a separate web-loop
   derivative. No picture content was cropped; the original file is unchanged.
+- Live verification exposed a delivery issue as well: the Pages asset binding
+  returned 200/full video bodies for byte-range probes. Public video responses
+  now supply streaming single-range 206 responses when the binding ignores the
+  Range header. Existing partial/error responses, validators, HEAD requests,
+  compression, non-video assets, and console-host requests are preserved.
 - Restored the SEO hero video on phones and kept the advertising video on short
   screens. Balanced the website hero line wrapping and made the scrolled mobile
   header opaque immediately.
@@ -53,7 +58,7 @@ Follow-up verification:
 - All ten derivatives have validated codecs/pixel format and size limits.
   Frame-zero cover files are byte-for-byte matches to FFmpeg extraction from
   their encoded clips. The trimmed showcase loop ends before the black tail.
-- 47 Node regression tests, UI contract checks, TypeScript, and the Pages build
+- 57 Node regression tests, UI contract checks, TypeScript, and the Pages build
   pass. Bun is unavailable locally; equivalent npm/Node checks were used.
 
 These are Chrome responsive-rendering and media-recovery checks, not a claim

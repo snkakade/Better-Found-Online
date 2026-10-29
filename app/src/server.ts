@@ -3,6 +3,7 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applySecurityHeaders } from "./lib/security-headers.server";
+import { applyMediaRange } from "./lib/media-range.server";
 import { handleConsoleApi } from "./lib/console-api.server";
 import type { D1Database } from "@cloudflare/workers-types";
 
@@ -178,7 +179,9 @@ export default {
         /\.[a-zA-Z0-9]{2,16}$/.test(pathname);
 
       if ((request.method === "GET" || request.method === "HEAD") && isStaticAsset && env.ASSETS) {
-        return applySecurityHeaders(await env.ASSETS.fetch(request));
+        const response = await env.ASSETS.fetch(request);
+        const publicVideo = !consoleHost && pathname.startsWith("/assets/") && /\.(mp4|webm|m4v)$/i.test(pathname);
+        return applySecurityHeaders(publicVideo ? applyMediaRange(request, response) : response);
       }
 
       const handler = await getServerEntry();
