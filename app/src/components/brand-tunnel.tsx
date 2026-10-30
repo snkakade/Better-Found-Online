@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
+import { MOBILE_CHAPTER_START, MOBILE_CHAPTER_APPROACH_END, mobileChapterFocus, mobileTunnelPresence } from "@/lib/tunnel-pacing";
 
 type BrandTunnelProps = {
   paused?: boolean;
@@ -255,7 +256,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       const chapter = chapterCards[index];
       const chapterTrigger = ScrollTrigger.create({
         trigger: beat,
-        start: () => compact ? "top 92%" : "top 80%",
+        start: () => compact ? MOBILE_CHAPTER_START : "top 80%",
         end: () => compact ? "bottom top" : "bottom 50%",
         invalidateOnRefresh: true,
         onUpdate: (self) => { chapter.targetProgress = self.progress; if (compact) measureSlot(index); },
@@ -313,7 +314,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       viewportHeight = height;
       viewportLeft = rect.left;
       const journeyScreens = journey.offsetHeight / height;
-      const distancePerScreen = width < 768 ? 7 : 8;
+      const distancePerScreen = 8;
       travelDistance = THREE.MathUtils.clamp(
         journeyScreens * distancePerScreen,
         width < 768 ? 16 : 20,
@@ -376,20 +377,26 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       camera.updateMatrixWorld();
 
       let chapterActive = false;
+      let chapterFocus = 0;
       chapterCards.forEach((chapter, index) => {
         chapter.progress += (chapter.targetProgress - chapter.progress) * 0.12;
         const progress = chapter.progress;
         const visible = motionAllowed && loadedTextures === textureSources.length && progress > 0.001 && progress < 0.999;
         chapter.group.visible = visible;
+        // Keep passing tunnel objects behind the mobile reading card, while
+        // retaining its actual perspective, fog and travel through the scene.
+        chapter.group.renderOrder = compact ? 1 : 0;
         // Only exchange the real HTML image after its WebGL counterpart can
         // actually render. Text and image slots always remain in document flow.
         if (compact) {
-          const state = visible ? "visible" : "fallback";
+          const waiting = motionAllowed && loadedTextures === textureSources.length && progress <= 0.001;
+          const state = visible ? "visible" : waiting ? "waiting" : "fallback";
           if (beats[index].dataset.tunnelCard !== state) beats[index].dataset.tunnelCard = state;
         }
         if (!visible) return;
         chapterActive = true;
-        const approach = THREE.MathUtils.smoothstep(progress, 0.02, compact ? 0.34 : 0.46);
+        if (compact) chapterFocus = Math.max(chapterFocus, mobileChapterFocus(progress));
+        const approach = THREE.MathUtils.smoothstep(progress, 0.02, compact ? MOBILE_CHAPTER_APPROACH_END : 0.46);
         const departure = THREE.MathUtils.smoothstep(progress, compact ? 0.86 : 0.76, 1);
         const image = textures[index].image as { width: number; height: number } | undefined;
         const ratio = image ? image.width / image.height : 4 / 3;
@@ -420,9 +427,12 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
       });
       const chapterState = chapterActive ? "true" : "false";
       if (journey.dataset.chapterActive !== chapterState) journey.dataset.chapterActive = chapterState;
-      const sculptureOpacity = chapterActive ? 0.025 : compact ? 0.84 : 0.72;
+      const focusState = compact && chapterFocus > 0.55 ? "true" : "false";
+      if (journey.dataset.chapterFocus !== focusState) journey.dataset.chapterFocus = focusState;
+      const tunnelPresence = mobileTunnelPresence(chapterFocus);
+      const sculptureOpacity = compact ? 0.84 * tunnelPresence : chapterActive ? 0.025 : 0.72;
       sculptureMaterial.opacity += (sculptureOpacity - sculptureMaterial.opacity) * 0.12;
-      if (compact) veilMaterial.opacity += ((chapterActive ? 0.01 : 0.025) - veilMaterial.opacity) * 0.12;
+      if (compact) veilMaterial.opacity += ((0.025 - chapterFocus * 0.01) - veilMaterial.opacity) * 0.12;
 
       world.rotation.z = Math.sin(motionTime * 0.12) * 0.012 + currentProgress * 0.028;
       sculpture.rotation.x = 0.72 + motionTime * 0.055;
@@ -435,8 +445,8 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
         portal.rotation.z = index * 0.22 + motionTime * (index % 2 ? -0.025 : 0.02);
       });
       cards.forEach((card, index) => {
-        const imageOpacity = chapterActive ? 0 : compact ? 0.68 : 0.56;
-        const backingOpacity = chapterActive ? 0 : 0.7;
+        const imageOpacity = compact ? 0.68 * tunnelPresence : chapterActive ? 0 : 0.56;
+        const backingOpacity = compact ? 0.7 * tunnelPresence : chapterActive ? 0 : 0.7;
         card.material.opacity += (imageOpacity - card.material.opacity) * 0.075;
         card.backing.opacity += (backingOpacity - card.backing.opacity) * 0.075;
         card.group.position.z = wrapAhead(cardLayout[index].z, camera.position.z);
@@ -456,6 +466,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunn
     const restoreFallback = () => {
       delete journey.dataset.tunnelReady;
       delete journey.dataset.chapterActive;
+      delete journey.dataset.chapterFocus;
       beats.forEach(beat => delete beat.dataset.tunnelCard);
     };
     const onContextLost = (event: Event) => {
