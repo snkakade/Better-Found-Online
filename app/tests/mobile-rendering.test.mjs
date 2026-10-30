@@ -9,12 +9,36 @@ const source = path => readFileSync(new URL(`../src/${path}`, import.meta.url), 
 const mobile = source("mobile-refinements.css");
 const preview = source("components/website-preview.tsx");
 
-test("mobile homepage content does not depend on reversible scroll reveals", () => {
+test("mobile copy stays readable while the continuous tunnel is restored", () => {
   assert.match(source("routes/index.tsx"), /if \(reduced \|\| motionPaused \|\| window\.matchMedia\("\(max-width: 900px\)"\)\.matches\) return/);
   assert.match(mobile, /home-page :is\([^}]+opacity: 1 !important;[^}]+visibility: visible !important/s);
   assert.match(mobile, /home-page \.story-stage \{ display: none/);
   assert.match(mobile, /home-page \.story-beat-media \{ display: block/);
-  assert.match(mobile, /home-page \.brand-tunnel \{ position: absolute/);
+  assert.match(mobile, /home-page \.brand-tunnel \{ position: sticky; top: 0; height: 100svh; margin-bottom: -100svh/);
+});
+
+test("mobile chapter artwork emerges in the tunnel instead of being disabled on compact screens", () => {
+  const tunnel = source("components/brand-tunnel.tsx");
+  assert.match(tunnel, /const chapterTriggers = !motionAllowed \? \[\] : beats\.map/);
+  assert.doesNotMatch(tunnel, /paused \|\| compact \? \[\]/);
+  assert.match(tunnel, /slot\.width/);
+  assert.match(tunnel, /slot\.height/);
+  assert.match(tunnel, /chapter\.group\.quaternion\.copy\(camera\.quaternion\)/);
+  assert.match(tunnel, /if \(compact\) measureSlot\(index\)/);
+  assert.match(mobile, /data-tunnel-ready="true"\] \.story-beat\[data-tunnel-card="visible"\] \.story-beat-media \{ opacity: 0/);
+  assert.match(mobile, /story-beat-media \{[^}]+object-fit: contain/);
+});
+
+test("mobile motion fails open to real images, cleans up and honours reduced motion", () => {
+  const tunnel = source("components/brand-tunnel.tsx");
+  assert.match(tunnel, /motionAllowed = !reducedMotion && !paused && !window\.matchMedia/);
+  assert.match(tunnel, /loadedTextures === textureSources\.length/);
+  assert.match(tunnel, /const restoreFallback/);
+  assert.match(tunnel, /delete beat\.dataset\.tunnelCard/);
+  for (const event of ["webglcontextlost", "webglcontextrestored", "visibilitychange"]) assert.ok(tunnel.includes(`removeEventListener("${event}"`));
+  assert.match(mobile, /max-width: 900px\) and \(prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(tunnel, /compactLayout/);
+  assert.match(tunnel, /compact \? 1\.25 : 1\.6/);
 });
 
 test("mobile services use native details instead of a cancellable height animation", () => {

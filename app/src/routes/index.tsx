@@ -279,7 +279,7 @@ function Index() {
 
       <main id="main">
         <div className="tunnel-journey">
-          <BrandTunnel paused={motionPaused} reducedMotion={reduced} compactLayout={compact} />
+          <BrandTunnel paused={motionPaused} reducedMotion={reduced} />
 
           <div className="hero-journey">
             <section className="hero" id="home" aria-labelledby="hero-title">

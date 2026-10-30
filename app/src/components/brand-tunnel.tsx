@@ -6,7 +6,6 @@ import * as THREE from "three";
 type BrandTunnelProps = {
   paused?: boolean;
   reducedMotion?: boolean;
-  compactLayout?: boolean;
 };
 
 const textureSources = [
@@ -56,7 +55,9 @@ function makeGlowTexture() {
   return texture;
 }
 
-export function BrandTunnel({ paused = false, reducedMotion = false, compactLayout = false }: BrandTunnelProps) {
+// Preserve the signature tunnel on phones. Design variance 6 / motion 7 /
+// density 4: native page scrolling, one approaching image, no pinned text.
+export function BrandTunnel({ paused = false, reducedMotion = false }: BrandTunnelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +66,10 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
     const section = sectionRef.current;
     const journey = section?.closest<HTMLElement>(".tunnel-journey");
     if (!canvas || !section || !journey) return;
-    const compact = compactLayout || window.matchMedia("(max-width: 900px)").matches;
+    let compact = window.matchMedia("(max-width: 900px)").matches;
+    const motionAllowed = !reducedMotion && !paused && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const beats = Array.from(journey.querySelectorAll<HTMLElement>(".story-beat"));
+    const slots = beats.map(beat => beat.querySelector<HTMLImageElement>(".story-beat-media"));
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -83,9 +87,9 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
-        antialias: true,
+        antialias: !compact,
         alpha: false,
-        powerPreference: "high-performance",
+        powerPreference: compact ? "low-power" : "high-performance",
       });
     } catch {
       // The chapter images remain available as ordinary HTML when WebGL is unavailable.
@@ -108,14 +112,14 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
 
     const sculptureMaterial = new THREE.MeshStandardMaterial({
       color: 0xbb232b,
-      metalness: 0.76,
+      metalness: compact ? 0.56 : 0.76,
       roughness: 0.32,
       transparent: true,
       opacity: 0.72,
       depthWrite: false,
     });
     const sculpture = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(2.25, 0.42, 150, 18, 2, 3),
+      new THREE.TorusKnotGeometry(2.25, 0.42, compact ? 96 : 150, compact ? 12 : 18, 2, 3),
       sculptureMaterial,
     );
     sculpture.position.set(5.25, 1.35, -12);
@@ -126,7 +130,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
     const veilMaterial = new THREE.MeshBasicMaterial({
       color: 0xbb232b,
       transparent: true,
-      opacity: 0.085,
+      opacity: compact ? 0.025 : 0.085,
       side: THREE.DoubleSide,
       depthWrite: false,
     });
@@ -186,9 +190,6 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       const texture = textureLoader.load(source, () => {
         if (disposed) return;
         loadedTextures += 1;
-        if (loadedTextures === textureSources.length && !reducedMotion && !paused && !compact) {
-          journey.dataset.tunnelReady = "true";
-        }
         renderer.render(scene, camera);
       });
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -203,6 +204,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
         color: 0xffffff,
         transparent: true,
         opacity: 0.56,
+        depthWrite: false,
         side: THREE.DoubleSide,
         toneMapped: false,
       });
@@ -211,6 +213,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
         color: 0x20309a,
         transparent: true,
         opacity: 0.72,
+        depthWrite: false,
         side: THREE.DoubleSide,
       });
       const backing = new THREE.Mesh(new THREE.PlaneGeometry(5.08, 3.23), backingMaterial);
@@ -240,17 +243,23 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       group.add(new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material));
       group.visible = false;
       scene.add(group);
-      return { group, material, targetProgress: 0, progress: 0 };
+      return { group, material, targetProgress: 0, progress: 0, slot: { left: 0, top: 0, width: 0, height: 0 } };
     });
-    const chapterTriggers = reducedMotion || paused || compact ? [] : Array.from(journey.querySelectorAll<HTMLElement>(".story-beat")).map((beat, index) => {
+    const measureSlot = (index: number) => {
+      const rect = slots[index]?.getBoundingClientRect();
+      // The sticky surface starts leaving with the last chapter. Measure in
+      // its local viewport so the final image does not slip away from its slot.
+      if (rect) chapterCards[index].slot = { left: rect.left, top: rect.top - section.getBoundingClientRect().top, width: rect.width, height: rect.height };
+    };
+    const chapterTriggers = !motionAllowed ? [] : beats.map((beat, index) => {
       const chapter = chapterCards[index];
       const chapterTrigger = ScrollTrigger.create({
         trigger: beat,
-        start: "top 80%",
-        end: "bottom 50%",
+        start: () => compact ? "top 92%" : "top 80%",
+        end: () => compact ? "bottom top" : "bottom 50%",
         invalidateOnRefresh: true,
-        onUpdate: (self) => { chapter.targetProgress = self.progress; },
-        onRefresh: (self) => { chapter.targetProgress = self.progress; },
+        onUpdate: (self) => { chapter.targetProgress = self.progress; if (compact) measureSlot(index); },
+        onRefresh: (self) => { chapter.targetProgress = self.progress; if (compact) measureSlot(index); },
       });
       chapter.targetProgress = chapter.progress = chapterTrigger.progress;
       return chapterTrigger;
@@ -267,7 +276,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       end: "bottom top",
       invalidateOnRefresh: true,
       onUpdate: (self) => {
-        if (!reducedMotion && !paused) targetProgress = self.progress;
+        if (motionAllowed) targetProgress = self.progress;
       },
     });
     targetProgress = trigger.progress;
@@ -292,10 +301,17 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
     let chapterMaxWidth = 1;
     let chapterMaxHeight = 1;
     let pixelsToWorld = 1;
+    let viewportWidth = 1;
+    let viewportHeight = 1;
+    let viewportLeft = 0;
     const resize = () => {
       const rect = section.getBoundingClientRect();
       const width = Math.max(1, rect.width);
-      const height = Math.max(1, window.innerHeight);
+      const height = Math.max(1, rect.height);
+      compact = width <= 900;
+      viewportWidth = width;
+      viewportHeight = height;
+      viewportLeft = rect.left;
       const journeyScreens = journey.offsetHeight / height;
       const distancePerScreen = width < 768 ? 7 : 8;
       travelDistance = THREE.MathUtils.clamp(
@@ -311,14 +327,14 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       });
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      const halfViewHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * chapterDepth;
+      pixelsToWorld = halfViewHeight * 2 / height;
       const stage = journey.querySelector<HTMLElement>(".story-stage");
       const inner = journey.querySelector<HTMLElement>(".story-stage-inner");
-      if (stage && inner) {
+      if (!compact && stage && inner) {
         const stageRect = stage.getBoundingClientRect();
         const innerRect = inner.getBoundingClientRect();
         const stickyTop = Number.parseFloat(getComputedStyle(stage).top) || 0;
-        const halfViewHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * chapterDepth;
-        pixelsToWorld = halfViewHeight * 2 / height;
         chapterRestPosition.set(
           ((innerRect.left + innerRect.width / 2) / width * 2 - 1) * halfViewHeight * camera.aspect,
           (1 - (stickyTop + stageRect.height / 2) / height * 2) * halfViewHeight,
@@ -326,7 +342,8 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
         chapterMaxWidth = innerRect.width * 0.92;
         chapterMaxHeight = stageRect.height * 0.72;
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 768 ? 1.25 : 1.6));
+      if (compact) slots.forEach((_, index) => measureSlot(index));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, compact ? 1.25 : 1.6));
       renderer.setSize(width, height, false);
       renderer.render(scene, camera);
     };
@@ -338,9 +355,10 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
 
     let frame = 0;
     let running = true;
+    let contextLost = false;
     const startTime = performance.now();
     const render = () => {
-      if (!running) return;
+      if (!running || contextLost || disposed) return;
       const elapsed = (performance.now() - startTime) / 1000;
       const motionTime = reducedMotion || paused ? 0 : elapsed;
       const intro = reducedMotion || paused ? 1 : Math.min(1, elapsed / 0.9);
@@ -361,15 +379,32 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       chapterCards.forEach((chapter, index) => {
         chapter.progress += (chapter.targetProgress - chapter.progress) * 0.12;
         const progress = chapter.progress;
-        const visible = !reducedMotion && !paused && progress > 0.001 && progress < 0.999;
+        const visible = motionAllowed && loadedTextures === textureSources.length && progress > 0.001 && progress < 0.999;
         chapter.group.visible = visible;
+        // Only exchange the real HTML image after its WebGL counterpart can
+        // actually render. Text and image slots always remain in document flow.
+        if (compact) {
+          const state = visible ? "visible" : "fallback";
+          if (beats[index].dataset.tunnelCard !== state) beats[index].dataset.tunnelCard = state;
+        }
         if (!visible) return;
         chapterActive = true;
-        const approach = THREE.MathUtils.smoothstep(progress, 0.02, 0.46);
-        const departure = THREE.MathUtils.smoothstep(progress, 0.76, 1);
+        const approach = THREE.MathUtils.smoothstep(progress, 0.02, compact ? 0.34 : 0.46);
+        const departure = THREE.MathUtils.smoothstep(progress, compact ? 0.86 : 0.76, 1);
         const image = textures[index].image as { width: number; height: number } | undefined;
         const ratio = image ? image.width / image.height : 4 / 3;
-        const displayWidth = Math.min(chapterMaxWidth, chapterMaxHeight * ratio) * pixelsToWorld;
+        let maxWidth = chapterMaxWidth;
+        let maxHeight = chapterMaxHeight;
+        if (compact) {
+          const slot = chapter.slot;
+          maxWidth = slot.width;
+          maxHeight = slot.height;
+          chapterRestPosition.set(
+            (slot.left - viewportLeft + slot.width / 2 - viewportWidth / 2) * pixelsToWorld,
+            (viewportHeight / 2 - slot.top - slot.height / 2) * pixelsToWorld,
+          );
+        }
+        const displayWidth = Math.min(maxWidth, maxHeight * ratio) * pixelsToWorld;
         chapter.group.scale.set(displayWidth, displayWidth / ratio, 1);
         chapterPosition.set(
           chapterRestPosition.x * approach - displayWidth * departure * 0.85,
@@ -378,15 +413,16 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
         );
         chapter.group.position.copy(camera.localToWorld(chapterPosition));
         chapter.group.quaternion.copy(camera.quaternion);
-        chapter.group.rotateY((1 - approach) * -0.38 - departure * 0.18);
-        chapter.group.rotateZ((1 - approach) * 0.05 - departure * 0.04);
+        chapter.group.rotateY((1 - approach) * (compact ? -0.2 : -0.38) - departure * 0.18);
+        chapter.group.rotateZ((1 - approach) * (compact ? 0.025 : 0.05) - departure * 0.04);
         chapter.material.opacity = THREE.MathUtils.smoothstep(progress, 0.01, 0.2)
           * (1 - THREE.MathUtils.smoothstep(progress, 0.86, 1));
       });
       const chapterState = chapterActive ? "true" : "false";
       if (journey.dataset.chapterActive !== chapterState) journey.dataset.chapterActive = chapterState;
-      const sculptureOpacity = chapterActive ? 0.025 : 0.72;
+      const sculptureOpacity = chapterActive ? 0.025 : compact ? 0.84 : 0.72;
       sculptureMaterial.opacity += (sculptureOpacity - sculptureMaterial.opacity) * 0.12;
+      if (compact) veilMaterial.opacity += ((chapterActive ? 0.01 : 0.025) - veilMaterial.opacity) * 0.12;
 
       world.rotation.z = Math.sin(motionTime * 0.12) * 0.012 + currentProgress * 0.028;
       sculpture.rotation.x = 0.72 + motionTime * 0.055;
@@ -399,7 +435,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
         portal.rotation.z = index * 0.22 + motionTime * (index % 2 ? -0.025 : 0.02);
       });
       cards.forEach((card, index) => {
-        const imageOpacity = chapterActive ? 0 : 0.56;
+        const imageOpacity = chapterActive ? 0 : compact ? 0.68 : 0.56;
         const backingOpacity = chapterActive ? 0 : 0.7;
         card.material.opacity += (imageOpacity - card.material.opacity) * 0.075;
         card.backing.opacity += (backingOpacity - card.backing.opacity) * 0.075;
@@ -412,8 +448,34 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       if (scene.fog) scene.fog.color.copy(clearColor);
       renderer.setClearColor(clearColor, 1);
       renderer.render(scene, camera);
-      if (!reducedMotion && !paused) frame = window.requestAnimationFrame(render);
+      // Mark ready after a painted render, never just after a network response.
+      if (motionAllowed && loadedTextures === textureSources.length) journey.dataset.tunnelReady = "true";
+      if (motionAllowed) frame = window.requestAnimationFrame(render);
     };
+
+    const restoreFallback = () => {
+      delete journey.dataset.tunnelReady;
+      delete journey.dataset.chapterActive;
+      beats.forEach(beat => delete beat.dataset.tunnelCard);
+    };
+    const onContextLost = (event: Event) => {
+      event.preventDefault();
+      contextLost = true;
+      window.cancelAnimationFrame(frame);
+      restoreFallback();
+    };
+    const onContextRestored = () => {
+      contextLost = false;
+      resize();
+      if (running) render();
+    };
+    const onVisibilityChange = () => {
+      window.cancelAnimationFrame(frame);
+      if (!document.hidden && running) render();
+    };
+    canvas.addEventListener("webglcontextlost", onContextLost);
+    canvas.addEventListener("webglcontextrestored", onContextRestored);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
@@ -439,8 +501,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
 
     return () => {
       disposed = true;
-      delete journey.dataset.tunnelReady;
-      delete journey.dataset.chapterActive;
+      restoreFallback();
       running = false;
       window.cancelAnimationFrame(frame);
       visibilityObserver.disconnect();
@@ -449,6 +510,9 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       chapterTriggers.forEach((chapterTrigger) => chapterTrigger.kill());
       window.removeEventListener("pointermove", onPointerMove);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       world.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           child.geometry.dispose();
@@ -468,7 +532,7 @@ export function BrandTunnel({ paused = false, reducedMotion = false, compactLayo
       glowMaterial?.dispose();
       renderer.dispose();
     };
-  }, [paused, reducedMotion, compactLayout]);
+  }, [paused, reducedMotion]);
 
   return (
     <div className="brand-tunnel" ref={sectionRef} aria-hidden="true">
