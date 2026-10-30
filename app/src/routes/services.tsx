@@ -237,8 +237,8 @@ function ServicesPage() {
           stagger: 0.085,
         }, 4.82);
 
-        // Keep the signature reveal, but let the service offer become readable promptly.
-        timeline.timeScale(2.5);
+        // Finish the decorative introduction before it can delay reading.
+        timeline.timeScale(8);
       }
 
       if (!compactMotion) {
@@ -247,19 +247,17 @@ function ServicesPage() {
           const copy = chapter.querySelectorAll(".service-chapter-copy > *");
           const number = chapter.querySelector(".service-chapter-number");
 
-          gsap.fromTo(image, { clipPath: "inset(14% 14% 14% 14%)", scale: 1.16 }, {
+          gsap.fromTo(image, { clipPath: "inset(4% 4% 4% 4%)", scale: 1.03 }, {
             clipPath: "inset(0% 0% 0% 0%)",
             scale: 1,
             ease: "none",
-            scrollTrigger: { trigger: chapter, start: "top 85%", end: "center 45%", scrub: 1 },
+            scrollTrigger: { trigger: chapter, start: "top bottom", end: "top 72%", scrub: 0.25 },
           });
-          gsap.fromTo(copy, { y: 56, autoAlpha: 0 }, {
+          gsap.fromTo(copy, { y: 16 }, {
             y: 0,
-            autoAlpha: 1,
-            duration: 0.9,
-            ease: "power3.out",
-            stagger: 0.07,
-            scrollTrigger: { trigger: chapter, start: "top 70%", end: "bottom 18%", toggleActions: "play reverse play reverse" },
+            duration: 0.35,
+            ease: "power2.out",
+            scrollTrigger: { trigger: chapter, start: "top 96%", once: true },
           });
           gsap.fromTo(number, { rotate: -10, autoAlpha: 0.2 }, {
             rotate: 0,
@@ -284,13 +282,11 @@ function ServicesPage() {
           ease: "none",
           scrollTrigger: { trigger: ".services-system", start: "top bottom", end: "bottom top", scrub: 1.2 },
         });
-        gsap.fromTo(".engagement-card", { y: 70, autoAlpha: 0 }, {
+        gsap.fromTo(".engagement-card", { y: 16 }, {
           y: 0,
-          autoAlpha: 1,
-          duration: 1,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".engagement-grid", start: "top 82%", end: "bottom 18%", toggleActions: "play reverse play reverse" },
+          duration: 0.35,
+          ease: "power2.out",
+          scrollTrigger: { trigger: ".engagement-grid", start: "top 96%", once: true },
         });
       }
     }, root);

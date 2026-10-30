@@ -43,7 +43,7 @@ export function InformationScrollStory({
   outroCtaHref,
   afterHeading,
   afterBody,
-  scrollScreens = 5,
+  scrollScreens = 2.4,
 }: InformationScrollStoryProps) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -87,26 +87,26 @@ export function InformationScrollStory({
       if (outroBodyElement) gsap.set(outroBodyElement, { autoAlpha: 0, y: 18 });
       gsap.set(outroCtaElement, { autoAlpha: 0, y: 24 });
 
-      const mobileLayout = window.matchMedia("(max-width: 600px)").matches;
-      const inwardTravel = mobileLayout ? 28 : 42;
+      // Keep the two readable columns apart throughout the transition.
+      const inwardTravel = 12;
 
       ScrollTrigger.create({
         trigger: hero,
-        start: "top top",
-        end: `+=${window.innerHeight * scrollScreens}`,
+        start: () => `top ${document.querySelector(".header")?.getBoundingClientRect().height ?? 80}px`,
+        end: () => `+=${window.innerHeight * scrollScreens}`,
         pin: true,
         pinSpacing: true,
         scrub: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const progress = self.progress;
-          const openingProgress = gsap.utils.clamp(0, 1, progress / 0.25);
-          const rotateProgress = gsap.utils.clamp(0, 1, (progress - 0.25) / 0.2);
-          const exitProgress = gsap.utils.clamp(0, 1, (progress - 0.45) / 0.2);
-          const accentProgress = gsap.utils.clamp(0, 1, (progress - 0.45) / 0.05);
-          const imageProgress = gsap.utils.clamp(0, 1, (progress - 0.7) / 0.18);
-          const finalRevealProgress = gsap.utils.clamp(0, 1, (progress - 0.8) / 0.1);
-          const copyFadeProgress = gsap.utils.clamp(0, 1, (progress - 0.8) / 0.05);
+          const openingProgress = gsap.utils.clamp(0, 1, progress / 0.18);
+          const rotateProgress = gsap.utils.clamp(0, 1, (progress - 0.18) / 0.16);
+          const exitProgress = gsap.utils.clamp(0, 1, (progress - 0.34) / 0.18);
+          const accentProgress = gsap.utils.clamp(0, 1, (progress - 0.34) / 0.05);
+          const imageProgress = gsap.utils.clamp(0, 1, (progress - 0.54) / 0.16);
+          const finalRevealProgress = gsap.utils.clamp(0, 1, (progress - 0.62) / 0.16);
+          const copyFadeProgress = gsap.utils.clamp(0, 1, (progress - 0.52) / 0.1);
 
           gsap.set(foreground, {
             clipPath: `polygon(${48 * openingProgress}% 0%, ${100 - 48 * openingProgress}% 0%, ${100 - 48 * openingProgress}% 100%, ${48 * openingProgress}% 100%)`,
@@ -117,12 +117,12 @@ export function InformationScrollStory({
           gsap.set(backgroundColumns[0], {
             xPercent: inwardTravel * exitProgress,
             opacity: 1 - copyFadeProgress,
-            zIndex: progress >= 0.65 ? 3 : 1,
+            zIndex: progress >= 0.52 ? 3 : 1,
           });
           gsap.set(backgroundColumns[1], {
             xPercent: -inwardTravel * exitProgress,
             opacity: 1 - copyFadeProgress,
-            zIndex: progress >= 0.65 ? 3 : 1,
+            zIndex: progress >= 0.52 ? 3 : 1,
           });
           gsap.set(accentOverlay, { opacity: accentProgress });
           gsap.set(outroImagesElements[0], {
@@ -135,21 +135,22 @@ export function InformationScrollStory({
           gsap.set(outroSplit!.lines, { yPercent: 100 * (1 - finalRevealProgress) });
           if (outroBodyElement) {
             gsap.set(outroBodyElement, {
-              autoAlpha: gsap.utils.clamp(0, 1, (finalRevealProgress - 0.25) / 0.65),
+              autoAlpha: finalRevealProgress,
               y: 18 * (1 - finalRevealProgress),
             });
           }
           gsap.set(outroCtaElement, {
-            autoAlpha: gsap.utils.clamp(0, 1, (finalRevealProgress - 0.45) / 0.55),
+            autoAlpha: finalRevealProgress,
             y: 24 * (1 - finalRevealProgress),
           });
         },
       });
     }, element);
 
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    const refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => {
+      cancelAnimationFrame(refreshFrame);
       context.revert();
       outroSplit?.revert();
       if (lenis) gsap.ticker.remove(ticker);

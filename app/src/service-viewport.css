@@ -1,0 +1,142 @@
+/* Fit a service feature to the space below the fixed header. Long portfolios,
+   reports and expanded FAQs keep their natural height; no clipped content. */
+:root .site:is(.services-page, .service-detail-page, .creative-page) :is(.services-closing, .service-detail-closing, .performance-closing) h2 {
+  color: var(--brand-white);
+}
+
+@media (min-width: 901px) {
+  :root .site:is(.services-page, .service-detail-page, .growth-service-page, .creative-page) {
+    --service-section-space: clamp(32px, 5svh, 56px);
+    --service-heading-size: clamp(2.4rem, min(4.2vw, 6.2svh), 4.5rem);
+  }
+
+  :root .site:is(.services-page, .service-detail-page, .growth-service-page, .creative-page) main .section-pad {
+    padding-block: var(--service-section-space);
+  }
+
+  :root .site:is(.services-page, .service-detail-page, .growth-service-page, .creative-page) main h2 {
+    font-size: var(--service-heading-size);
+    line-height: 1.04;
+  }
+
+  :root .services-page .service-chapter {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    gap: 4vw;
+    min-height: 0;
+    padding-block: var(--service-section-space);
+  }
+  :root .services-page .service-chapter-number {
+    position: absolute;
+    top: 32px;
+    left: 12px;
+    font-size: 3rem;
+  }
+  :root .services-page .service-chapter-visual {
+    height: min(64svh, 560px);
+    max-width: 100%;
+  }
+  :root .services-page .service-chapter-image { object-fit: contain; }
+  :root .services-page .service-chapter-visual::after { display: none; }
+  :root .services-page .service-chapter-copy { max-width: none; }
+  :root .services-page .service-chapter-copy h2 { margin-top: 12px; }
+  :root .services-page .service-chapter-copy > p:nth-of-type(2) {
+    margin-top: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  :root .services-page .service-chapter-copy ul { margin-top: 20px; gap: 0 20px; }
+  :root .services-page .service-chapter-copy li { min-height: 40px; font-size: .875rem; line-height: 1.4; }
+  :root .services-page .service-result { gap: 16px; margin-top: 20px; }
+  :root .services-page .service-result p { font-size: 1rem; line-height: 1.45; }
+  :root .services-page .service-chapter-actions { gap: 12px; margin-top: 20px; }
+  :root .services-page.site .service-chapter-actions > a { --action-padding: 13px 16px; font-size: .9375rem; }
+  :root .services-page :is(.services-opening, .services-system, .services-closing) { min-height: 0; }
+  :root .services-page .services-system-visual { width: min(36vw, 60svh, 540px); }
+  :root .services-page .engagement-grid { margin-top: 32px; }
+  :root .services-page .engagement-card { min-height: 0; padding: 24px; }
+  :root .services-page .engagement-card h3 { margin-top: 40px; font-size: clamp(1.75rem, 2.5vw, 2.5rem); }
+  :root .services-page .services-closing h2 { margin-top: 24px; }
+  :root .services-page .services-closing a { margin-top: 24px; }
+
+  :root .service-detail-page .service-detail-hero { min-height: 0; padding-block: 112px 40px; align-items: center; }
+  :root .service-detail-page .service-detail-hero h1 { font-size: clamp(2.75rem, min(4.65vw, 7.4svh), 5.65rem); }
+  :root .service-detail-page .service-detail-actions { gap: 16px; margin-top: 24px; }
+  :root .service-detail-page:not(.performance-marketing-page) .service-detail-hero-media { height: min(64svh, 560px); }
+  :root .service-detail-page .service-detail-hero-copy > p:not(.eyebrow) { margin-top: 20px; }
+  :root .service-detail-page :is(.service-detail-approach, .service-detail-closing, .performance-closing, .performance-evidence-standard) { min-height: 0; }
+  :root .service-detail-page :is(.service-detail-closing, .performance-closing) h2 { margin-top: 20px; }
+  :root .performance-marketing-page .performance-system-grid { margin-top: 24px; }
+  :root .performance-marketing-page .performance-system-grid article { min-height: 0; gap: 16px; padding: 20px; }
+
+  :root .growth-service-page :is(.growth-cards, .format-section, .process-section, .channel-choice, .comparison-section, .content-section) > :is(div, ol) { margin-top: 32px; }
+  :root .growth-service-page .growth-cards article { min-height: 0; }
+  :root .growth-service-page .process-section li { padding: 20px; }
+  :root .growth-service-page .process-section li h3 { margin-top: 32px; }
+  :root .growth-service-page .search-journey { min-height: 0; padding-bottom: var(--service-section-space) !important; }
+  :root .growth-service-page .statement-track,
+  :root .growth-service-page .journey-line { margin-top: 24px; }
+  :root .growth-service-page .format-section { display: block; }
+  :root .growth-service-page .format-section header { position: static; max-width: 960px; }
+  :root .growth-service-page .format-section header h2 { margin-block: 12px; }
+  :root .growth-service-page .format-section header > p:last-child { max-width: 760px; }
+  :root .growth-service-page .format-section > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin-top: 24px; }
+  :root .growth-service-page .format-section > div article { grid-template-columns: 24px minmax(0, 1fr); gap: 12px; padding-block: 16px; }
+  :root .growth-service-page .format-section article h3 { font-size: 1.5rem; }
+  :root .growth-service-page .format-section article p { margin-top: 8px; font-size: 1rem; line-height: 1.5; }
+  :root .growth-service-page .split-editorial figure { height: min(58svh, 520px); }
+  :root .growth-service-page .website-related-grid { margin-top: 24px; }
+  :root .growth-service-page .website-related-grid article { padding-block: 16px; }
+  :root .site:is(.growth-service-page, .service-detail-page, .creative-page) .faq-section summary { min-height: 52px; padding-block: 16px; font-size: 1rem; line-height: 1.4; }
+
+  :root .creative-page .creative-capability { min-height: 0; }
+  :root .creative-page .creative-capability-media { height: min(60svh, 520px); }
+  :root .creative-page .creative-capability-copy h3 { font-size: var(--service-heading-size); line-height: 1.04; }
+
+  :root .site .scroll63-hero { height: calc(100svh - 80px); }
+  :root .site .scroll63-hero-fg-header h2 { font-size: clamp(2.75rem, min(6vw, 10svh), 6.5rem); }
+  :root .site .scroll63-hero-bg-content-copy { width: min(76%, 31rem); }
+  :root .site .scroll63-hero-bg-content-copy h3 { font-size: clamp(2rem, min(3.2vw, 5.8svh), 3.75rem); line-height: 1.04; }
+  :root .site .scroll63-hero-bg-content-copy p { font-size: 1rem; line-height: 1.5; }
+  :root .site .scroll63-hero-bg-content-col .scroll63-hero-bg-content-copy { margin-top: 0; }
+  :root .site .scroll63-hero-outro-header { gap: 20px; }
+  :root .site .scroll63-hero-outro-header h3 { font-size: var(--service-heading-size); line-height: 1.04; }
+  :root .site .scroll63-about { height: auto; min-height: 0; padding: var(--service-section-space) max(5vw, 24px); }
+  :root .site .scroll63-about h3 { font-size: var(--service-heading-size); line-height: 1.04; }
+  :root .site .scroll63-about p { margin-top: 20px; font-size: 1rem; }
+
+  /* A single project, title and action share one header-aware pinned frame. */
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-pin {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 20px;
+    top: var(--reel-header, 80px);
+    height: calc(100svh - var(--reel-header, 80px));
+    padding-block: 24px;
+  }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-heading { margin: 0; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-heading .eyebrow { margin-bottom: 8px; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-heading h2 { font-size: clamp(2rem, min(3.4vw, 5.5svh), 3.5rem); }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-intro { margin-top: 10px; max-width: 720px; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-track { grid-auto-columns: 100%; margin: 0; min-height: 0; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-card { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); height: 100%; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-copy { justify-content: center; padding: 24px; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-copy h3 { font-size: clamp(1.6rem, min(2.4vw, 4.6svh), 2.6rem); }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-copy p { font-size: .9375rem; line-height: 1.5; }
+  :root .home-page .work-reel[data-scroll-driven="true"] .reel-all { margin-top: 0; }
+}
+
+@media (min-width: 901px) and (max-width: 1199px) {
+  :root .growth-service-page .format-section > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Motion preferences retain the complete story in ordinary reading order. */
+@media (min-width: 901px) and (prefers-reduced-motion: reduce) {
+  :root .site .scroll63-hero { height: auto; }
+  :root .site .scroll63-hero :is(.scroll63-hero-fg-content, .scroll63-hero-bg-content, .scroll63-hero-outro-content) { height: auto; min-height: 0; }
+  :root .site .scroll63-hero-fg-img { height: min(56svh, 500px); }
+  :root .site .scroll63-hero-fg-header { position: static; width: 100%; transform: none; }
+  :root .site .scroll63-hero-bg-content { padding-block: 32px; }
+  :root .site .scroll63-hero-outro-content { display: grid; grid-template-columns: 1fr 1fr; }
+  :root .site .scroll63-hero-outro-img { height: min(36svh, 300px); }
+  :root .site .scroll63-hero-outro-header { position: static; grid-column: 1 / -1; width: 100%; padding: 32px; transform: none; }
+}

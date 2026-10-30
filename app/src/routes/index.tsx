@@ -234,13 +234,13 @@ function Index() {
           trigger: ".hero-journey",
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
+          scrub: 0.25,
           invalidateOnRefresh: true,
         },
       })
-        .to(".hero-copy", { autoAlpha: 0, yPercent: -20, scale: 0.96, duration: 0.28 }, 0.08)
-        .to(".story-intro-copy", { autoAlpha: 1, y: 0, duration: 0.3 }, 0.4)
-        .to(".story-intro-note", { autoAlpha: 1, y: 0, duration: 0.26 }, 0.5);
+        .to(".hero-copy", { autoAlpha: 0, yPercent: -20, scale: 0.96, duration: 0.22 }, 0.08)
+        .to(".story-intro-copy", { autoAlpha: 1, y: 0, duration: 0.24 }, 0.3)
+        .to(".story-intro-note", { autoAlpha: 1, y: 0, duration: 0.2 }, 0.36);
 
       gsap.utils.toArray<HTMLElement>(".story-beat").forEach((beat, index) => {
         ScrollTrigger.create({
@@ -252,8 +252,10 @@ function Index() {
         });
       });
 
-      gsap.utils.toArray<HTMLElement>(".section-heading, .service, .about-grid, .insight, .contact-top").forEach((element) => {
-        gsap.fromTo(element, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: element, start: "top 86%", end: "bottom 14%", toggleActions: "play reverse play reverse" } });
+      // Reading content stays visible even if a visitor skips a trigger or
+      // reverses direction. Disclosure rows must never depend on an entrance.
+      gsap.utils.toArray<HTMLElement>(".section-heading, .about-grid, .contact-top").forEach((element) => {
+        gsap.fromTo(element, { y: 16 }, { y: 0, duration: 0.35, ease: "power2.out", scrollTrigger: { trigger: element, start: "top 96%", once: true } });
       });
 
       gsap.utils.toArray<HTMLElement>(".reel-image img, .macro-window img").forEach((image) => {

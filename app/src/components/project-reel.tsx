@@ -1,5 +1,7 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TransitionLink } from "@/components/site-chrome";
 import { WebsitePreview } from "@/components/website-preview";
 
@@ -19,6 +21,7 @@ export function ProjectReel() {
     if (!root) return;
     const items = Array.from(root.querySelectorAll<HTMLElement>(".reel-card"));
     const observer = new IntersectionObserver((entries) => {
+      if (section.current?.dataset.scrollDriven === "true") return;
       const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
       if (visible) setActive(items.indexOf(visible.target as HTMLElement));
     }, { root, threshold: [0.55, 0.8] });
@@ -30,61 +33,54 @@ export function ProjectReel() {
     const region = section.current;
     const root = track.current;
     if (!region || !root) return;
-    const finePointer = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    const cards = Array.from(root.querySelectorAll<HTMLElement>(".reel-card"));
-    let frame = 0;
-    let sectionTop = 0;
-    let travel = 1;
-    let maxScroll = 0;
-
-    const measure = () => {
-      if (!finePointer.matches || reduceMotion.matches) {
-        region.style.removeProperty("height");
-        delete region.dataset.scrollDriven;
-        return;
-      }
+    gsap.registerPlugin(ScrollTrigger);
+    const media = gsap.matchMedia();
+    media.add("(min-width: 901px) and (min-height: 680px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
       region.dataset.scrollDriven = "true";
-      maxScroll = Math.max(0, root.scrollWidth - root.clientWidth);
-      travel = Math.max(maxScroll * 0.92, window.innerHeight * 1.35);
-      region.style.height = `${window.innerHeight + travel}px`;
-      sectionTop = region.getBoundingClientRect().top + window.scrollY;
-      update();
-    };
-
-    const update = () => {
-      frame = 0;
-      const progress = Math.min(1, Math.max(0, (window.scrollY - sectionTop) / travel));
-      root.scrollLeft = progress * maxScroll;
-      const viewportCenter = root.scrollLeft + root.clientWidth / 2;
-      const nearest = cards.reduce((best, card, index) => {
-        const center = card.offsetLeft + card.offsetWidth / 2;
-        return Math.abs(center - viewportCenter) < best.distance
-          ? { distance: Math.abs(center - viewportCenter), index }
-          : best;
-      }, { distance: Number.POSITIVE_INFINITY, index: 0 });
-      setActive(nearest.index);
-    };
-
-    const requestUpdate = () => {
-      if (finePointer.matches && !reduceMotion.matches && !frame) frame = window.requestAnimationFrame(update);
-    };
-
-    measure();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", measure);
-    finePointer.addEventListener("change", measure);
-    reduceMotion.addEventListener("change", measure);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", measure);
-      finePointer.removeEventListener("change", measure);
-      reduceMotion.removeEventListener("change", measure);
-      region.style.removeProperty("height");
-      delete region.dataset.scrollDriven;
-    };
+      const cards = Array.from(root.querySelectorAll<HTMLElement>(".reel-card"));
+      const pin = region.querySelector<HTMLElement>(".reel-pin")!;
+      let maxScroll = 0;
+      let travel = 1;
+      let currentIndex = -1;
+      const measure = () => {
+        const headerHeight = document.querySelector(".header")?.getBoundingClientRect().height ?? 80;
+        region.style.setProperty("--reel-header", `${headerHeight}px`);
+        maxScroll = Math.max(0, root.scrollWidth - root.clientWidth);
+        travel = Math.max(maxScroll * 0.8, window.innerHeight);
+        region.style.height = `${pin.offsetHeight + travel}px`;
+      };
+      measure();
+      const tween = gsap.fromTo(root, { scrollLeft: 0 }, {
+        scrollLeft: () => maxScroll,
+        ease: "none",
+        scrollTrigger: {
+          trigger: region,
+          start: () => `top ${region.style.getPropertyValue("--reel-header")}`,
+          end: () => `+=${travel}`,
+          scrub: 0.3,
+          invalidateOnRefresh: true,
+          onRefreshInit: measure,
+        },
+        onUpdate: () => {
+          const center = root.scrollLeft + root.clientWidth / 2;
+          const nearest = cards.reduce((best, card, index) => {
+            const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
+            return distance < best.distance ? { distance, index } : best;
+          }, { distance: Infinity, index: 0 }).index;
+          if (nearest !== currentIndex) { currentIndex = nearest; setActive(nearest); }
+        },
+      });
+      const refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh());
+      return () => {
+        cancelAnimationFrame(refreshFrame);
+        tween.scrollTrigger?.kill();
+        tween.revert();
+        region.style.removeProperty("height");
+        region.style.removeProperty("--reel-header");
+        delete region.dataset.scrollDriven;
+      };
+    });
+    return () => media.revert();
   }, []);
 
   return (
