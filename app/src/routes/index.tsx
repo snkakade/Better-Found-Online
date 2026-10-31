@@ -258,7 +258,7 @@ function Index() {
         gsap.fromTo(element, { y: 16 }, { y: 0, duration: 0.35, ease: "power2.out", scrollTrigger: { trigger: element, start: "top 96%", once: true } });
       });
 
-      gsap.utils.toArray<HTMLElement>(".reel-image img, .macro-window img").forEach((image) => {
+      gsap.utils.toArray<HTMLElement>(".macro-window img").forEach((image) => {
         gsap.fromTo(image, { scale: 1.12, yPercent: -3 }, { scale: 1, yPercent: 3, ease: "none", scrollTrigger: { trigger: image, start: "top bottom", end: "bottom top", scrub: 1 } });
       });
     }, root);

@@ -4,3 +4,6 @@
 :root .site .website-preview > img { opacity: 1; visibility: visible; }
 :root .site .website-preview > video { opacity: 0; background: transparent; }
 :root .site .website-preview[data-ready="true"] > video { opacity: 1; }
+/* Retire the loading cover after a real video frame is painted. Otherwise it
+   remains visible through the video's uncropped letterbox area. */
+:root .site .website-preview[data-ready="true"] > img { opacity: 0; visibility: hidden; }
