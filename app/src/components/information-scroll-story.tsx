@@ -1,8 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import Lenis from "lenis";
 import { editorialSrcSet } from "@/editorial-images";
 import "@/information-scroll-story.css";
 
@@ -49,119 +47,69 @@ export function InformationScrollStory({
   const root = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!root.current) return;
-
-    gsap.registerPlugin(ScrollTrigger, SplitText);
     const element = root.current;
+    if (!element) return;
+    gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
-    // Touch layouts read in document order. Only larger, motion-enabled screens pin.
+
+    // Compact and reduced-motion layouts retain ordinary document reading.
     media.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
-    const smoothScroll = window.matchMedia("(min-width: 901px) and (hover: hover) and (pointer: fine)").matches;
-    const lenis = smoothScroll ? new Lenis() : null;
-    const ticker = (time: number) => lenis?.raf(time * 1000);
-    const onLenisScroll = () => ScrollTrigger.update();
-    let outroSplit: SplitText | undefined;
-
-    lenis?.on("scroll", onLenisScroll);
-    if (lenis) gsap.ticker.add(ticker);
-    gsap.ticker.lagSmoothing(0);
-
-    const context = gsap.context(() => {
       const hero = element.querySelector<HTMLElement>(".scroll63-hero");
       const foreground = element.querySelector<HTMLElement>(".scroll63-hero-fg-content");
       const darkOverlay = element.querySelector<HTMLElement>(".scroll63-hero-fg-overlay-dark");
-      const accentOverlay = element.querySelector<HTMLElement>(".scroll63-hero-fg-overlay");
-      const backgroundColumns = element.querySelectorAll<HTMLElement>(".scroll63-hero-bg-content-col");
-      const outroImagesElements = element.querySelectorAll<HTMLElement>(".scroll63-hero-outro-img");
-      const outroHeadingElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-header h3");
-      const outroBodyElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-header p");
-      const outroCtaElement = element.querySelector<HTMLElement>(".scroll63-hero-outro-cta");
+      const columns = element.querySelectorAll<HTMLElement>(".scroll63-hero-bg-content-col");
+      const outro = element.querySelector<HTMLElement>(".scroll63-hero-outro-content");
+      const images = element.querySelectorAll<HTMLElement>(".scroll63-hero-outro-img");
+      const caption = element.querySelector<HTMLElement>(".scroll63-hero-outro-header");
+      if (!hero || !foreground || !darkOverlay || !outro || !caption || columns.length !== 2 || images.length !== 2) return;
 
-      if (!hero || !foreground || !darkOverlay || !accentOverlay || backgroundColumns.length < 2 || outroImagesElements.length < 2 || !outroHeadingElement || !outroCtaElement) return;
+      const headerHeight = () => document.querySelector(".header")?.getBoundingClientRect().height ?? 80;
+      const measure = () => element.style.setProperty("--story-header", `${headerHeight()}px`);
+      measure();
 
-      outroSplit = SplitText.create(outroHeadingElement, {
-        type: "lines",
-        mask: "lines",
-        linesClass: "scroll63-line",
-      });
-      gsap.set(outroSplit.lines, { yPercent: 100 });
-      if (outroBodyElement) gsap.set(outroBodyElement, { autoAlpha: 0, y: 18 });
-      gsap.set(outroCtaElement, { autoAlpha: 0, y: 24 });
+      const context = gsap.context(() => {
+        // Hide the whole ending, including its background, until that phase.
+        gsap.set(columns, { autoAlpha: 0, y: 16 });
+        gsap.set(outro, { autoAlpha: 0 });
+        gsap.set(caption, { autoAlpha: 0, y: 16 });
+        const fullFrame = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
 
-      // Keep the two readable columns apart throughout the transition.
-      const inwardTravel = 12;
+        gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: hero,
+            start: () => `top ${headerHeight()}px`,
+            end: () => `+=${window.innerHeight * scrollScreens}`,
+            pin: true,
+            pinSpacing: true,
+            scrub: 0.35,
+            invalidateOnRefresh: true,
+            onRefreshInit: measure,
+          },
+        })
+          .to(foreground, { clipPath: "polygon(48% 0%, 52% 0%, 52% 100%, 48% 100%)", duration: 0.2 }, 0)
+          .to(darkOverlay, { opacity: 1, duration: 0.2 }, 0)
+          .to(foreground, { rotate: 65, scale: 0, autoAlpha: 0, duration: 0.18 }, 0.2)
+          .to(columns, { autoAlpha: 1, y: 0, duration: 0.12 }, 0.26)
+          // Give both messages a stable reading interval before the ending.
+          .to(columns, { autoAlpha: 0, y: -12, duration: 0.1 }, 0.62)
+          .set(outro, { autoAlpha: 1 }, 0.72)
+          .to(images[0], { clipPath: fullFrame, duration: 0.16 }, 0.72)
+          .to(images[1], { clipPath: fullFrame, duration: 0.16 }, 0.72)
+          .to(caption, { autoAlpha: 1, y: 0, duration: 0.12 }, 0.78)
+          // Hold the completed heading and action inside the pinned frame.
+          .to(outro, { autoAlpha: 1, duration: 0.1 }, 0.9);
+      }, element);
 
-      ScrollTrigger.create({
-        trigger: hero,
-        start: () => `top ${document.querySelector(".header")?.getBoundingClientRect().height ?? 80}px`,
-        end: () => `+=${window.innerHeight * scrollScreens}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const openingProgress = gsap.utils.clamp(0, 1, progress / 0.18);
-          const rotateProgress = gsap.utils.clamp(0, 1, (progress - 0.18) / 0.16);
-          const exitProgress = gsap.utils.clamp(0, 1, (progress - 0.34) / 0.18);
-          const accentProgress = gsap.utils.clamp(0, 1, (progress - 0.34) / 0.05);
-          const imageProgress = gsap.utils.clamp(0, 1, (progress - 0.54) / 0.16);
-          const finalRevealProgress = gsap.utils.clamp(0, 1, (progress - 0.62) / 0.16);
-          const copyFadeProgress = gsap.utils.clamp(0, 1, (progress - 0.52) / 0.1);
-
-          gsap.set(foreground, {
-            clipPath: `polygon(${48 * openingProgress}% 0%, ${100 - 48 * openingProgress}% 0%, ${100 - 48 * openingProgress}% 100%, ${48 * openingProgress}% 100%)`,
-            rotate: 65 * rotateProgress,
-            scale: 1 - exitProgress,
-          });
-          gsap.set(darkOverlay, { opacity: openingProgress });
-          gsap.set(backgroundColumns[0], {
-            xPercent: inwardTravel * exitProgress,
-            opacity: 1 - copyFadeProgress,
-            zIndex: progress >= 0.52 ? 3 : 1,
-          });
-          gsap.set(backgroundColumns[1], {
-            xPercent: -inwardTravel * exitProgress,
-            opacity: 1 - copyFadeProgress,
-            zIndex: progress >= 0.52 ? 3 : 1,
-          });
-          gsap.set(accentOverlay, { opacity: accentProgress });
-          gsap.set(outroImagesElements[0], {
-            clipPath: `polygon(0% 0%, 100% 0%, 100% ${imageProgress * 100}%, 0% ${imageProgress * 100}%)`,
-          });
-          gsap.set(outroImagesElements[1], {
-            clipPath: `polygon(0% ${100 - imageProgress * 100}%, 100% ${100 - imageProgress * 100}%, 100% 100%, 0% 100%)`,
-          });
-
-          gsap.set(outroSplit!.lines, { yPercent: 100 * (1 - finalRevealProgress) });
-          if (outroBodyElement) {
-            gsap.set(outroBodyElement, {
-              autoAlpha: finalRevealProgress,
-              y: 18 * (1 - finalRevealProgress),
-            });
-          }
-          gsap.set(outroCtaElement, {
-            autoAlpha: finalRevealProgress,
-            y: 24 * (1 - finalRevealProgress),
-          });
-        },
-      });
-    }, element);
-
-    const refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh());
-
-    return () => {
-      cancelAnimationFrame(refreshFrame);
-      context.revert();
-      outroSplit?.revert();
-      if (lenis) gsap.ticker.remove(ticker);
-      lenis?.off("scroll", onLenisScroll);
-      lenis?.destroy();
-    };
+      const refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh());
+      return () => {
+        cancelAnimationFrame(refreshFrame);
+        context.revert();
+        element.style.removeProperty("--story-header");
+      };
     });
     return () => media.revert();
   }, [scrollScreens]);
-
   return (
     <div className={`scroll63-story${editorialSrcSet(foregroundImage) ? " scroll63-story--editorial" : ""}`} ref={root} id={id}>
       <section className="scroll63-hero" aria-label={foregroundHeading}>
@@ -169,7 +117,6 @@ export function InformationScrollStory({
           <div className="scroll63-hero-fg-img"><img src={foregroundImage} srcSet={editorialSrcSet(foregroundImage)} sizes="100vw" alt={foregroundAlt} decoding="async" /></div>
           <div className="scroll63-hero-fg-header"><h2>{foregroundHeading}</h2></div>
           <div className="scroll63-hero-fg-overlay-dark" aria-hidden="true" />
-          <div className="scroll63-hero-fg-overlay" aria-hidden="true" />
         </div>
 
         <div className="scroll63-hero-bg-content">

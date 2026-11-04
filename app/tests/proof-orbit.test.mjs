@@ -90,7 +90,6 @@ test('visible toolbars are removed without losing full-frame video or accessible
   assert.match(component, /onKeyDown/);
   assert.match(component, /onPointerUp/);
   assert.match(component, /onFocusCapture/);
-  assert.match(component, /onPointerEnter/);
   assert.match(component, /aria-disabled/);
   assert.match(hook, /!motion.matches && visible && !document.hidden/);
   assert.match(hook, /resize.observe\(heading\)/);

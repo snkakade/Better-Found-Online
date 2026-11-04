@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
-import { CreativeCampaignFilms, CreativeCapabilityCarousel, CreativeFaq, CreativeProcessStory, CreativeProofReel, OrbitShapeTransition } from "@/components/creative-story-components";
+import { CreativeCampaignFilms, CreativeCapabilityCarousel, CreativeFaq, CreativeProofReel, OrbitShapeTransition } from "@/components/creative-story-components";
 import { InformationScrollStory } from "@/components/information-scroll-story";
 
 export const Route = createFileRoute("/creative-production")({
@@ -30,14 +30,6 @@ const proofVideos = [
   { src: "/assets/creative-work/talking-head-before-after.mp4", poster: "/assets/creative-work/talking-head-before-after-poster.jpg", label: "Short-form edit", navLabel: "Short-form", title: "Raw delivery, shaped for attention.", detail: "Pacing, captions, graphic inserts, and reframing built around a vertical audience." },
   { src: "/assets/creative-work/interview-before-after.mp4", poster: "/assets/creative-work/interview-before-after-poster.jpg", label: "Interview edit", navLabel: "Interview", title: "A clearer story from the same footage.", detail: "Selected moments, typography, cutaways, and finishing turn a long take into a concise narrative." },
   { src: "/assets/creative-work/social-edit-before-after.mp4", poster: "/assets/creative-work/social-edit-before-after-poster.jpg", label: "Social transformation", navLabel: "Social edit", title: "Designed to hold the next second.", detail: "Color, rhythm, supporting visuals, and on-screen text make the message easier to follow." },
-];
-
-const process = [
-  ["01", "Understand", "Define the message, audience, format, and purpose."],
-  ["02", "Plan", "Agree on the creative direction, materials, and deliverables."],
-  ["03", "Create", "Develop the visual content for the approved scope."],
-  ["04", "Refine", "Review the work and make agreed adjustments."],
-  ["05", "Deliver", "Prepare approved assets for the intended channels and formats."],
 ];
 
 const faq = [
@@ -89,10 +81,9 @@ function CreativeProductionPage() {
 
         <section className="creative-growth section-pad" aria-labelledby="creative-growth-title"><div><p className="eyebrow">Related growth services</p><h2 id="creative-growth-title">Put the work<br />where it performs.</h2><p>Connect finished creative to paid campaigns and ongoing social content.</p></div><div className="creative-growth-grid"><article><span>Paid campaigns</span><h3>Performance Marketing</h3><p>Campaign creative, audience targeting, and optimization tied to commercial goals.</p><TransitionLink href="/services/performance-marketing">Explore Performance Marketing</TransitionLink></article><article><span>Ongoing content</span><h3>Social Media Management</h3><p>Planning, creative coordination, publishing, and ongoing channel management.</p><TransitionLink href="/services/social-media-management">Explore Social Media Management</TransitionLink></article></div></section>
 
-        <OrbitShapeTransition />
-        <CreativeProcessStory process={process} />
         <CreativeFaq faq={faq} />
 
+        <OrbitShapeTransition />
         <section className="service-detail-closing section-pad"><p className="eyebrow">Ready to make it?</p><h2>Have an idea worth<br />bringing to life?</h2><p className="creative-closing-copy">Tell us what you're making, who it's for, and what the finished content needs to do.</p><a href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a></section>
       </main><SiteFooter />
     </div>

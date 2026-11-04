@@ -26,12 +26,11 @@ function ProofVideo({ video, active }: { video: CreativeProofVideo; active: bool
 export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) {
   const stage = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const gesture = useRef<{ x: number; y: number } | null>(null);
   const swiped = useRef(false);
   const focusRequested = useRef<number | null>(null);
-  const { active, moving, compact, select } = useProofOrbit(stage, videos.length, paused || hovered || focused);
+  const { active, moving, compact, select } = useProofOrbit(stage, videos.length, paused || focused);
   useEffect(() => {
     if (moving || focusRequested.current === null) return;
     stage.current?.querySelectorAll<HTMLButtonElement>(".proof-orbit-select")[focusRequested.current]?.focus();
@@ -40,11 +39,11 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
   if (!videos.length) return null;
   const choose = (index: number) => {
     if (moving) return;
-    setPaused(true); setFocused(false); select(index);
+    setPaused(false); setFocused(false); select(index);
   };
   return (
     <section className="creative-proof section-pad proof-orbit" id="edit-transformations" aria-labelledby="creative-proof-title" aria-roledescription="carousel"
-      onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+      onFocusCapture={(event) => setFocused(event.target.matches(":focus-visible"))} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
       onKeyDown={(event) => {
         if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
@@ -59,7 +58,6 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
           <div><p className="eyebrow">Before / after</p><h2 id="creative-proof-title">See what the edit changes.</h2><p>Raw footage becomes clear, paced, platform-ready content.</p></div>
         </header>
         <div className="proof-orbit-stage" id="proof-orbit-stage" ref={stage} data-moving={moving} data-active={active}
-          onPointerEnter={(event) => { if (event.pointerType === "mouse") setHovered(true); }} onPointerLeave={() => setHovered(false)}
           onPointerDown={(event) => { if (event.pointerType !== "mouse") { gesture.current = { x: event.clientX, y: event.clientY }; swiped.current = false; } }}
           onPointerCancel={() => { gesture.current = null; }} onPointerUp={(event) => {
             const start = gesture.current; gesture.current = null;
@@ -85,7 +83,7 @@ export function CreativeProofReel({ videos }: { videos: CreativeProofVideo[] }) 
         </div>
       </div>
       <p className="sr-only" id="proof-orbit-help">Select a preview to enlarge it. Select the featured example to pause or resume the sequence. Use left and right arrow keys to change examples.</p>
-      <p className="sr-only" aria-live={paused ? "polite" : "off"} aria-atomic="true">In focus: {videos[active]?.label}.</p>
+      <p className="sr-only" aria-live={paused || focused ? "polite" : "off"} aria-atomic="true">In focus: {videos[active]?.label}.</p>
     </section>
   );
 }

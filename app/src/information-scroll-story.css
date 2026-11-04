@@ -123,10 +123,6 @@
     content: "";
     pointer-events: none;
   }
-  .scroll63-story--editorial .scroll63-hero-outro-header {
-    padding: 28px;
-    background: rgb(32 48 154 / .94);
-  }
 }
 
 @media (max-width: 1000px) {
