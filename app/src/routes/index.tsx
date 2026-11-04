@@ -12,6 +12,7 @@ import { ProjectEnquiry } from "@/components/project-enquiry";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
 import { humanImages, editorialSrcSet } from "@/editorial-images";
+import { useContactAnchor } from "@/hooks/use-contact-anchor";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -136,6 +137,7 @@ const insights = [
 ];
 
 function Index() {
+  useContactAnchor();
   const root = useRef<HTMLDivElement>(null);
   const [activeStory, setActiveStory] = useState(0);
   const [reduced, setReduced] = useState(false);
