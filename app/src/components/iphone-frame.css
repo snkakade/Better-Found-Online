@@ -1,29 +1,37 @@
-/* Black iPhone 16 Pro front: 71.5 × 149.6 mm body proportions.
-   Reference: https://support.apple.com/en-my/121031
-   Container units keep the hardware proportional in the small ensemble too. */
+/* Detailed Black Titanium render with a transparent display opening.
+   Source and usage terms: docs/device-frames.md. Hardware is never redrawn. */
 .case-device-phone { container-type: inline-size; isolation: isolate; }
 .case-visual--phone .case-device-stage { container-type: size; }
-.case-visual--phone .case-device-phone { max-width: 47.8cqh; }
-.website-phone-hero .case-device-phone { max-width: calc((100svh - 150px) * .478); }
+.case-visual--phone .case-device-phone { max-width: 48.34cqh; }
+.website-phone-hero .case-device-phone { max-width: calc((100svh - 150px) * .4834); }
 .iphone-body {
   position: relative;
-  z-index: 1;
   width: 100%;
-  aspect-ratio: 715 / 1496;
-  border: max(.5px, .3cqw) solid #4b4c50;
-  border-radius: 14cqw;
-  background: linear-gradient(115deg, #343538, #101113 18%, #050506 76%, #252629);
-  box-shadow: inset 0 0 0 .55cqw #151618, inset 0 .35cqw .3cqw rgb(255 255 255 / .14), 0 9cqw 17cqw rgb(0 0 0 / .3);
+  aspect-ratio: 1109 / 2294;
+  filter: drop-shadow(0 5cqw 8cqw rgb(0 0 0 / .3));
 }
 .case-device-phone .case-device-phone-screen {
   position: absolute;
-  inset: 2.1cqw;
+  z-index: 1;
+  /* The slight underlap also covers antialiasing after responsive resizing. */
+  inset: calc(1.612903% - .3cqw) calc(3.967538% - .3cqw) calc(1.612903% - .3cqw) calc(3.877367% - .3cqw);
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  border-radius: 12cqw;
+  clip-path: polygon(17.2211% 0.0000%, 14.2857% 0.0901%, 12.3288% 0.2252%, 11.0568% 0.3604%, 9.2955% 0.6306%, 8.0235% 0.9009%, 6.2622% 1.3964%, 5.3816% 1.7117%, 3.7182% 2.4775%, 2.5440% 3.2432%, 1.6634% 4.0090%, 1.6634% 4.0991%, 1.4677% 4.2342%, 1.4677% 4.3243%, 1.2720% 4.4595%, 0.9785% 4.8649%, 0.9785% 5.0000%, 0.8806% 5.0450%, 0.8806% 5.1802%, 0.5871% 5.5856%, 0.3914% 6.4414%, 0.2935% 6.4865%, 0.2935% 6.8468%, 0.1957% 6.8919%, 0.1957% 7.4324%, 0.0978% 7.4775%, 0.0978% 9.5946%, 0.0000% 9.6396%, 0.0000% 90.3153%, 0.0978% 90.3604%, 0.0978% 92.5225%, 0.1957% 92.5676%, 0.1957% 93.0631%, 0.2935% 93.1081%, 0.2935% 93.4685%, 0.3914% 93.5135%, 0.5871% 94.4144%, 0.6849% 94.4595%, 0.9785% 95.0901%, 1.2720% 95.4955%, 1.4677% 95.6306%, 1.5656% 95.8559%, 2.8376% 96.9369%, 4.1096% 97.7027%, 4.3053% 97.7477%, 4.4031% 97.8378%, 4.8924% 98.0180%, 4.8924% 98.0631%, 6.3601% 98.6036%, 7.4364% 98.9189%, 9.0020% 99.2793%, 10.0783% 99.4595%, 12.2309% 99.7297%, 13.4051% 99.8198%, 16.9276% 99.9550%, 83.1703% 99.9550%, 86.0078% 99.8649%, 87.8669% 99.7297%, 89.4325% 99.5495%, 91.2916% 99.2342%, 92.6614% 98.9189%, 94.7162% 98.2432%, 96.0861% 97.6126%, 96.0861% 97.5676%, 96.2818% 97.5225%, 96.9667% 97.1171%, 97.6517% 96.6216%, 97.9452% 96.3063%, 98.1409% 96.2162%, 98.1409% 96.1261%, 98.5323% 95.8108%, 98.6301% 95.5856%, 98.8258% 95.4505%, 99.1194% 95.0450%, 99.3151% 94.5495%, 99.4129% 94.5045%, 99.5108% 94.0541%, 99.6086% 94.0090%, 99.6086% 93.7387%, 99.7065% 93.6937%, 99.7065% 93.3333%, 99.8043% 93.2883%, 99.8043% 92.8829%, 99.9022% 92.8378%, 99.9022% 91.8468%, 100.0000% 91.8018%, 100.0000% 8.1532%, 99.9022% 8.1081%, 99.9022% 7.1171%, 99.8043% 7.0721%, 99.7065% 6.2613%, 99.6086% 6.2162%, 99.5108% 5.6757%, 99.2172% 5.2703%, 99.1194% 4.9099%, 98.7280% 4.5045%, 98.6301% 4.2793%, 98.4344% 4.1441%, 98.4344% 4.0541%, 97.7495% 3.4234%, 96.8689% 2.7928%, 95.9883% 2.2973%, 94.3249% 1.5766%, 93.2485% 1.2162%, 90.8023% 0.6306%, 87.7691% 0.2252%, 85.8121% 0.0901%, 82.8767% 0.0000%);
   background: #000;
+}
+.iphone-hardware {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
 }
 .iphone-status {
   position: relative;
@@ -34,29 +42,11 @@
 .iphone-time {
   position: absolute;
   top: 4.6cqw;
-  left: 7.5cqw;
+  left: 5.6cqw;
   font: 600 3.7cqw/1 system-ui, -apple-system, sans-serif;
   letter-spacing: -.08cqw;
 }
-.case-device-phone .case-device-phone-island {
-  position: absolute;
-  top: 3cqw;
-  left: 50%;
-  width: 30cqw;
-  height: 8.5cqw;
-  border: .25cqw solid #151619;
-  border-radius: 6cqw;
-  background: #050506;
-  transform: translateX(-50%);
-}
-.iphone-lens { position: absolute; top: 2.1cqw; right: 2.2cqw; width: 3.7cqw; height: 3.7cqw; border: .5cqw solid #0b0c0e; border-radius: 50%; background: radial-gradient(circle at 65% 30%, #243140, #0a0c12 65%); }
-.iphone-status-icons { position: absolute; top: 4.6cqw; right: 6.1cqw; width: 16.5cqw; height: 3.5cqw; }
+.iphone-status-icons { position: absolute; top: 4.6cqw; right: 4.4cqw; width: 16.5cqw; height: 3.5cqw; }
 .iphone-viewport { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #000; }
 .iphone-home-area { position: relative; flex: 0 0 6.5cqw; background: #000; }
 .iphone-home-area > span { position: absolute; bottom: 1.7cqw; left: 32%; width: 36%; height: 1.15cqw; border-radius: 2cqw; background: #fff; }
-.iphone-button { position: absolute; width: .9cqw; border-radius: .6cqw; background: #18191b; box-shadow: inset 0 0 0 .2cqw #48494c; }
-.iphone-button--action { top: 17.5%; left: -.65cqw; height: 3.8%; }
-.iphone-button--volume-up { top: 25%; left: -.65cqw; height: 7.2%; }
-.iphone-button--volume-down { top: 34%; left: -.65cqw; height: 7.2%; }
-.iphone-button--power { top: 27%; right: -.65cqw; height: 10%; }
-.iphone-button--camera { top: 65%; right: -.45cqw; width: .6cqw; height: 8%; }
