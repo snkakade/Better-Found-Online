@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TransitionLink } from "@/components/site-chrome";
 import { useAutoplayVideo } from "@/hooks/use-autoplay-video";
+import { humanImages } from "@/editorial-images";
 export { CreativeProofReel } from "@/components/creative-proof-reel/creative-proof-reel";
 
 export interface CreativeCapability {
@@ -81,8 +82,8 @@ function OrbitSplitGallery() {
 
   return (
     <div ref={root} className="orbit-split-gallery" style={{ "--split": "46%" } as CSSProperties} onPointerMove={(event) => update(event.clientX)}>
-      <figure><img src="/assets/portals.webp" alt="Architectural metallic forms representing creative structure" /><figcaption>Direction</figcaption></figure>
-      <figure><img src="/assets/world/poster.webp" alt="Abstract metallic composition representing a finished visual world" /><figcaption>Expression</figcaption></figure>
+      <figure><img {...humanImages.storyboardSession} sizes="50vw" loading="lazy" /><figcaption>Direction</figcaption></figure>
+      <figure><img {...humanImages.productSet} sizes="50vw" loading="lazy" /><figcaption>Expression</figcaption></figure>
     </div>
   );
 }

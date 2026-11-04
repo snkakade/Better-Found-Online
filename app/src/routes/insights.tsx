@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { PageSchema } from "@/components/page-schema";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
-import { editorialImages, editorialSrcSet } from "@/editorial-images";
+import { editorialImages, humanImages, editorialSrcSet } from "@/editorial-images";
 
 export const Route = createFileRoute("/insights")({
   component: InsightsPage,
@@ -23,8 +23,8 @@ const insights = [
     category: "Web Design",
     filter: "web-design",
     title: "Your website should do more than look good.",
-    image: editorialImages.websitePlanning.src,
-    imageAlt: editorialImages.websitePlanning.alt,
+    image: humanImages.websiteWorkshop.src,
+    imageAlt: humanImages.websiteWorkshop.alt,
     paragraphs: [
       "A strong website makes your business easier to understand and your next step easier to take.",
       "Start with a clear offer, useful information, credible proof, and a reason to get in touch.",
@@ -47,8 +47,8 @@ const insights = [
     category: "Design & Motion",
     filter: "design-motion",
     title: "Not every movement moves things forward.",
-    image: editorialImages.motionStoryboards.src,
-    imageAlt: editorialImages.motionStoryboards.alt,
+    image: humanImages.storyboardSession.src,
+    imageAlt: humanImages.storyboardSession.alt,
     paragraphs: [
       "Animation should make a website easier to follow, not harder to use.",
       "When motion has a purpose, it can guide attention, explain ideas, and give a digital experience its own character.",

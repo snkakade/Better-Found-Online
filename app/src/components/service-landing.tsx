@@ -3,7 +3,7 @@ import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/compon
 import { InformationScrollStory } from "@/components/information-scroll-story";
 import { serviceRelatedOptions } from "@/service-related-options";
 import type { RelatedServicePath } from "@/service-related-options";
-import { editorialSrcSet } from "@/editorial-images";
+import { editorialSrcSet, humanImages } from "@/editorial-images";
 import "@/service-related-options.css";
 
 export type ServiceLink = { label: string; href: RelatedServicePath };
@@ -107,7 +107,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           rightBody={`${data.supporting} ${data.audience} ${data.problem}`}
           outroImages={[
             { src: data.image, alt: data.imageAlt ?? `${data.eyebrow} visual study` },
-            data.supportImage ?? { src: data.image === "/assets/macro.webp" ? "/assets/connect.webp" : "/assets/macro.webp", alt: "Connected metallic forms in the Better Found Online visual system" },
+            data.supportImage ?? humanImages.websiteWorkshop,
           ]}
           outroHeading="Turn attention into action."
           outroCtaLabel={data.cta}

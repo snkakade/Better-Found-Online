@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
+import { humanImages, editorialSrcSet } from "@/editorial-images";
 
 export const Route = createFileRoute("/services")({
   component: ServicesPage,
@@ -31,7 +32,7 @@ const services = [
     cardLine: "Websites / Digital Experience",
     cta: "Explore Website Design",
     href: "/services/websites",
-    image: "/assets/service-cards/build.jpg",
+    image: humanImages.websiteWorkshop.src,
   },
   {
     number: "02",
@@ -47,7 +48,7 @@ const services = [
     href: "/creative-production",
     secondaryCta: "Discuss a Creative Project",
     secondaryHref: "/#contact",
-    image: "/assets/service-cards/create.jpg",
+    image: humanImages.creativeShoot.src,
   },
   {
     number: "03",
@@ -63,7 +64,7 @@ const services = [
     href: "/services/seo-ai-search",
     secondaryCta: "Explore Performance Marketing",
     secondaryHref: "/services/performance-marketing",
-    image: "/assets/service-cards/grow.jpg",
+    image: humanImages.campaignReview.src,
   },
   {
     number: "04",
@@ -77,7 +78,7 @@ const services = [
     cardLine: "CRM / Integrations / Automation",
     cta: "Discuss Integrations",
     href: "/#contact",
-    image: "/assets/service-cards/connect.jpg",
+    image: humanImages.customerFollowup.src,
   },
   {
     number: "05",
@@ -91,7 +92,7 @@ const services = [
     cardLine: "Performance / Reporting / Process",
     cta: "Discuss Improvements",
     href: "/#contact",
-    image: "/assets/service-cards/improve.jpg",
+    image: humanImages.reportReview.src,
   },
 ];
 
@@ -308,7 +309,7 @@ function ServicesPage() {
         <div className="services-preloader-images">
           {preloaderFrames.map((service, index) => (
             <div className="services-preloader-img" key={`${service.name}-${index}`}>
-              <img src={service.image} alt="" />
+              <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="20vw" alt="" />
             </div>
           ))}
         </div>
@@ -330,7 +331,7 @@ function ServicesPage() {
           <div className="services-hero-cards">
             {services.map((service) => (
               <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.name}`}>
-                <img src={service.image} alt="" />
+                <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 900px) 90vw, 20vw" alt="" />
                 <span><b>{service.cardTitle}</b><small>{service.cardLine}</small></span>
               </a>
             ))}
@@ -361,7 +362,7 @@ function ServicesPage() {
             <article className="service-chapter" id={service.name.toLowerCase()} key={service.name}>
               <div className="service-chapter-number" aria-hidden="true">{service.number}</div>
               <div className="service-chapter-visual">
-                <img className="service-chapter-image" src={service.image} alt="" loading="lazy" />
+                <img className="service-chapter-image" src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy" decoding="async" />
               </div>
               <div className="service-chapter-copy">
                 <p className="service-chapter-label">{service.name} / {service.category}</p>

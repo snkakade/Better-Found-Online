@@ -1,0 +1,25 @@
+/* Human scenes keep natural colour and their landscape framing. */
+:root .site img[src^="/assets/editorial/human-"] { filter: none; }
+
+:root .site.creative-page .creative-hero-media {
+  display: block;
+  width: min(100%, 84svh, 780px);
+  height: auto;
+  aspect-ratio: 3 / 2;
+  justify-self: end;
+  margin: 0;
+}
+:root .site.creative-page .creative-hero-media img { display: block; object-fit: contain; }
+
+:root .site.services-page .services-hero-cards { height: auto; }
+:root .site.services-page .services-hero-card { min-height: 0; grid-template-rows: auto 1fr; }
+:root .site.services-page .services-hero-card img { height: auto; aspect-ratio: 3 / 2; }
+:root .site.services-page .service-chapter-visual { height: auto; aspect-ratio: 3 / 2; }
+:root .site.services-page .service-chapter-image { object-fit: contain; }
+:root .site.home-page .macro-window { aspect-ratio: 3 / 2; }
+:root .site .work-hero-collage img { aspect-ratio: 3 / 2; }
+
+@media (max-width: 900px) {
+  :root .site.creative-page .creative-hero { gap: 24px; align-content: center; }
+  :root .site.creative-page .creative-hero-media { width: min(100%, 540px); justify-self: center; }
+}

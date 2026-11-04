@@ -290,10 +290,7 @@ export function SiteHeader({
           </div>
           <div className="site-menu-video">
             {open && (
-              <video autoPlay muted loop playsInline preload="metadata" poster="/assets/world/poster.webp">
-                <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
-                <source src="/assets/world/hero.mp4" type="video/mp4" />
-              </video>
+              <video src="/assets/creative-work/finished-interview-loop.mp4" autoPlay muted loop playsInline preload="metadata" poster="/assets/creative-work/finished-interview-loop-poster.jpg" />
             )}
             <div className="site-menu-video-index" aria-hidden="true">
               <span><b>1</b><small>Find</small></span>

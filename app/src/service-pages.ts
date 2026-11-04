@@ -1,5 +1,5 @@
 import type { ServiceLandingData } from "@/components/service-landing";
-import { editorialImages } from "./editorial-images.ts";
+import { editorialImages, humanImages } from "./editorial-images.ts";
 
 export const videoProduction: ServiceLandingData = {
   path: "/services/video-production-editing",
@@ -22,9 +22,9 @@ export const videoProduction: ServiceLandingData = {
   relatedHeading: "Need animation or help publishing?",
   related: [{ label: "Social Media Management", href: "/services/social-media-management" }, { label: "Motion Graphics & Animation", href: "/services/motion-graphics-animation" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss a Video Project",
-  image: editorialImages.videoEditing.src,
-  imageAlt: editorialImages.videoEditing.alt,
-  supportImage: editorialImages.motionStoryboards,
+  image: humanImages.editReview.src,
+  imageAlt: humanImages.editReview.alt,
+  supportImage: humanImages.storyboardSession,
 };
 
 export const cgiRendering: ServiceLandingData = {
@@ -50,7 +50,7 @@ export const cgiRendering: ServiceLandingData = {
   cta: "Discuss a 3D Project",
   image: editorialImages.cgiMaterials.src,
   imageAlt: editorialImages.cgiMaterials.alt,
-  supportImage: editorialImages.productPhotography,
+  supportImage: humanImages.productSet,
 };
 
 export const motionGraphics: ServiceLandingData = {
@@ -74,9 +74,9 @@ export const motionGraphics: ServiceLandingData = {
   relatedHeading: "Need video editing or campaign graphics?",
   related: [{ label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Graphic Design", href: "/services/graphic-design" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss an Animation Project",
-  image: editorialImages.motionStoryboards.src,
-  imageAlt: editorialImages.motionStoryboards.alt,
-  supportImage: editorialImages.graphicPrintProofs,
+  image: humanImages.storyboardSession.src,
+  imageAlt: humanImages.storyboardSession.alt,
+  supportImage: humanImages.printCheck,
 };
 
 export const graphicDesign: ServiceLandingData = {
@@ -100,8 +100,8 @@ export const graphicDesign: ServiceLandingData = {
   relatedHeading: "Need video, publishing, or paid ads?",
   related: [{ label: "Performance Marketing", href: "/services/performance-marketing" }, { label: "Social Media Management", href: "/services/social-media-management" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }],
   cta: "Discuss a Design Project",
-  image: editorialImages.graphicPrintProofs.src,
-  imageAlt: editorialImages.graphicPrintProofs.alt,
+  image: humanImages.printCheck.src,
+  imageAlt: humanImages.printCheck.alt,
   supportImage: editorialImages.websitePlanning,
 };
 
@@ -126,9 +126,9 @@ export const socialMedia: ServiceLandingData = {
   relatedHeading: "Need graphics, video, or paid ads?",
   related: [{ label: "Graphic Design", href: "/services/graphic-design" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Performance Marketing", href: "/services/performance-marketing" }],
   cta: "Discuss Social Media",
-  image: editorialImages.socialContent.src,
-  imageAlt: editorialImages.socialContent.alt,
-  supportImage: editorialImages.connectedWorkflow,
+  image: humanImages.socialFilming.src,
+  imageAlt: humanImages.socialFilming.alt,
+  supportImage: humanImages.customerFollowup,
 };
 
 export const performanceMarketing: ServiceLandingData = {
@@ -152,7 +152,7 @@ export const performanceMarketing: ServiceLandingData = {
   relatedHeading: "Need better pages, creative, or social content?",
   related: [{ label: "Website & Landing Pages", href: "/services#build" }, { label: "Creative Production", href: "/creative-production" }, { label: "Social Media Management", href: "/services/social-media-management" }],
   cta: "Discuss Paid Marketing",
-  image: editorialImages.campaignPlanning.src,
-  imageAlt: editorialImages.campaignPlanning.alt,
-  supportImage: editorialImages.connectedWorkflow,
+  image: humanImages.campaignReview.src,
+  imageAlt: humanImages.campaignReview.alt,
+  supportImage: humanImages.customerFollowup,
 };

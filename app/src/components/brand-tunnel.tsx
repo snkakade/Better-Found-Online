@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { MOBILE_CHAPTER_START, MOBILE_CHAPTER_APPROACH_END, mobileChapterFocus, mobileTunnelPresence } from "@/lib/tunnel-pacing";
+import { humanImages } from "@/editorial-images";
 
 type BrandTunnelProps = {
   paused?: boolean;
@@ -10,9 +11,9 @@ type BrandTunnelProps = {
 };
 
 const textureSources = [
-  "/assets/portals.webp",
-  "/assets/macro.webp",
-  "/assets/connect.webp",
+  humanImages.websiteWorkshop.src,
+  humanImages.editReview.src,
+  humanImages.campaignReview.src,
 ];
 
 const cardLayout = [

@@ -6,7 +6,7 @@ import { searchAdsMedia } from "@/search-ads-media";
 import { PerformanceProofCards } from "@/components/performance-proof-cards";
 import { AdPlatformMark, type AdPlatform } from "@/components/ad-platform-mark";
 import { campaignEvidence } from "@/performance-evidence";
-import { editorialImages } from "@/editorial-images";
+import { humanImages } from "@/editorial-images";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 
 const pageTitle = "Performance Marketing & Paid Ads | Better Found Online";
@@ -103,16 +103,16 @@ function PerformanceMarketingPage() {
 
         <InformationScrollStory
           id="approach"
-          foregroundImage={editorialImages.campaignPlanning.src}
-          foregroundAlt={editorialImages.campaignPlanning.alt}
+          foregroundImage={humanImages.campaignReview.src}
+          foregroundAlt={humanImages.campaignReview.alt}
           foregroundHeading="Better decisions before bigger budgets."
           leftTitle="Before the first click"
           leftBody="Understand the offer, the audience, and the action worth measuring. Those questions come before channel selection, media planning, and creative."
           rightTitle="Campaigns with a job to do"
           rightBody="Match the message, channel, and destination to the customer's intent. Use the evidence to decide what to adjust, maintain, or expand."
           outroImages={[
-            editorialImages.connectedWorkflow,
-            editorialImages.socialContent,
+            humanImages.customerFollowup,
+            humanImages.reportReview,
           ]}
           outroHeading="Spend with a plan."
           outroBody="Because a bigger budget is only useful when the campaign has a clear job to do."

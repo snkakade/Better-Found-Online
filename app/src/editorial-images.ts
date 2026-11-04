@@ -23,3 +23,17 @@ export const editorialImages = {
   productPhotography: editorialImage("product-photography", "Camera and softbox lighting a blue glass bottle on a white tabletop photography set"),
   connectedWorkflow: editorialImage("connected-workflow", "Blue paper workflow cards connected by pencil lines with red approval markers"),
 };
+
+/* Illustrative human working scenes, never presented as staff or client proof. */
+export const humanImages = {
+  creativeShoot: editorialImage("human-creative-shoot", "A camera operator and business owner preparing a product video in a daylight studio"),
+  editReview: editorialImage("human-edit-review", "An editor and colleague reviewing footage and an editing timeline at a workstation"),
+  websiteWorkshop: editorialImage("human-website-workshop", "A designer and business owner reviewing website layouts together"),
+  campaignReview: editorialImage("human-campaign-review", "Two marketing specialists reviewing a campaign plan and laptop dashboard"),
+  customerFollowup: editorialImage("human-customer-followup", "A small-business owner following up a customer enquiry by phone"),
+  reportReview: editorialImage("human-report-review", "An analyst checking a printed report against information on a laptop"),
+  storyboardSession: editorialImage("human-storyboard-session", "Creative collaborators arranging and drawing a sequence of paper storyboards"),
+  printCheck: editorialImage("human-print-check", "A graphic designer checking the paper and colour of a printed brochure proof"),
+  socialFilming: editorialImage("human-social-filming", "A content creator filming a potter demonstrating a handmade cup"),
+  productSet: editorialImage("human-product-set", "A photographer and business owner arranging a tabletop product shoot"),
+};

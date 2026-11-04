@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { editorialImages } from "@/editorial-images";
+import { humanImages } from "@/editorial-images";
 
 const items = [
-  { title: "Clarity", image: editorialImages.websitePlanning, text: "Make the important things easy to find and understand." },
-  { title: "Character", image: editorialImages.productPhotography, text: "Build a visual and verbal identity people can recognize." },
-  { title: "Continuity", image: editorialImages.connectedWorkflow, text: "Make the message, experience, and next step feel connected." },
+  { title: "Clarity", image: humanImages.websiteWorkshop, text: "Make the important things easy to find and understand." },
+  { title: "Character", image: humanImages.printCheck, text: "Build a visual and verbal identity people can recognize." },
+  { title: "Continuity", image: humanImages.customerFollowup, text: "Make the message, experience, and next step feel connected." },
 ];
 
 export function ImageAccordion() {

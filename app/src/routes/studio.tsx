@@ -20,13 +20,10 @@ export const Route = createFileRoute("/studio")({
 function StudioBeliefVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useAutoplayVideo(videoRef, { src: "/assets/world/hero.mp4" });
+  useAutoplayVideo(videoRef, { src: "/assets/creative-work/finished-interview-loop.mp4" });
 
   return (
-    <video ref={videoRef} autoPlay muted loop playsInline preload="metadata" poster="/assets/world/poster.webp">
-      <source src="/assets/world/hero-mobile.mp4" media="(max-width: 700px)" type="video/mp4" />
-      <source src="/assets/world/hero.mp4" type="video/mp4" />
-    </video>
+    <video ref={videoRef} src="/assets/creative-work/finished-interview-loop.mp4" autoPlay muted loop playsInline preload="metadata" poster="/assets/creative-work/finished-interview-loop-poster.jpg" />
   );
 }
 

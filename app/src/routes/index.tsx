@@ -10,6 +10,7 @@ import { ProjectReel } from "@/components/project-reel";
 import { ServicesAccordion } from "@/components/services-accordion";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
+import { humanImages, editorialSrcSet } from "@/editorial-images";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -31,7 +32,7 @@ const storyChapters = [
     title: "Explain your services clearly.",
     body:
       "We clarify your offer and write your website copy so visitors can quickly see what you do and why to choose you.",
-    image: "/assets/portals.webp",
+    image: humanImages.websiteWorkshop.src,
   },
   {
     id: "shape",
@@ -40,7 +41,7 @@ const storyChapters = [
     title: "Make contacting your business easy.",
     body:
       "We build mobile-friendly websites with clear service pages, visible contact options, and simple forms, so customers can reach you from any screen.",
-    image: "/assets/macro.webp",
+    image: humanImages.printCheck.src,
   },
   {
     id: "launch",
@@ -49,14 +50,14 @@ const storyChapters = [
     title: "Get found when customers search.",
     body:
       "SEO and paid ads connect relevant searches to focused landing pages. Inquiry tracking helps you see which channels bring in potential customers.",
-    image: "/assets/connect.webp",
+    image: humanImages.campaignReview.src,
   },
 ];
 
 const services = [
   {
     name: "Build",
-    preview: "/assets/portals.webp",
+    preview: humanImages.websiteWorkshop.src,
     lead: "Make your first impression count.",
     body:
       "Distinctive, easy-to-use websites that present your business clearly, build confidence, and make the next step feel natural.",
@@ -66,7 +67,7 @@ const services = [
   },
   {
     name: "Create",
-    preview: "/assets/connect.webp",
+    preview: humanImages.creativeShoot.src,
     lead: "Make something worth watching.",
     body:
       "Video, CGI, animation, and graphic design that give your ideas more character and your message more impact.",
@@ -76,7 +77,7 @@ const services = [
   },
   {
     name: "Grow",
-    preview: "/assets/macro.webp",
+    preview: humanImages.campaignReview.src,
     lead: "Reach the right people. Make the spend count.",
     body:
       "SEO, paid media, content, and social management connected to the customers you want to reach and the actions that matter to your business.",
@@ -86,7 +87,7 @@ const services = [
   },
   {
     name: "Connect",
-    preview: "/assets/connect.webp",
+    preview: humanImages.customerFollowup.src,
     lead: "Don't lose momentum after the click.",
     body:
       "Bring forms, customer information, and everyday tools together to make inquiries and follow-ups easier to manage.",
@@ -96,7 +97,7 @@ const services = [
   },
   {
     name: "Improve",
-    preview: "/assets/world/poster.webp",
+    preview: humanImages.reportReview.src,
     lead: "Make better decisions with better information.",
     body:
       "Understand what's working, identify where people get stuck, and focus your time on improvements that serve the business.",
@@ -329,6 +330,8 @@ function Index() {
                     key={chapter.id}
                     className={`story-art story-art-${index + 1}${activeStory === index ? " is-active" : ""}`}
                     src={chapter.image}
+                    srcSet={editorialSrcSet(chapter.image)}
+                    sizes="(max-width: 900px) 100vw, 50vw"
                     alt=""
                     loading="eager"
                     decoding="async"
@@ -357,7 +360,7 @@ function Index() {
             <div className="story-beats">
               {storyChapters.map((chapter, index) => (
                 <article key={chapter.id} className="story-beat">
-                  <img className="story-beat-media" src={chapter.image} alt="" width="1200" height="750" loading="eager" decoding="async" />
+                  <img className="story-beat-media" src={chapter.image} srcSet={editorialSrcSet(chapter.image)} sizes="(max-width: 900px) 100vw, 50vw" alt="" width="1440" height="960" loading="eager" decoding="async" />
                   <p className="eyebrow">{chapter.label} <span>/ {chapter.name}</span></p>
                   <div className="story-beat-copy">
                     <h3>{chapter.title}</h3>
@@ -392,7 +395,7 @@ function Index() {
             </h2>
             <div className="about-grid">
               <div className="macro-window">
-                <img src="/assets/macro.webp" alt="Close-up of a precisely finished brushed-silver ribbon" width="1200" height="670" loading="lazy" />
+                <img {...humanImages.storyboardSession} sizes="(max-width: 900px) 100vw, 45vw" loading="lazy" decoding="async" />
               </div>
               <div className="about-copy">
                 <p>A beautiful website means little if people can't understand your offer. More traffic means little if visitors don't know what to do next.</p>

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { CreativeCampaignFilms, CreativeCapabilityCarousel, CreativeFaq, CreativeProofReel, OrbitShapeTransition } from "@/components/creative-story-components";
 import { InformationScrollStory } from "@/components/information-scroll-story";
+import { humanImages } from "@/editorial-images";
 
 export const Route = createFileRoute("/creative-production")({
   component: CreativeProductionPage,
@@ -17,13 +18,13 @@ export const Route = createFileRoute("/creative-production")({
 });
 
 const capabilities = [
-  { number: "01", sliderTitle: "Brand films", title: "Video Production & Editing", headline: "Make every second count.", body: "From brand videos and promotional edits to campaign content and social clips, we shape visual material into clear, engaging stories.", tags: "Brand Videos / Promotional Edits / Social Videos / Trailers / Ad Videos", cta: "Explore Video Services", href: "/services/video-production-editing", image: "/assets/world/poster.webp", video: "/assets/creative-work/finished-interview-loop.mp4", poster: "/assets/creative-work/finished-interview-loop-poster.jpg" },
-  { number: "02", sliderTitle: "Product CGI", title: "3D Design, CGI & Rendering", headline: "Bring the hard-to-show into focus.", body: "Use 3D modeling, CGI, and rendering to present products, spaces, concepts, and visual ideas with more detail and creative freedom.", tags: "3D Modeling / CGI / Product Renders / Environments / Visual Effects", cta: "Explore 3D & CGI", href: "/services/3d-cgi-rendering", image: "/assets/portals.webp", video: "https://videos.pexels.com/video-files/12806512/12806512-hd_1920_1080_60fps.mp4" },
-  { number: "03", sliderTitle: "Motion systems", title: "2D Animation & Motion Graphics", headline: "Give your ideas a little movement.", body: "Turn static information into visual stories through motion graphics, animated content, and 2D animation created around your message.", tags: "2D Animation / Motion Graphics / Promotional Animation / Animated Assets", cta: "Explore Motion Design", href: "/services/motion-graphics-animation", image: "/assets/connect.webp", video: "/assets/creative-work/campaign-film-tts.mp4", poster: "/assets/creative-work/campaign-film-tts-poster.jpg" },
-  { number: "04", sliderTitle: "Campaign trailers", title: "Trailers & Advertisement Videos", headline: "Make the opening count.", body: "Promotional trailers and advertisement videos designed to communicate the idea quickly, build interest, and support the wider campaign.", tags: "Promotional Trailers / Advertisement Videos / Brand Campaign Content", cta: "Discuss an Ad Video", href: "/services/video-production-editing#scope", image: "/assets/world/poster-mobile.webp", video: "/assets/creative-work/campaign-film-rev.mp4", poster: "/assets/creative-work/campaign-film-rev-poster.jpg" },
-  { number: "05", sliderTitle: "Graphic worlds", title: "Graphic Design", headline: "Make the message look the part.", body: "Graphic design for marketing, digital communication, social content, and promotional campaigns, with visuals that stay consistent with the brand.", tags: "Social Graphics / Campaign Visuals / Promotional Assets / Digital Design", cta: "Explore Graphic Design", href: "/services/graphic-design", image: "/assets/macro.webp", video: "https://videos.pexels.com/video-files/20271094/20271094-uhd_2560_1440_25fps.mp4" },
-  { number: "06", sliderTitle: "Social stories", title: "Social Content Production", headline: "Build a story people can follow.", body: "Create adaptable visual content for social channels, from short-form edits and motion assets to campaign-ready graphic systems.", tags: "Short-form Video / Social Motion / Content Systems / Campaign Assets", cta: "Explore Social Content", href: "/services/social-media-management", image: "/assets/connect.webp", video: "https://videos.pexels.com/video-files/2887463/2887463-hd_1920_1080_25fps.mp4" },
-  { number: "07", sliderTitle: "Digital campaigns", title: "Campaign Creative", headline: "Give the campaign a visual pulse.", body: "Unify video, motion, CGI, and graphic design around one campaign idea so every format feels connected and recognizably yours.", tags: "Campaign Direction / Paid Creative / Motion Assets / Multi-format Delivery", cta: "Explore Campaign Support", href: "/services/performance-marketing", image: "/assets/portals.webp", video: "https://videos.pexels.com/video-files/4990245/4990245-hd_1920_1080_30fps.mp4" },
+  { number: "01", sliderTitle: "Brand films", title: "Video Production & Editing", headline: "Make every second count.", body: "From brand videos and promotional edits to campaign content and social clips, we shape visual material into clear, engaging stories.", tags: "Brand Videos / Promotional Edits / Social Videos / Trailers / Ad Videos", cta: "Explore Video Services", href: "/services/video-production-editing", image: humanImages.editReview.src, video: "/assets/creative-work/finished-interview-loop.mp4", poster: "/assets/creative-work/finished-interview-loop-poster.jpg" },
+  { number: "02", sliderTitle: "Product CGI", title: "3D Design, CGI & Rendering", headline: "Bring the hard-to-show into focus.", body: "Use 3D modeling, CGI, and rendering to present products, spaces, concepts, and visual ideas with more detail and creative freedom.", tags: "3D Modeling / CGI / Product Renders / Environments / Visual Effects", cta: "Explore 3D & CGI", href: "/services/3d-cgi-rendering", image: humanImages.productSet.src, video: "https://videos.pexels.com/video-files/12806512/12806512-hd_1920_1080_60fps.mp4" },
+  { number: "03", sliderTitle: "Motion systems", title: "2D Animation & Motion Graphics", headline: "Give your ideas a little movement.", body: "Turn static information into visual stories through motion graphics, animated content, and 2D animation created around your message.", tags: "2D Animation / Motion Graphics / Promotional Animation / Animated Assets", cta: "Explore Motion Design", href: "/services/motion-graphics-animation", image: humanImages.storyboardSession.src, video: "/assets/creative-work/campaign-film-tts.mp4", poster: "/assets/creative-work/campaign-film-tts-poster.jpg" },
+  { number: "04", sliderTitle: "Campaign trailers", title: "Trailers & Advertisement Videos", headline: "Make the opening count.", body: "Promotional trailers and advertisement videos designed to communicate the idea quickly, build interest, and support the wider campaign.", tags: "Promotional Trailers / Advertisement Videos / Brand Campaign Content", cta: "Discuss an Ad Video", href: "/services/video-production-editing#scope", image: humanImages.creativeShoot.src, video: "/assets/creative-work/campaign-film-rev.mp4", poster: "/assets/creative-work/campaign-film-rev-poster.jpg" },
+  { number: "05", sliderTitle: "Graphic worlds", title: "Graphic Design", headline: "Make the message look the part.", body: "Graphic design for marketing, digital communication, social content, and promotional campaigns, with visuals that stay consistent with the brand.", tags: "Social Graphics / Campaign Visuals / Promotional Assets / Digital Design", cta: "Explore Graphic Design", href: "/services/graphic-design", image: humanImages.printCheck.src, video: "https://videos.pexels.com/video-files/20271094/20271094-uhd_2560_1440_25fps.mp4" },
+  { number: "06", sliderTitle: "Social stories", title: "Social Content Production", headline: "Build a story people can follow.", body: "Create adaptable visual content for social channels, from short-form edits and motion assets to campaign-ready graphic systems.", tags: "Short-form Video / Social Motion / Content Systems / Campaign Assets", cta: "Explore Social Content", href: "/services/social-media-management", image: humanImages.socialFilming.src, video: "https://videos.pexels.com/video-files/2887463/2887463-hd_1920_1080_25fps.mp4" },
+  { number: "07", sliderTitle: "Digital campaigns", title: "Campaign Creative", headline: "Give the campaign a visual pulse.", body: "Unify video, motion, CGI, and graphic design around one campaign idea so every format feels connected and recognizably yours.", tags: "Campaign Direction / Paid Creative / Motion Assets / Multi-format Delivery", cta: "Explore Campaign Support", href: "/services/performance-marketing", image: humanImages.campaignReview.src, video: "https://videos.pexels.com/video-files/4990245/4990245-hd_1920_1080_30fps.mp4" },
 ];
 
 const proofVideos = [
@@ -54,7 +55,7 @@ function CreativeProductionPage() {
       <main id="main">
         <section className="creative-hero" aria-labelledby="creative-title">
           <div><p className="eyebrow">Creative Production</p><h1 id="creative-title">Make something worth<br /><span>a second look.</span></h1><p>Video editing and production, motion graphics, CGI, rendering, and graphic design for brands that need distinctive, campaign-ready content.</p><div className="creative-actions"><a className="primary-btn" href={whatsapp} target="_blank" rel="noopener noreferrer">Discuss a Creative Project</a><a className="story-link" href="#selected-work">View Selected Work</a></div></div>
-          <figure className="creative-hero-media"><img src="/assets/service-cards/create.jpg" alt="Creative production combining camera work, storyboards, motion, and CGI" width="960" height="1600" /></figure>
+          <figure className="creative-hero-media"><img {...humanImages.creativeShoot} sizes="(max-width: 900px) 100vw, 44vw" fetchPriority="high" decoding="async" /></figure>
         </section>
 
         <CreativeCapabilityCarousel capabilities={capabilities} />
@@ -62,16 +63,16 @@ function CreativeProductionPage() {
         <CreativeProofReel videos={proofVideos} />
 
         <InformationScrollStory
-          foregroundImage="/assets/world/poster.webp"
-          foregroundAlt="Abstract metallic sculpture representing creative production"
+          foregroundImage={humanImages.productSet.src}
+          foregroundAlt={humanImages.productSet.alt}
           foregroundHeading="Ideas become images people remember."
           leftTitle="Shape the message"
           leftBody="Video, CGI, animation, and design begin with what the audience needs to notice, understand, and remember."
           rightTitle="Build the moment"
           rightBody="We choose the format, pace, visual language, and finish around the purpose of the content and the channel where it will live."
           outroImages={[
-            { src: "/assets/connect.webp", alt: "Metallic ribbon composition representing motion and animation" },
-            { src: "/assets/macro.webp", alt: "Close-up metallic form representing detailed visual craft" },
+            humanImages.storyboardSession,
+            humanImages.editReview,
           ]}
           outroHeading="Make every frame matter."
           outroCtaLabel="Discuss a Creative Project"

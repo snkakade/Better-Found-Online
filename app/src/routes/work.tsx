@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { humanImages } from "@/editorial-images";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { HorizontalCases } from "@/components/horizontal-cases";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
@@ -32,9 +33,9 @@ function WorkPage() {
             </div>
           </div>
           <div className="work-hero-collage" aria-hidden="true">
-            <img src="/assets/portals.webp" alt="" />
-            <img src="/assets/macro.webp" alt="" />
-            <img src="/assets/connect.webp" alt="" />
+            <img {...humanImages.websiteWorkshop} sizes="30vw" alt="" />
+            <img {...humanImages.printCheck} sizes="30vw" alt="" />
+            <img {...humanImages.campaignReview} sizes="30vw" alt="" />
           </div>
           <div className="orbit-svg" aria-hidden="true">
             <svg viewBox="0 0 700 700"><circle cx="350" cy="350" r="270" /><ellipse cx="350" cy="350" rx="330" ry="115" transform="rotate(-24 350 350)" /><ellipse cx="350" cy="350" rx="330" ry="115" transform="rotate(58 350 350)" /></svg>
