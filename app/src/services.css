@@ -65,6 +65,12 @@
   text-transform: uppercase;
 }
 
+/* Tight tracking lets glyphs extend beyond each character's advance width.
+   Keep the vertical reveal mask without cutting the sides of S and V. */
+.services-preloader-title .services-char-mask {
+  overflow-x: visible !important;
+}
+
 .services-preloader-counter {
   position: absolute;
   top: -1.5rem;
