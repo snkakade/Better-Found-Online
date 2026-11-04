@@ -65,7 +65,7 @@
   position: relative;
   isolation: isolate;
   align-items: center;
-  justify-content: center;
+  justify-content: var(--action-justify, center);
   flex: 0 1 auto;
   gap: 12px;
   width: var(--action-width, fit-content);
@@ -80,7 +80,7 @@
   background-image: var(--action-surface);
   box-shadow: var(--action-current-shadow);
   color: var(--action-label);
-  font: 650 1rem/1.3 Outfit, sans-serif;
+  font: 650 var(--action-font-size, 1rem)/1.3 Outfit, sans-serif;
   letter-spacing: -.015em;
   text-align: center;
   text-decoration: none;

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, Check, PaperPlaneTilt } from "@phosphor-icons/react";
+import { ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
@@ -8,6 +8,7 @@ import { BrandTunnel } from "@/components/brand-tunnel";
 import { KineticBand } from "@/components/kinetic-band";
 import { ProjectReel } from "@/components/project-reel";
 import { ServicesAccordion } from "@/components/services-accordion";
+import { ProjectEnquiry } from "@/components/project-enquiry";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { PageSchema } from "@/components/page-schema";
 import { humanImages, editorialSrcSet } from "@/editorial-images";
@@ -134,16 +135,6 @@ const insights = [
   },
 ];
 
-const projectTypes = [
-  ["Website", "Website Design & Development"],
-  ["Search", "SEO & Search Visibility"],
-  ["Paid marketing", "Paid Advertising & Performance Marketing"],
-  ["Creative", "Creative Production"],
-  ["Social media", "Social Media Management"],
-  ["CRM & integrations", "CRM & Integrations"],
-  ["Not sure yet", "Not Sure Yet"],
-] as const;
-
 function Index() {
   const root = useRef<HTMLDivElement>(null);
   const [activeStory, setActiveStory] = useState(0);
@@ -158,7 +149,7 @@ function Index() {
     const data = new FormData(event.currentTarget);
     const selectedProjectTypes = data.getAll("projectType").map(String);
     if (selectedProjectTypes.length === 0) {
-      setProjectTypeError("Choose at least one starting point.");
+      setProjectTypeError("Select a service, or choose “Not sure yet”.");
       event.currentTarget.querySelector<HTMLInputElement>('input[name="projectType"]')?.focus();
       return;
     }
@@ -449,44 +440,7 @@ function Index() {
           </div>
         </section>
 
-        <section className="contact section-pad" id="contact" aria-labelledby="contact-title">
-          <div className="contact-aside">
-            <h2 id="contact-title">Tell us what needs to work better.</h2>
-            <p className="contact-intro">Select the services you need and describe the outcome.</p>
-            <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
-              Prefer a quick message? WhatsApp us <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-          <form className="contact-form" onSubmit={handleInquiry}>
-            <header className="contact-form-head">
-              <h3>Project details</h3>
-              <small>Required fields are marked *</small>
-            </header>
-            <div className="contact-field"><label htmlFor="contact-name">Your name *</label><input id="contact-name" name="name" autoComplete="name" placeholder="Enter your full name" required /></div>
-            <div className="contact-field"><label htmlFor="contact-email">Your email *</label><input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@company.com" required /></div>
-            <div className="contact-field"><label htmlFor="contact-phone">Your phone *</label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="Country code + number" required /></div>
-            <div className="contact-field"><label htmlFor="contact-company">Company or website</label><input id="contact-company" name="company" autoComplete="organization" placeholder="Optional" /></div>
-            <fieldset className="contact-project-types" aria-invalid={projectTypeError ? "true" : undefined} aria-describedby={projectTypeError ? "contact-project-error" : undefined}>
-              <legend>Services * <span>Select all that apply</span></legend>
-              <div className="contact-choice-grid">
-                {projectTypes.map(([label, value]) => (
-                  <label key={value} className="contact-choice">
-                    <input name="projectType" type="checkbox" value={value} onChange={() => projectTypeError && setProjectTypeError("")} />
-                    <span>{label}<Check size={14} weight="bold" aria-hidden="true" /></span>
-                  </label>
-                ))}
-              </div>
-              {projectTypeError && <p id="contact-project-error" className="contact-project-error" role="alert">{projectTypeError}</p>}
-            </fieldset>
-            <div className="contact-field contact-form-wide contact-goal"><label htmlFor="contact-details">Desired outcome *</label><textarea id="contact-details" name="details" rows={3} placeholder="What should change, and when?" required /></div>
-            <div className="contact-form-actions">
-              <label className="contact-marketing-consent"><input name="marketingConsent" type="checkbox" value="yes" /><span>Optional: email or text me about relevant services and updates.</span></label>
-              <p className="contact-privacy-note">By continuing, you ask us to use these details to respond. WhatsApp receives the message only after you review and send it. See our <a href="/privacy">Privacy Notice</a>.</p>
-              <button type="submit" data-cta>Review in WhatsApp <PaperPlaneTilt size={18} weight="light" aria-hidden="true" /></button>
-            </div>
-            {inquiryReady && <p className="contact-form-status" role="status">Your message is ready to review in WhatsApp. Nothing has been sent yet.</p>}
-          </form>
-        </section>
+        <ProjectEnquiry onSubmit={handleInquiry} inquiryReady={inquiryReady} projectTypeError={projectTypeError} onServicesChange={() => setProjectTypeError("")} />
       </main>
 
       <SiteFooter motionPaused={motionPaused} onMotionToggle={() => setMotionPaused(!motionPaused)} />
