@@ -522,24 +522,8 @@
 
 .case-device-tablet-screen { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; background: #050607; }
 
-/* Mirrors the phone proportions and hardware details used on the Shrey portfolio. */
-.case-device-phone {
-  width: min(34%, 300px);
-  padding: 8px;
-  border: 1px solid rgba(226, 232, 240, 0.34);
-  border-radius: 48px;
-  background: linear-gradient(145deg, #454a52 0%, #15181d 16%, #07090c 70%, #30343b 100%);
-  box-shadow: 0 34px 80px rgba(1, 5, 10, 0.5), inset 0 1px 1px rgba(255,255,255,.34), inset 0 -1px 1px rgba(255,255,255,.08);
-  isolation: isolate;
-}
-
-.case-device-phone::before,
-.case-device-phone::after { position: absolute; z-index: -1; width: 4px; border-radius: 3px; background: #22262c; box-shadow: inset 1px 0 rgba(255,255,255,.12); content: ""; }
-.case-device-phone::before { top: 104px; left: -4px; height: 74px; }
-.case-device-phone::after { top: 132px; right: -4px; height: 96px; }
-.case-device-phone-screen { position: relative; aspect-ratio: 390 / 844; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 40px; background: #070807; }
-.case-device-phone-screen video { opacity: 1; filter: saturate(.92) contrast(1.03); transform: none; }
-.case-device-phone-island { position: absolute; top: 10px; left: 50%; width: 31%; height: 24px; border: 1px solid rgba(255,255,255,.04); border-radius: 999px; background: #030405; box-shadow: 0 1px rgba(255,255,255,.05); transform: translateX(-50%); }
+/* Hardware lives in the shared, proportionally scaled IPhoneFrame. */
+.case-device-phone { width: min(34%, 300px); }
 
 .case-visual--ensemble .case-device-macbook { position: absolute; z-index: 1; top: 7%; left: 10%; width: 82%; transform: rotateX(1deg) rotateY(-3deg); }
 .case-visual--ensemble .case-device-tablet { position: absolute; z-index: 2; right: 1%; bottom: 2%; width: 43%; transform: rotate(3deg); }

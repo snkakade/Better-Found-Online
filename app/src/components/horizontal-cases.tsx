@@ -2,6 +2,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WebsitePreview } from "@/components/website-preview";
+import { IPhoneFrame } from "@/components/iphone-frame";
 
 const cases = [
   {
@@ -42,11 +43,11 @@ type CaseDevice = (typeof cases)[number]["devices"][number];
 
 function DevicePreview({ device, registerVideo, playbackRate }: { device: CaseDevice; registerVideo?: (video: HTMLVideoElement | null) => void; playbackRate: number }) {
   const video = (
-    <WebsitePreview src={device.src} label={device.label} registerVideo={registerVideo} playbackRate={playbackRate} fit={device.kind === "macbook" ? "cover" : "contain"} />
+    <WebsitePreview src={device.src} label={device.label} registerVideo={registerVideo} playbackRate={playbackRate} fit={device.kind === "tablet" ? "contain" : "cover"} />
   );
 
   if (device.kind === "phone") {
-    return <div className="case-device case-device-phone"><div className="case-device-phone-screen">{video}<span className="case-device-phone-island" aria-hidden="true" /></div></div>;
+    return <IPhoneFrame>{video}</IPhoneFrame>;
   }
 
   if (device.kind === "tablet") {

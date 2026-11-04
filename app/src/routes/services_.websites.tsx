@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
 import { WebsitePreview } from "@/components/website-preview";
+import { IPhoneFrame } from "@/components/iphone-frame";
 import "@/service-growth-pages.css";
 import "@/website-page.css";
 
@@ -271,15 +272,13 @@ function WebsitesPage() {
             </small>
           </div>
           <figure className="website-phone-hero">
-            <div className="case-device case-device-phone">
-              <div className="case-device-phone-screen">
+            <IPhoneFrame>
                 <WebsitePreview
                   src="/assets/work/say-vanilla-mobile.webm"
                   label="Say Vanilla mobile website preview on an iPhone"
+                  fit="cover"
                 />
-                <span className="case-device-phone-island" aria-hidden="true" />
-              </div>
-            </div>
+            </IPhoneFrame>
             <figcaption>
               <span>Mobile website preview</span>
               <b>Say Vanilla</b>
