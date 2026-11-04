@@ -114,24 +114,6 @@
   :root .site .scroll63-hero-bg-content-copy h3 { font-size: clamp(2rem, min(3.2vw, 5.8svh), 3.75rem); line-height: 1.04; }
   :root .site .scroll63-hero-bg-content-copy p { font-size: 1rem; line-height: 1.5; }
   :root .site .scroll63-hero-bg-content-col .scroll63-hero-bg-content-copy { margin-top: 0; }
-  :root .site .scroll63-hero-outro-content { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr) auto; }
-  :root .site .scroll63-hero-outro-img { min-height: 0; }
-  :root .site .scroll63-hero-outro-header {
-    position: relative;
-    inset: auto;
-    grid-column: 1 / -1;
-    width: 100%;
-    transform: none;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 16px 28px;
-    padding: 24px max(5vw, 24px);
-    background: var(--brand-blue);
-    text-align: left;
-  }
-  :root .site .scroll63-hero-outro-header h3 { flex: 1; min-width: 0; }
-  :root .site .scroll63-hero-outro-header > p { order: 3; flex-basis: 100%; width: 100%; }
   :root .site .scroll63-hero-outro-header h3 { font-size: var(--service-heading-size); line-height: 1.04; }
   :root .site .scroll63-about { height: auto; min-height: 0; padding: var(--service-section-space) max(5vw, 24px); }
   :root .site .scroll63-about h3 { font-size: var(--service-heading-size); line-height: 1.04; }
@@ -171,5 +153,4 @@
   :root .site .scroll63-hero-bg-content { padding-block: 32px; }
   :root .site .scroll63-hero-outro-content { display: grid; grid-template-columns: 1fr 1fr; }
   :root .site .scroll63-hero-outro-img { height: min(36svh, 300px); }
-  :root .site .scroll63-hero-outro-header { position: static; grid-column: 1 / -1; width: 100%; padding: 32px; transform: none; }
 }

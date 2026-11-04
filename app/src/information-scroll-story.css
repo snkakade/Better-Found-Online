@@ -100,14 +100,16 @@
 .scroll63-hero-bg-content-copy h3 { color: var(--scroll63-accent); font-size: clamp(2.25rem, 4vw, 5.25rem); line-height: 0.94; font-weight: 400; }
 .scroll63-hero-bg-content-copy p { margin: 0; font-size: clamp(0.9rem, 1.02vw, 1.08rem); line-height: 1.48; }
 
-.scroll63-hero-outro-content { z-index: 1; display: flex; }
-.scroll63-hero-outro-img { flex: 1; min-width: 0; overflow: hidden; will-change: clip-path; }
+/* Every story ends with images above the same left-copy/right-action band. */
+.scroll63-hero-outro-content { z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr) auto; }
+.scroll63-hero-outro-img { min-width: 0; min-height: 0; overflow: hidden; will-change: clip-path; }
 .scroll63-hero-outro-img:first-child { clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); }
 .scroll63-hero-outro-img:nth-child(2) { clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%); }
-.scroll63-hero-outro-header { position: absolute; top: 50%; left: 50%; z-index: 2; display: flex; width: min(72%, 58rem); transform: translate(-50%, -50%); flex-direction: column; align-items: center; gap: 1.75rem; text-align: center; }
-.scroll63-hero-outro-header h3 { font-size: clamp(2.6rem, 5.2vw, 6rem); line-height: 0.92; font-weight: 600; letter-spacing: -0.045em; text-shadow: 0 0.08em 0.45em rgb(32 48 154 / 0.45); }
-.scroll63-hero-outro-header > p { width: min(42rem, 92%); margin: 0; color: color-mix(in srgb, var(--scroll63-light) 78%, transparent); font-size: clamp(.95rem, 1.25vw, 1.2rem); line-height: 1.55; text-shadow: 0 .1em .7em rgb(32 48 154 / .5); }
-.scroll63-hero-outro-cta { display: inline-flex; min-height: 3.5rem; align-items: center; justify-content: center; gap: 1.4rem; border: 1px solid currentColor; padding: 0.85rem 1.25rem; color: inherit; font-size: clamp(0.85rem, 1vw, 1rem); font-weight: 700; letter-spacing: 0.02em; text-decoration: none; text-transform: uppercase; }
+.scroll63-hero-outro-header { position: relative; grid-column: 1 / -1; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto; width: 100%; align-items: center; gap: 16px 28px; padding: 24px max(5vw, 24px); background: var(--scroll63-dark); text-align: left; }
+.scroll63-hero-outro-copy { min-width: 0; }
+.scroll63-hero-outro-header h3 { font-size: clamp(2.6rem, 5.2vw, 6rem); line-height: 1.04; font-weight: 600; letter-spacing: -0.045em; }
+.scroll63-hero-outro-copy > p { max-width: 50rem; margin: 12px 0 0; color: color-mix(in srgb, var(--scroll63-light) 78%, transparent); font-size: clamp(.95rem, 1.25vw, 1.2rem); line-height: 1.55; }
+.scroll63-hero-outro-cta { display: inline-flex; justify-self: end; min-height: 3.5rem; align-items: center; justify-content: center; gap: 1.4rem; border: 1px solid currentColor; padding: 0.85rem 1.25rem; color: inherit; font-size: clamp(0.85rem, 1vw, 1rem); font-weight: 700; letter-spacing: 0.02em; text-decoration: none; text-transform: uppercase; }
 .scroll63-hero-outro-cta span { font-size: 1.25em; transition: transform 180ms ease; }
 .scroll63-hero-outro-cta:hover span,
 .scroll63-hero-outro-cta:focus-visible span { transform: translate(0.18rem, -0.18rem); }
@@ -132,7 +134,6 @@
   .scroll63-hero-bg-content-col:nth-child(2) .scroll63-hero-bg-content-copy { margin-top: 50svh; }
   .scroll63-hero-bg-content-col { padding: 1.25rem; }
   .scroll63-hero-fg-header { width: 100%; padding: 1.25rem; }
-  .scroll63-hero-outro-header { width: min(88%, 44rem); padding: 2rem; }
   .scroll63-about { width: 100%; padding: 2rem; }
 }
 
@@ -195,16 +196,17 @@
   .scroll63-story .scroll63-hero-outro-header {
     position: static;
     grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
     width: 100%;
     padding: 36px 20px 48px;
     transform: none;
-    align-items: flex-start;
+    align-items: start;
     gap: 20px;
     text-align: left;
   }
   .scroll63-story .scroll63-hero-outro-header h3 { font-size: clamp(1.875rem, 8vw, 2.5rem); line-height: 1.1; font-weight: 400; text-shadow: none; }
-  .scroll63-story .scroll63-hero-outro-header > p { width: 100%; font-size: 1rem; line-height: 1.6; text-shadow: none; }
-  .scroll63-story .scroll63-hero-outro-cta { width: 100%; }
+  .scroll63-story .scroll63-hero-outro-copy > p { width: 100%; font-size: 1rem; line-height: 1.6; }
+  :root .site .scroll63-story .scroll63-hero-outro-cta { --action-width: 100%; width: 100%; }
   .scroll63-story .scroll63-about { height: auto; min-height: 0; padding: 48px 20px; text-align: left; }
   .scroll63-story .scroll63-about > div { width: 100%; }
   .scroll63-story .scroll63-about h3 { font-size: clamp(2rem, 9vw, 2.75rem); line-height: 1.06; }

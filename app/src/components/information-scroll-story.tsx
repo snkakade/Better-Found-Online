@@ -127,8 +127,10 @@ export function InformationScrollStory({
         <div className="scroll63-hero-outro-content">
           {outroImages.map((image) => <div className="scroll63-hero-outro-img" key={`${image.src}-${image.alt}`}><img src={image.src} srcSet={editorialSrcSet(image.src)} sizes="50vw" alt={image.alt} loading="lazy" decoding="async" /></div>)}
           <div className="scroll63-hero-outro-header">
-            <h3>{outroHeading}</h3>
-            {outroBody && <p>{outroBody}</p>}
+            <div className="scroll63-hero-outro-copy">
+              <h3>{outroHeading}</h3>
+              {outroBody && <p>{outroBody}</p>}
+            </div>
             <a className="scroll63-hero-outro-cta" href={outroCtaHref} target={outroCtaHref.startsWith("http") ? "_blank" : undefined} rel={outroCtaHref.startsWith("http") ? "noopener noreferrer" : undefined}>{outroCtaLabel}</a>
           </div>
         </div>
