@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
+import { editorialSrcSet } from "@/editorial-images";
 import "@/information-scroll-story.css";
 
 export type InformationScrollStoryProps = {
@@ -162,10 +163,10 @@ export function InformationScrollStory({
   }, [scrollScreens]);
 
   return (
-    <div className="scroll63-story" ref={root} id={id}>
+    <div className={`scroll63-story${editorialSrcSet(foregroundImage) ? " scroll63-story--editorial" : ""}`} ref={root} id={id}>
       <section className="scroll63-hero" aria-label={foregroundHeading}>
         <div className="scroll63-hero-fg-content">
-          <div className="scroll63-hero-fg-img"><img src={foregroundImage} alt={foregroundAlt} /></div>
+          <div className="scroll63-hero-fg-img"><img src={foregroundImage} srcSet={editorialSrcSet(foregroundImage)} sizes="100vw" alt={foregroundAlt} decoding="async" /></div>
           <div className="scroll63-hero-fg-header"><h2>{foregroundHeading}</h2></div>
           <div className="scroll63-hero-fg-overlay-dark" aria-hidden="true" />
           <div className="scroll63-hero-fg-overlay" aria-hidden="true" />
@@ -177,7 +178,7 @@ export function InformationScrollStory({
         </div>
 
         <div className="scroll63-hero-outro-content">
-          {outroImages.map((image) => <div className="scroll63-hero-outro-img" key={`${image.src}-${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" /></div>)}
+          {outroImages.map((image) => <div className="scroll63-hero-outro-img" key={`${image.src}-${image.alt}`}><img src={image.src} srcSet={editorialSrcSet(image.src)} sizes="50vw" alt={image.alt} loading="lazy" decoding="async" /></div>)}
           <div className="scroll63-hero-outro-header">
             <h3>{outroHeading}</h3>
             {outroBody && <p>{outroBody}</p>}

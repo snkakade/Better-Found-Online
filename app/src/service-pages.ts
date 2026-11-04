@@ -1,4 +1,5 @@
 import type { ServiceLandingData } from "@/components/service-landing";
+import { editorialImages } from "./editorial-images.ts";
 
 export const videoProduction: ServiceLandingData = {
   path: "/services/video-production-editing",
@@ -21,7 +22,9 @@ export const videoProduction: ServiceLandingData = {
   relatedHeading: "Need animation or help publishing?",
   related: [{ label: "Social Media Management", href: "/services/social-media-management" }, { label: "Motion Graphics & Animation", href: "/services/motion-graphics-animation" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss a Video Project",
-  image: "/assets/world/poster.webp",
+  image: editorialImages.videoEditing.src,
+  imageAlt: editorialImages.videoEditing.alt,
+  supportImage: editorialImages.motionStoryboards,
 };
 
 export const cgiRendering: ServiceLandingData = {
@@ -45,7 +48,9 @@ export const cgiRendering: ServiceLandingData = {
   relatedHeading: "Need animation or a finished video?",
   related: [{ label: "Creative Production", href: "/creative-production" }, { label: "Motion Graphics & Animation", href: "/services/motion-graphics-animation" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }],
   cta: "Discuss a 3D Project",
-  image: "/assets/portals.webp",
+  image: editorialImages.cgiMaterials.src,
+  imageAlt: editorialImages.cgiMaterials.alt,
+  supportImage: editorialImages.productPhotography,
 };
 
 export const motionGraphics: ServiceLandingData = {
@@ -69,7 +74,9 @@ export const motionGraphics: ServiceLandingData = {
   relatedHeading: "Need video editing or campaign graphics?",
   related: [{ label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Graphic Design", href: "/services/graphic-design" }, { label: "Creative Production", href: "/creative-production" }],
   cta: "Discuss an Animation Project",
-  image: "/assets/connect.webp",
+  image: editorialImages.motionStoryboards.src,
+  imageAlt: editorialImages.motionStoryboards.alt,
+  supportImage: editorialImages.graphicPrintProofs,
 };
 
 export const graphicDesign: ServiceLandingData = {
@@ -93,7 +100,9 @@ export const graphicDesign: ServiceLandingData = {
   relatedHeading: "Need video, publishing, or paid ads?",
   related: [{ label: "Performance Marketing", href: "/services/performance-marketing" }, { label: "Social Media Management", href: "/services/social-media-management" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }],
   cta: "Discuss a Design Project",
-  image: "/assets/macro.webp",
+  image: editorialImages.graphicPrintProofs.src,
+  imageAlt: editorialImages.graphicPrintProofs.alt,
+  supportImage: editorialImages.websitePlanning,
 };
 
 export const socialMedia: ServiceLandingData = {
@@ -117,7 +126,9 @@ export const socialMedia: ServiceLandingData = {
   relatedHeading: "Need graphics, video, or paid ads?",
   related: [{ label: "Graphic Design", href: "/services/graphic-design" }, { label: "Video Production & Editing", href: "/services/video-production-editing" }, { label: "Performance Marketing", href: "/services/performance-marketing" }],
   cta: "Discuss Social Media",
-  image: "/assets/connect.webp",
+  image: editorialImages.socialContent.src,
+  imageAlt: editorialImages.socialContent.alt,
+  supportImage: editorialImages.connectedWorkflow,
 };
 
 export const performanceMarketing: ServiceLandingData = {
@@ -141,5 +152,7 @@ export const performanceMarketing: ServiceLandingData = {
   relatedHeading: "Need better pages, creative, or social content?",
   related: [{ label: "Website & Landing Pages", href: "/services#build" }, { label: "Creative Production", href: "/creative-production" }, { label: "Social Media Management", href: "/services/social-media-management" }],
   cta: "Discuss Paid Marketing",
-  image: "/assets/world/poster.webp",
+  image: editorialImages.campaignPlanning.src,
+  imageAlt: editorialImages.campaignPlanning.alt,
+  supportImage: editorialImages.connectedWorkflow,
 };

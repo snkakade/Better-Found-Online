@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { PageSchema } from "@/components/page-schema";
 import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/components/site-chrome";
+import { editorialImages, editorialSrcSet } from "@/editorial-images";
 
 export const Route = createFileRoute("/insights")({
   component: InsightsPage,
@@ -22,8 +23,8 @@ const insights = [
     category: "Web Design",
     filter: "web-design",
     title: "Your website should do more than look good.",
-    image: "/assets/portals.webp",
-    imageAlt: "Connected sculptural frames illustrating a clear website structure",
+    image: editorialImages.websitePlanning.src,
+    imageAlt: editorialImages.websitePlanning.alt,
     paragraphs: [
       "A strong website makes your business easier to understand and your next step easier to take.",
       "Start with a clear offer, useful information, credible proof, and a reason to get in touch.",
@@ -34,8 +35,8 @@ const insights = [
     category: "Search & Content",
     filter: "search-content",
     title: "Better visibility starts with better answers.",
-    image: "/assets/macro.webp",
-    imageAlt: "Detailed metal surface representing focused search and useful content",
+    image: editorialImages.searchResearch.src,
+    imageAlt: editorialImages.searchResearch.alt,
     paragraphs: [
       "People search because they're looking for something specific. Your content should meet that need.",
       "Answer real questions, explain your services clearly, and make useful information easy to find.",
@@ -46,8 +47,8 @@ const insights = [
     category: "Design & Motion",
     filter: "design-motion",
     title: "Not every movement moves things forward.",
-    image: "/assets/connect.webp",
-    imageAlt: "Flowing metal form representing purposeful digital motion",
+    image: editorialImages.motionStoryboards.src,
+    imageAlt: editorialImages.motionStoryboards.alt,
     paragraphs: [
       "Animation should make a website easier to follow, not harder to use.",
       "When motion has a purpose, it can guide attention, explain ideas, and give a digital experience its own character.",
@@ -182,8 +183,7 @@ function InsightsPage() {
             {visibleInsights.map((item) => (
               <article className="insights-card" id={`insight-${item.number}`} data-insight-reveal key={item.number}>
                 <div className="insights-card-media">
-                  <span className="insights-browser-bar"><i aria-hidden="true">● ● ●</i><span>Better Found Online / Insights</span><span aria-hidden="true">↘</span></span>
-                  <img src={item.image} alt={item.imageAlt} />
+                  <img src={item.image} srcSet={editorialSrcSet(item.image)} sizes="(max-width: 900px) 100vw, 85vw" alt={item.imageAlt} width="1440" height="960" loading="lazy" decoding="async" />
                 </div>
                 <div className="insights-card-meta">
                   <div>

@@ -113,6 +113,22 @@
 .scroll63-hero-outro-cta:focus-visible span { transform: translate(0.18rem, -0.18rem); }
 .scroll63-line { position: relative; will-change: transform; }
 
+/* Photography keeps its natural colour; only text areas need a blue surface. */
+@media (min-width: 901px) {
+  .scroll63-story--editorial .scroll63-hero-fg-img { position: relative; }
+  .scroll63-story--editorial .scroll63-hero-fg-img::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgb(32 48 154 / .2) 65%, rgb(32 48 154 / .94));
+    content: "";
+    pointer-events: none;
+  }
+  .scroll63-story--editorial .scroll63-hero-outro-header {
+    padding: 28px;
+    background: rgb(32 48 154 / .94);
+  }
+}
+
 @media (max-width: 1000px) {
   .scroll63-hero-bg-content-copy { width: 72%; }
   .scroll63-hero-bg-content-col:nth-child(2) .scroll63-hero-bg-content-copy { margin-left: auto; }

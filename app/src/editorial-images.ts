@@ -1,0 +1,25 @@
+/* Illustrative editorial scenes. Actual project videos and campaign reports
+   remain the portfolio evidence. Each image has a smaller mobile source. */
+function editorialImage(name: string, alt: string) {
+  const src = `/assets/editorial/${name}.webp`;
+  return { src, srcSet: editorialSrcSet(src), alt, width: 1440, height: 960 };
+}
+
+export function editorialSrcSet(src: string) {
+  return src.startsWith("/assets/editorial/")
+    ? `${src.replace(/\.webp$/, "-720.webp")} 720w, ${src} 1440w`
+    : undefined;
+}
+
+export const editorialImages = {
+  videoEditing: editorialImage("video-editing", "Video editing workstation with a laptop, monitor, headphones and an external drive"),
+  cgiMaterials: editorialImage("cgi-materials", "Glass, ceramic and brushed metal material studies beside a 3D modelling screen"),
+  motionStoryboards: editorialImage("motion-storyboards", "Six paper storyboard frames planning the movement of a blue circle"),
+  graphicPrintProofs: editorialImage("graphic-print-proofs", "Blue geometric print proofs, a red colour swatch and metal clips on a design table"),
+  socialContent: editorialImage("social-content", "A phone, printed content photographs and a paper publishing calendar"),
+  websitePlanning: editorialImage("website-planning", "Paper website wireframes beside a laptop, pencil and ruler"),
+  searchResearch: editorialImage("search-research", "Reference books, blue page tabs and a laptop on a library research desk"),
+  campaignPlanning: editorialImage("campaign-planning", "Campaign layouts and planning cards arranged beside a laptop and calculator"),
+  productPhotography: editorialImage("product-photography", "Camera and softbox lighting a blue glass bottle on a white tabletop photography set"),
+  connectedWorkflow: editorialImage("connected-workflow", "Blue paper workflow cards connected by pencil lines with red approval markers"),
+};

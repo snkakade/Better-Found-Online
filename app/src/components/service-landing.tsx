@@ -3,6 +3,7 @@ import { PageTransition, SiteFooter, SiteHeader, TransitionLink } from "@/compon
 import { InformationScrollStory } from "@/components/information-scroll-story";
 import { serviceRelatedOptions } from "@/service-related-options";
 import type { RelatedServicePath } from "@/service-related-options";
+import { editorialSrcSet } from "@/editorial-images";
 import "@/service-related-options.css";
 
 export type ServiceLink = { label: string; href: RelatedServicePath };
@@ -35,6 +36,8 @@ export type ServiceLandingData = {
   related: ServiceLink[];
   cta: string;
   image: string;
+  imageAlt?: string;
+  supportImage?: { src: string; alt: string };
 };
 
 export function ServiceStructuredData({ data }: { data: ServiceLandingData }) {
@@ -90,21 +93,21 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
               <a className="story-link" href="#scope">Explore the Scope <ArrowDown size={16} weight="light" /></a>
             </div>
           </div>
-          <figure className="service-detail-hero-media"><img src={data.image} alt="Abstract sculptural artwork representing the service" width="1200" height="1200" /></figure>
+          <figure className={`service-detail-hero-media${editorialSrcSet(data.image) ? " service-detail-hero-media--editorial" : ""}`}><img src={data.image} srcSet={editorialSrcSet(data.image)} sizes="(max-width: 900px) 100vw, 45vw" alt={data.imageAlt ?? "Abstract sculptural artwork representing the service"} width={editorialSrcSet(data.image) ? 1440 : 1200} height={editorialSrcSet(data.image) ? 960 : 1200} decoding="async" /></figure>
         </section>
 
         <InformationScrollStory
           id="scope"
           foregroundImage={data.image}
-          foregroundAlt={`Abstract sculptural artwork representing ${data.eyebrow}`}
+          foregroundAlt={data.imageAlt ?? `Abstract sculptural artwork representing ${data.eyebrow}`}
           foregroundHeading={data.sectionHeading}
           leftTitle="What it includes"
           leftBody={`${data.definition} Scope includes ${data.services.join(", ")}.`}
           rightTitle="What it solves"
           rightBody={`${data.supporting} ${data.audience} ${data.problem}`}
           outroImages={[
-            { src: data.image, alt: `${data.eyebrow} visual study` },
-            { src: data.image === "/assets/macro.webp" ? "/assets/connect.webp" : "/assets/macro.webp", alt: "Connected metallic forms in the Better Found Online visual system" },
+            { src: data.image, alt: data.imageAlt ?? `${data.eyebrow} visual study` },
+            data.supportImage ?? { src: data.image === "/assets/macro.webp" ? "/assets/connect.webp" : "/assets/macro.webp", alt: "Connected metallic forms in the Better Found Online visual system" },
           ]}
           outroHeading="Turn attention into action."
           outroCtaLabel={data.cta}
