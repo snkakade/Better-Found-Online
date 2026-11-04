@@ -166,6 +166,7 @@ function ServicesPage() {
         gsap.set(".services-hero-card", { y: 56, scale: 0.96, rotate: 0, autoAlpha: 0 });
 
         const timeline = gsap.timeline({ delay: 0.05 });
+        const progress = { current: 0 };
 
         timeline.to(".services-preloader-img", {
           scale: 1,
@@ -184,33 +185,29 @@ function ServicesPage() {
           y: "0%",
           duration: 1,
           ease: "servicesHop2",
-          onStart: () => {
-            const value = { current: 0 };
-            gsap.to(value, {
-              current: 100,
-              duration: 2,
-              delay: 0.5,
-              ease: "power2.inOut",
-              onUpdate: () => {
-                if (counter.current) counter.current.textContent = String(Math.round(value.current)).padStart(3, "0");
-              },
-            });
-          },
         }, "<");
-        timeline.to(".services-preloader-counter p", { y: "-100%", duration: 0.75, ease: "servicesHop2" }, 3.25);
+        timeline.to(progress, {
+          current: 100,
+          duration: 2.15,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            if (counter.current) counter.current.textContent = String(Math.round(progress.current)).padStart(3, "0");
+          },
+        }, 0.85);
+        timeline.to(".services-preloader-counter p", { y: "-100%", duration: 0.75, ease: "servicesHop2" }, 4.25);
         timeline.to(preloaderHeaderSplit.chars, {
           y: "-100%",
           duration: 0.75,
           ease: "servicesHop2",
           stagger: { each: 0.125, from: "random" },
-        }, 3.25);
+        }, 4.25);
         timeline.to(".services-preloader-img", {
           scale: 0,
           clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
           duration: 1,
           ease: "servicesHop2",
           stagger: -0.075,
-        }, 3.5);
+        }, 4.5);
         timeline.to(".services-preloader", {
           clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
           duration: 1,
@@ -219,15 +216,15 @@ function ServicesPage() {
             document.body.style.overflow = previousOverflow;
             gsap.set(".services-preloader", { autoAlpha: 0, pointerEvents: "none" });
           },
-        }, 4.35);
-        timeline.to(".services-hero-title", { y: 0, autoAlpha: 1, duration: 1, ease: "servicesHop" }, 4.65);
+        }, 5.35);
+        timeline.to(".services-hero-title", { y: 0, autoAlpha: 1, duration: 1, ease: "servicesHop" }, 5.65);
         timeline.to(supportingTargets, {
           y: 0,
           autoAlpha: 1,
           duration: 1,
           ease: "servicesHop",
           stagger: 0.075,
-        }, 4.75);
+        }, 5.75);
         timeline.to(".services-hero-card", {
           y: 0,
           scale: 1,
@@ -236,10 +233,10 @@ function ServicesPage() {
           duration: 1.05,
           ease: "servicesHop",
           stagger: 0.085,
-        }, 4.82);
+        }, 5.82);
 
-        // Finish the decorative introduction before it can delay reading.
-        timeline.timeScale(8);
+        // About 3.6 seconds overall, with a one-second hold on the settled title.
+        timeline.timeScale(2);
       }
 
       if (!compactMotion) {
