@@ -781,7 +781,6 @@ async function handleCallPreflight(request: Request, env: ConsoleEnv, actor: Aut
   if (local.minutes < windowStart || local.minutes >= windowEnd) reasons.push(`Recipient local time is outside the ${minutesLabel(windowStart)} to ${minutesLabel(windowEnd)} calling window.`);
   if (!agentAttested) reasons.push("Confirm the truthful identity and business-purpose statement before calling.");
   if (recipientType === "unknown") reasons.push("Verify whether this is a business or consumer line.");
-  if (recipientType === "business" && !companyName) reasons.push("Record the business name before calling.");
   if (recipientType === "business" && !new Set(["business_line_verified", "screened_clear"]).has(screeningBasis)) reasons.push("Document the business line or completed screening.");
   if (recipientType === "consumer" && screeningBasis !== "screened_clear") reasons.push("Consumer lines require a current do-not-call screening result.");
   if (callMode === "ai_or_prerecorded") {

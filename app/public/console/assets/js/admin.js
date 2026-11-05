@@ -46,7 +46,7 @@
     contactPage: 1,
     scheduleFilter: "upcoming",
     deferredInstall: null,
-    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null, muted: false, micStream: null, micFrame: null, hiddenRecents: false, preflight: null, preflightPhone: "" }
+    voice: { device: null, call: null, incoming: null, timer: null, startedAt: null, presenceTimer: null, muted: false, micStream: null, micFrame: null, hiddenRecents: false, preflight: null, preflightPhone: "", reviewLoading: false, reviewSubmitting: false, reviewRequest: 0, connecting: false }
   };
 
   function haptic(duration = 12) {
@@ -1055,7 +1055,7 @@
   function updateCallButton() {
     const number = normalizedDialNumber();
     if (state.voice.preflightPhone && state.voice.preflightPhone !== number) resetCallPreflight();
-    $("#call-button").disabled = !/^\+[1-9]\d{7,14}$/.test(number) || Boolean(state.voice.call);
+    $("#call-button").disabled = !/^\+[1-9]\d{7,14}$/.test(number) || Boolean(state.voice.call) || state.voice.connecting || state.voice.reviewLoading || state.voice.reviewSubmitting;
     const match = state.leads.find((lead) => lead.phone === number) || state.contacts.find((contact) => contact.phone === number);
     const name = match ? `${match.first_name || match.firstName || ""} ${match.last_name || match.lastName || ""}`.trim() : "";
     $("#dial-contact-match").textContent = name ? [name, match.company].filter(Boolean).join(" · ") : "No contact selected";
@@ -1065,7 +1065,8 @@
     state.voice.preflight = null;
     state.voice.preflightPhone = "";
     [["#preflight-recipient", "Review"], ["#preflight-time", "Review"], ["#preflight-dnc", "Review"], ["#preflight-voice", "Live"]].forEach(([selector, text]) => { const node = $(selector); if (node) { node.textContent = text; node.closest("span")?.removeAttribute("data-state"); } });
-    const buttonText = $("#call-button span"); if (buttonText) buttonText.textContent = "Review call";
+    const buttonText = $("#call-button span"); if (buttonText) buttonText.textContent = "Call";
+    const notes = $("#dial-review-notes"); if (notes) { notes.hidden = true; notes.innerHTML = ""; }
   }
 
   function renderPreflightChecks(result) {
@@ -1079,6 +1080,12 @@
     set("#preflight-time", byId.window, result.localTime || "Unknown");
     set("#preflight-dnc", byId.suppression, result.allowed ? "Clear" : "Blocked");
     set("#preflight-voice", byId.voice, "Live agent");
+    const notes = $("#dial-review-notes");
+    const warnings = result.warnings || [];
+    if (notes) {
+      notes.hidden = !warnings.length;
+      notes.innerHTML = warnings.length ? `<summary>Call notes (${warnings.length})</summary><ul>${warnings.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "";
+    }
   }
 
   function renderPreflightResult(result) {
@@ -1086,20 +1093,28 @@
     const reasons = result.reasons || [];
     const warnings = result.warnings || [];
     panel.hidden = false;
-    panel.className = `preflight-result ${reasons.length ? "blocked" : warnings.length ? "warning" : "allowed"}`;
-    panel.innerHTML = `<strong><i class="ph-bold ph-${reasons.length ? "prohibit" : warnings.length ? "warning-circle" : "check-circle"}"></i>${reasons.length ? "Call blocked" : warnings.length ? "Allowed with review notes" : "Checks passed"}</strong>${[...reasons, ...warnings].map((item) => `<p>${escapeHtml(item)}</p>`).join("")}${result.openingScript && !reasons.length ? `<div class="approved-opening"><small>Approved opening</small><p>${escapeHtml(result.openingScript).replace("{{agent}}", state.user?.name || "the agent").replace("{{company}}", $("#preflight-company").value.trim() || "your business")}</p></div>` : ""}`;
+    panel.className = `preflight-result ${reasons.length ? "blocked" : "allowed"}`;
+    panel.innerHTML = `<strong><i class="ph-bold ph-${reasons.length ? "prohibit" : "check-circle"}"></i>${reasons.length ? "Before you can call" : "Ready to connect"}</strong>${reasons.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}`;
+    const notes = $("#preflight-notes");
+    notes.hidden = !warnings.length;
+    notes.innerHTML = warnings.length ? `<summary>Notes · These do not block this call</summary><ul>${warnings.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "";
   }
 
   async function openCallPreflight() {
+    if (state.voice.call || state.voice.connecting || state.voice.reviewLoading || state.voice.reviewSubmitting) return;
     const to = normalizedDialNumber();
     if (!/^\+[1-9]\d{7,14}$/.test(to)) return toast("warning", "Enter a valid phone number");
+    state.voice.reviewLoading = true;
+    updateCallButton();
     resetCallPreflight();
     if (!state.compliance) await loadCompliance();
     const form = $("#call-preflight-form");
     form.reset();
-    $("#preflight-submit span").textContent = "Review and call";
+    $$("details", form).forEach(details => { details.open = false; });
+    $("#preflight-submit span").textContent = "Call now";
     $("#preflight-dialog-number").textContent = formatPhone(to);
     $("#preflight-result").hidden = true;
+    $("#preflight-notes").hidden = true;
     const match = state.leads.find((lead) => lead.phone === to) || state.contacts.find((contact) => contact.phone === to);
     $("#preflight-company").value = match?.company || "";
     try {
@@ -1113,24 +1128,38 @@
       $("#preflight-screening").value = result.suppressed ? "listed_do_not_call" : profile.screening_basis || "not_screened";
       $("#preflight-consent-type").value = profile.consent_type || "none";
       $("#preflight-consent-evidence").value = profile.consent_evidence || "";
+      $("#preflight-ai-consent").checked = Boolean(profile.ai_voice_consent);
+      // Recording permission is confirmed for this call, never carried forward.
+      $("#preflight-recording-consent").checked = false;
+      $("#preflight-saved-note").textContent = result.profile ? "Saved recipient details loaded. Update anything that has changed." : "Recipient details are saved for the next call.";
       if (result.suppressed) renderPreflightResult({ reasons: [`Internal do-not-call: ${result.suppressed.reason || "Do-not-call request"}`], warnings: [] });
-    } catch (error) { toast("error", "Could not load call review", error.message); }
+    } catch (error) { toast("error", "Could not load recipient details", error.message); }
+    finally { state.voice.reviewLoading = false; updateCallButton(); }
     togglePreflightConsentFields();
     openDialog($("#call-preflight-dialog"));
     window.setTimeout(() => $("#preflight-recipient-type").focus(), 60);
   }
 
   function togglePreflightConsentFields() {
-    $("#ai-consent-row").hidden = $("#preflight-call-mode").value !== "ai_or_prerecorded";
-    $("#recording-consent-row").hidden = $("#preflight-recording-mode").value !== "on";
+    const ai = $("#preflight-call-mode").value === "ai_or_prerecorded";
+    const recording = $("#preflight-recording-mode").value === "on";
+    $("#preflight-ai-fields").hidden = !ai;
+    $("#ai-consent-row").hidden = !ai;
+    $("#recording-consent-row").hidden = !recording;
+    $("#preflight-method-summary").textContent = `${ai ? "AI or prerecorded" : "Live agent"} · Recording ${recording ? "on" : "off"}`;
   }
 
   async function handleCallPreflight(event) {
     event.preventDefault();
+    if (state.voice.reviewLoading || state.voice.reviewSubmitting || state.voice.connecting || state.voice.call) return;
     const button = $("#preflight-submit");
     const to = normalizedDialNumber();
     if (state.voice.preflight?.allowed && state.voice.preflightPhone === to && new Date(state.voice.preflight.expiresAt).getTime() > Date.now()) return connectApprovedCall();
+    state.voice.reviewSubmitting = true;
+    const reviewRequest = ++state.voice.reviewRequest;
     button.disabled = true;
+    $("#preflight-submit span").textContent = "Checking…";
+    updateCallButton();
     const payload = {
       phone: to,
       recipientType: $("#preflight-recipient-type").value,
@@ -1147,33 +1176,53 @@
       recordingConsent: $("#preflight-recording-consent").checked,
       agentAttested: $("#preflight-attestation").checked
     };
+    const fields = $$("input,select,textarea", $("#call-preflight-form"));
+    fields.forEach(field => { field.disabled = true; });
     try {
       const result = await api("/api/console/call-preflight", { method: "POST", body: JSON.stringify(payload) });
+      if (state.voice.reviewRequest !== reviewRequest || !$("#call-preflight-dialog").open || normalizedDialNumber() !== to) return;
+      if (!result.allowed) {
+        renderPreflightResult({ ...result, reasons: result.reasons?.length ? result.reasons : ["The call check could not be completed. Try again."] });
+        renderPreflightChecks(result);
+        return;
+      }
       renderPreflightResult(result);
       renderPreflightChecks(result);
       state.voice.preflight = result;
       state.voice.preflightPhone = to;
-      $("#call-button span").textContent = "Approved";
-      $("#preflight-submit span").textContent = "Start approved call";
+      $("#preflight-submit span").textContent = "Connecting…";
+      await connectApprovedCall();
     } catch (error) {
-      const result = error.details || { reasons: [error.message], warnings: [] };
+      if (state.voice.reviewRequest !== reviewRequest || !$("#call-preflight-dialog").open) return;
+      const result = Array.isArray(error.details?.reasons) && error.details.reasons.length ? error.details : { reasons: [error.message], warnings: [] };
       renderPreflightResult(result);
       renderPreflightChecks(result);
       state.voice.preflight = null;
       state.voice.preflightPhone = "";
-      $("#preflight-submit span").textContent = "Review and call";
-    } finally { button.disabled = false; }
+    } finally {
+      state.voice.reviewSubmitting = false;
+      fields.forEach(field => { field.disabled = false; });
+      button.disabled = false;
+      $("#preflight-submit span").textContent = "Call now";
+      updateCallButton();
+    }
   }
 
   async function connectApprovedCall() {
+    if (state.voice.call || state.voice.connecting) return;
     const to = normalizedDialNumber();
     const preflight = state.voice.preflight;
+    const reviewRequest = state.voice.reviewRequest;
     if (!preflight?.allowed || state.voice.preflightPhone !== to || new Date(preflight.expiresAt).getTime() <= Date.now()) return openCallPreflight();
-    if (!state.voice.device) await initVoice();
-    if (!state.voice.device) return toast("error", "Voice is not available", "Check the Twilio Voice API configuration.");
+    state.voice.connecting = true;
+    updateCallButton();
     try {
+      if (!state.voice.device) await initVoice();
+      if (!state.voice.device) return toast("error", "Voice is not available", "Check the Twilio Voice API configuration.");
+      if (state.voice.reviewRequest !== reviewRequest || !$("#call-preflight-dialog").open) return;
       haptic(20);
       const call = await state.voice.device.connect({ params: { TargetNumber: to, PreflightId: preflight.id, CallMode: $("#preflight-call-mode").value, Recording: $("#preflight-recording-mode").value } });
+      if (state.voice.reviewRequest !== reviewRequest || !$("#call-preflight-dialog").open) { call.disconnect(); return; }
       $("#call-preflight-dialog").close();
       state.voice.call = call;
       state.voice.muted = false;
@@ -1188,6 +1237,7 @@
       call.on("cancel", endCallUI);
       call.on("error", (error) => { toast("error", "Call failed", error.message); endCallUI(); });
     } catch (error) { toast("error", "Could not place call", error.message); endCallUI(); }
+    finally { state.voice.connecting = false; updateCallButton(); }
   }
 
   function placeCall() { return openCallPreflight(); }
@@ -1345,16 +1395,22 @@
     });
     $("#call-outcome-form").addEventListener("submit", handleCallOutcome);
     $("#call-preflight-form").addEventListener("submit", handleCallPreflight);
+    $("#call-preflight-dialog").addEventListener("close", () => { state.voice.reviewRequest += 1; });
     $("#call-preflight-form").addEventListener("input", () => {
       if (!state.voice.preflight) return;
       state.voice.preflight = null;
       state.voice.preflightPhone = "";
       $("#preflight-result").hidden = true;
-      $("#preflight-submit span").textContent = "Review and call";
-      $("#call-button span").textContent = "Review call";
+      $("#preflight-notes").hidden = true;
+      $("#preflight-submit span").textContent = "Call now";
+      $("#call-button span").textContent = "Call";
     });
     $("#preflight-call-mode").addEventListener("change", togglePreflightConsentFields);
     $("#preflight-recording-mode").addEventListener("change", togglePreflightConsentFields);
+    $("#preflight-edit-method").addEventListener("click", () => {
+      $("#preflight-method-details").open = true;
+      $("#preflight-call-mode").focus();
+    });
     $("#receive-calls-toggle").addEventListener("change", (event) => api("/api/console/presence", { method: "POST", body: JSON.stringify({ available: event.target.checked }) }).then(() => toast("success", event.target.checked ? "Browser calls enabled" : "Browser calls paused")).catch((error) => toast("error", "Could not update availability", error.message)));
     $("#answer-call").addEventListener("click", acceptIncomingCall);
     $("#decline-call").addEventListener("click", () => { state.voice.incoming?.reject(); state.voice.incoming = null; $("#incoming-call-dialog").close(); });
