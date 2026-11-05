@@ -69,16 +69,9 @@
     margin: 0;
   }
 
-  /* Keep the first conversion action ahead of the swipeable service imagery. */
+  /* The service menu follows the hero copy and its conversion actions. */
   :root .services-page .services-hero { padding-inline: var(--mobile-gutter); }
-  :root .services-page .services-hero-cta { grid-row: 2; }
-  :root .services-page .services-hero-cards { height: 220px; grid-row: 3; }
-  :root .services-page .services-hero-card { min-height: 220px; }
   :root .services-page .services-hero-card b { white-space: normal; line-height: 1.3; }
-  :root .services-page .services-hero-card:hover { transform: none !important; }
-  :root .services-page .services-hero-cards { scrollbar-width: thin; scrollbar-color: var(--brand-red) transparent; padding-bottom: 8px; }
-  :root .services-page .services-hero-cards::-webkit-scrollbar { display: block; height: 3px; }
-  :root .services-page .services-hero-cards::-webkit-scrollbar-thumb { background: var(--brand-red); }
 
   :root .services-page .service-chapter {
     min-height: 0;

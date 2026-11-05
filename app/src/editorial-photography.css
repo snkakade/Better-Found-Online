@@ -11,9 +11,6 @@
 }
 :root .site.creative-page .creative-hero-media img { display: block; object-fit: contain; }
 
-:root .site.services-page .services-hero-cards { height: auto; }
-:root .site.services-page .services-hero-card { min-height: 0; grid-template-rows: auto 1fr; }
-:root .site.services-page .services-hero-card img { height: auto; aspect-ratio: 3 / 2; }
 :root .site.services-page .service-chapter-visual { height: auto; aspect-ratio: 3 / 2; }
 :root .site.services-page .service-chapter-image { object-fit: contain; }
 :root .site.home-page .macro-window { aspect-ratio: 3 / 2; }

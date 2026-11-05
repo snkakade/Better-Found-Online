@@ -29,7 +29,7 @@ const services = [
     body: "Your website should make your business easy to understand, credible, and simple to contact. We bring strategy, messaging, design, and development together to create a digital experience with a clear purpose.",
     items: ["Website Strategy & Positioning", "Website Design & Development", "User Experience & Conversion", "Interactive Digital Experiences"],
     result: "A distinctive digital presence that gives visitors a clear reason to stay, explore, and take action.",
-    cardLine: "Websites / Digital Experience",
+    heroSummary: "Business websites and landing pages.",
     cta: "Explore Website Design",
     href: "/services/websites",
     image: humanImages.websiteWorkshop.src,
@@ -43,7 +43,7 @@ const services = [
     body: "From polished campaign videos to detailed 3D visuals, we create content that helps brands show what words alone cannot. Every format starts with the message, the audience, and what the content needs to accomplish.",
     items: ["Video Production & Editing", "3D Design, CGI & Rendering", "2D Animation & Motion Graphics", "Trailers & Advertisement Videos", "Graphic Design & Campaign Assets"],
     result: "Distinctive creative content for websites, marketing campaigns, product presentations, and social channels.",
-    cardLine: "Video / CGI / Animation / Design",
+    heroSummary: "Video, animation, CGI and graphic design.",
     cta: "Explore Creative Production",
     href: "/creative-production",
     secondaryCta: "Discuss a Creative Project",
@@ -59,7 +59,7 @@ const services = [
     body: "SEO, paid media, content, and social management connected to the customers you want to reach and the actions that matter to your business.",
     items: ["SEO & Search Visibility", "Performance Marketing", "Social Media Management", "Campaign Measurement"],
     result: "A clearer path from visibility to informed campaign decisions and meaningful customer action.",
-    cardLine: "Search / Paid Media / Social",
+    heroSummary: "Search visibility and paid campaigns.",
     cta: "Explore SEO & AI Search",
     href: "/services/seo-ai-search",
     secondaryCta: "Explore Performance Marketing",
@@ -75,7 +75,7 @@ const services = [
     body: "A customer journey doesn't end with a form submission. We help connect selected tools, information, and simple workflows so inquiries reach the right place and follow-up becomes easier.",
     items: ["CRM & Form Integrations", "Booking & Inquiry Workflows", "Customer Information Handoffs", "Practical Workflow Automation"],
     result: "Fewer disconnected steps between an inquiry and the people responsible for responding.",
-    cardLine: "CRM / Integrations / Automation",
+    heroSummary: "Forms, bookings and customer follow-up.",
     cta: "Discuss Integrations",
     href: "/#contact",
     image: humanImages.customerFollowup.src,
@@ -89,7 +89,7 @@ const services = [
     body: "Better decisions start with understanding what's happening. We review websites, customer journeys, and available performance information to identify practical improvements worth making.",
     items: ["Website & Conversion Reviews", "Analytics & Reporting", "Process & Workflow Reviews", "Ongoing Optimization"],
     result: "Clearer priorities, more useful information, and a practical direction for improvement.",
-    cardLine: "Performance / Reporting / Process",
+    heroSummary: "Website reviews and campaign reporting.",
     cta: "Discuss Improvements",
     href: "/#contact",
     image: humanImages.reportReview.src,
@@ -319,28 +319,27 @@ function ServicesPage() {
       <main id="main">
         <section className="services-hero" aria-labelledby="services-page-title">
           <div className="services-hero-intro">
-            <div>
-              <p className="eyebrow">Website / Creative / Search / Marketing</p>
-              <h1 className="services-hero-title" id="services-page-title">Build a stronger digital presence.</h1>
+            <p className="services-hero-kicker">Our services</p>
+            <h1 className="services-hero-title" id="services-page-title"><span>Build a stronger</span><span>digital presence.</span></h1>
+            <p className="services-hero-description">Websites, creative production and marketing for service businesses and growing brands.</p>
+            <div className="services-hero-cta">
+              <TransitionLink href="/#contact" className="services-hero-action services-hero-action-primary">
+                Discuss Your Project <ArrowUpRight size={20} aria-hidden="true" />
+              </TransitionLink>
+              <TransitionLink href="/work" className="services-hero-action services-hero-action-secondary">
+                See Our Work <ArrowUpRight size={20} aria-hidden="true" />
+              </TransitionLink>
             </div>
-            <p>Websites, creative production, SEO, paid media, social, and connected systems for service businesses and growing brands.</p>
           </div>
-          <div className="services-hero-cards">
+          <nav className="services-hero-cards" aria-label="Explore our services">
             {services.map((service) => (
-              <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.name}`}>
-                <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 900px) 90vw, 20vw" alt="" />
-                <span><b>{service.cardTitle}</b><small>{service.cardLine}</small></span>
+              <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.cardTitle}`}>
+                <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 600px) 66px, 108px" width="108" height="72" alt="" />
+                <span className="services-hero-card-copy"><b>{service.cardTitle}</b><small>{service.heroSummary}</small></span>
+                <span className="services-hero-card-arrow"><ArrowUpRight size={23} aria-hidden="true" /></span>
               </a>
             ))}
-          </div>
-          <div className="services-hero-cta">
-            <TransitionLink href="/#contact" className="services-hero-action services-hero-action-primary">
-              Discuss Your Project
-            </TransitionLink>
-            <TransitionLink href="/work" className="services-hero-action services-hero-action-secondary">
-              See Our Work
-            </TransitionLink>
-          </div>
+          </nav>
         </section>
 
         <section className="services-opening section-pad">

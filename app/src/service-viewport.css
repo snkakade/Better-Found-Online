@@ -7,7 +7,7 @@
 :root .site .service-detail-hero-media--editorial { transform: none; }
 :root .site .service-detail-hero-media--editorial img { filter: none; object-position: center; }
 
-:root .site:is(.service-detail-page, .growth-service-page, .creative-page, .services-page) main > :is(.service-detail-hero, .growth-hero, .creative-hero, .services-hero) {
+:root .site:is(.service-detail-page, .growth-service-page, .creative-page) main > :is(.service-detail-hero, .growth-hero, .creative-hero) {
   min-height: 100svh;
 }
 
