@@ -97,25 +97,27 @@ test('saved recipient facts are returned without inventing verification or conse
 const clientSource = readFileSync(new URL('../public/console/assets/js/admin.js', import.meta.url), 'utf8');
 function clientFixture(result = {}, status = 201) {
   const nodes = new Map();
+  const listeners = new Map();
   function node(selector) {
     if (!nodes.has(selector)) nodes.set(selector, {
       value: '', checked: false, hidden: false, disabled: false, open: true, textContent: '', innerHTML: '',
       closest() { return this; }, setAttribute() {}, removeAttribute() {}, focus() {},
       querySelectorAll() { return []; }, querySelector(s) { return node(s); },
       close() { this.open = false; }, showModal() { this.open = true; }, reset() {},
+      addEventListener() {}, classList: { contains() { return true; }, toggle() {} },
     });
     return nodes.get(selector);
   }
   const storage = { getItem() { return null; }, setItem() {} };
   const context = vm.createContext({
-    document: { querySelector: node, querySelectorAll() { return []; } },
+    document: { querySelector: selector => selector === 'dialog[open]' ? (node('#call-preflight-dialog').open ? node('#call-preflight-dialog') : null) : node(selector), querySelectorAll() { return []; }, activeElement: { tagName: 'BUTTON' }, addEventListener(event, handler) { listeners.set(event, handler); } },
     localStorage: storage, sessionStorage: storage, navigator: {},
-    window: { setTimeout() {} }, Date, console,
+    window: { setTimeout() {}, addEventListener() {} }, Date, console,
     fetch: async () => ({ ok: status < 400, status, json: async () => result }),
   });
   // Expose the real functions in the test VM, without running application boot.
   const boundary = clientSource.lastIndexOf('  if ("serviceWorker" in navigator');
-  vm.runInContext(`${clientSource.slice(0, boundary)}globalThis.fixture = {state, handleCallPreflight, renderPreflightResult, togglePreflightConsentFields, openCallPreflight};})();`, context);
+  vm.runInContext(`${clientSource.slice(0, boundary)}globalThis.fixture = {state, handleCallPreflight, renderPreflightResult, togglePreflightConsentFields, openCallPreflight, registerEvents};})();`, context);
   const fixture = context.fixture;
   for (const [selector, value] of Object.entries({
     '#phone-input': valid.phone, '#preflight-recipient-type': valid.recipientType,
@@ -128,7 +130,7 @@ function clientFixture(result = {}, status = 201) {
   let connects = 0;
   let disconnects = 0;
   fixture.state.voice.device = { connect: async () => { connects++; return { on() {}, disconnect() { disconnects++; } }; } };
-  return { ...fixture, node, context, connects: () => connects, disconnects: () => disconnects };
+  return { ...fixture, node, context, listeners, connects: () => connects, disconnects: () => disconnects };
 }
 const allowedResult = () => ({ id: 'test-review', allowed: true, expiresAt: new Date(Date.now() + 600000).toISOString(), reasons: [], warnings: ['State policy review pending.'], checks: [] });
 const submit = fixture => fixture.handleCallPreflight({ preventDefault() {} });
@@ -229,4 +231,15 @@ test('reopening loads saved facts but keeps recording off and permission uncheck
   assert.equal(fixture.node('#preflight-recording-mode').value, 'off');
   assert.equal(fixture.node('#preflight-recording-consent').checked, false);
   assert.equal(fixture.connects(), 0);
+});
+
+test('dialer shortcuts do not reset or edit an open call form', () => {
+  const fixture = clientFixture();
+  fixture.registerEvents();
+  const keydown = fixture.listeners.get('keydown');
+  keydown({ key: 'Enter' });
+  assert.equal(fixture.state.voice.reviewLoading, false);
+  fixture.context.document.activeElement.tagName = 'BODY';
+  keydown({ key: '7' });
+  assert.equal(fixture.node('#phone-input').value, valid.phone);
 });
