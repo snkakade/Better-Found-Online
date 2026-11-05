@@ -266,8 +266,15 @@ function normalizeMessage(row: Record<string, unknown>, ownNumber: string) {
 async function validTwilioSignature(request: Request, authToken: string, entries: [string, string][]) {
   const provided = request.headers.get("X-Twilio-Signature") || "";
   if (!provided || !authToken) return false;
-  const sorted = [...entries].sort(([ak, av], [bk, bv]) => ak === bk ? av.localeCompare(bv) : ak.localeCompare(bk));
-  const payload = request.url + sorted.map(([key, value]) => `${key}${value}`).join("");
+  // Match Twilio's SDK: case-sensitive lexical order, not locale collation.
+  // For example, CallSid sorts before Called. Repeated values are unique/sorted.
+  const fields = new Map<string, Set<string>>();
+  for (const [name, value] of entries) {
+    if (!fields.has(name)) fields.set(name, new Set());
+    fields.get(name)!.add(value);
+  }
+  const payload = [...fields.keys()].sort().reduce((data, name) =>
+    data + [...fields.get(name)!].sort().map(value => name + value).join(""), request.url);
   const key = await crypto.subtle.importKey("raw", encoder.encode(authToken), { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
   const digest = new Uint8Array(await crypto.subtle.sign("HMAC", key, encoder.encode(payload)));
   return constantTimeEqual(bytesToBase64(digest), provided);
@@ -888,15 +895,16 @@ async function handleVoiceWebhook(request: Request, env: ConsoleEnv) {
   const userId = Number(from.match(/^client:bfo_user_(\d+)$/)?.[1] || 0) || null;
   const callSid = String(form.get("CallSid") || "") || null;
   const preflightId = String(form.get("PreflightId") || "");
-  if (!E164.test(target)) return xml("<Response><Say>Invalid destination number.</Say></Response>", 400);
+  if (!E164.test(target)) return xml("<Response><Say>Invalid destination number.</Say><Hangup/></Response>");
   const db = requireDb(env);
   const preflight = await db.prepare(`SELECT p.* FROM call_preflight_logs p
     WHERE p.id=? AND p.phone=? AND p.user_id=? AND p.decision='allowed' AND p.expires_at>datetime('now')
       AND NOT EXISTS (SELECT 1 FROM console_suppressions s WHERE s.phone=p.phone)`)
     .bind(preflightId, target, userId).first<Record<string, unknown>>();
   if (!preflight) {
-    await logComplianceEvent(env, userId, "outbound_call_blocked", target, { reason: "missing_or_expired_preflight", callSid });
-    return xml("<Response><Say>This call was blocked because its compliance review is missing or expired.</Say></Response>", 403);
+    const actor = userId ? await db.prepare("SELECT id FROM console_users WHERE id=?").bind(userId).first<{ id: number }>() : null;
+    await logComplianceEvent(env, actor?.id || null, "outbound_call_blocked", target, { reason: "missing_or_expired_preflight", callSid });
+    return xml("<Response><Say>This call cannot start because its review is missing, expired, or the number is now on the do not call list. Please refresh the call review.</Say><Hangup/></Response>");
   }
   await db.prepare(
     `INSERT OR IGNORE INTO outreach_events
