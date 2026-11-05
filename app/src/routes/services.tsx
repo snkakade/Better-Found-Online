@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -114,6 +114,7 @@ const engagementModels = [
 function ServicesPage() {
   const root = useRef<HTMLDivElement>(null);
   const counter = useRef<HTMLParagraphElement>(null);
+  const [featuredService, setFeaturedService] = useState(0);
 
   useLayoutEffect(() => {
     if (!root.current) return;
@@ -157,6 +158,7 @@ function ServicesPage() {
           { y: "0%", autoAlpha: 1 },
         );
         gsap.set(".services-hero-card", { y: 0, scale: 1, rotate: 0, autoAlpha: 1 });
+        gsap.set(".services-hero-art", { y: 0, autoAlpha: 1 });
       } else {
         const imageRotations = [7.5, -2.5, -10, 12.5, -5, 5];
         gsap.set(".services-preloader-img", { rotate: (index) => imageRotations[index] });
@@ -164,6 +166,7 @@ function ServicesPage() {
         gsap.set(preloaderHeaderSplit.chars, { y: "100%" });
         gsap.set(".services-hero-title", { y: 32, autoAlpha: 0 });
         gsap.set(".services-hero-card", { y: 56, scale: 0.96, rotate: 0, autoAlpha: 0 });
+        gsap.set(".services-hero-art", { y: 32, autoAlpha: 0 });
 
         const timeline = gsap.timeline({ delay: 0.05 });
         const progress = { current: 0 };
@@ -218,6 +221,7 @@ function ServicesPage() {
           },
         }, 5.35);
         timeline.to(".services-hero-title", { y: 0, autoAlpha: 1, duration: 1, ease: "servicesHop" }, 5.65);
+        timeline.to(".services-hero-art", { y: 0, autoAlpha: 1, duration: 1.2, ease: "servicesHop" }, 5.65);
         timeline.to(supportingTargets, {
           y: 0,
           autoAlpha: 1,
@@ -320,8 +324,8 @@ function ServicesPage() {
         <section className="services-hero" aria-labelledby="services-page-title">
           <div className="services-hero-intro">
             <p className="services-hero-kicker">Our services</p>
-            <h1 className="services-hero-title" id="services-page-title"><span>Build a stronger</span><span>digital presence.</span></h1>
-            <p className="services-hero-description">Websites, creative production and marketing for service businesses and growing brands.</p>
+            <h1 className="services-hero-title" id="services-page-title"><span>Websites, creative </span><span>&amp; marketing.</span></h1>
+            <p className="services-hero-description">Websites, creative and campaigns built to bring the right customers to your business.</p>
             <div className="services-hero-cta">
               <TransitionLink href="/#contact" className="services-hero-action services-hero-action-primary">
                 Discuss Your Project <ArrowUpRight size={20} aria-hidden="true" />
@@ -331,11 +335,20 @@ function ServicesPage() {
               </TransitionLink>
             </div>
           </div>
+          <div className="services-hero-art" aria-hidden="true">
+            <div className="services-hero-photo-stack">
+              {services.map((service, index) => (
+                <div className="services-hero-photo" key={service.name} data-depth={(index - featuredService + services.length) % services.length}>
+                  <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 600px) 85vw, (max-width: 1100px) 65vw, 42vw" width="1440" height="960" alt="" />
+                </div>
+              ))}
+            </div>
+            <p className="services-hero-art-caption"><b>{services[featuredService].cardTitle}</b><span>{services[featuredService].heroSummary}</span></p>
+          </div>
           <nav className="services-hero-cards" aria-label="Explore our services">
-            {services.map((service) => (
-              <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.cardTitle}`}>
-                <img src={service.image} srcSet={editorialSrcSet(service.image)} sizes="(max-width: 600px) 66px, 108px" width="108" height="72" alt="" />
-                <span className="services-hero-card-copy"><b>{service.cardTitle}</b><small>{service.heroSummary}</small></span>
+            {services.map((service, index) => (
+              <a className="services-hero-card" href={`#${service.name.toLowerCase()}`} key={service.name} aria-label={`Explore ${service.cardTitle}`} data-featured={index === featuredService} onPointerEnter={() => setFeaturedService(index)} onFocus={() => setFeaturedService(index)}>
+                <span className="services-hero-card-copy"><b>{service.cardTitle}</b></span>
                 <span className="services-hero-card-arrow"><ArrowUpRight size={23} aria-hidden="true" /></span>
               </a>
             ))}
