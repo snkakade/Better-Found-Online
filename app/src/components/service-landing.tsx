@@ -101,23 +101,25 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           foregroundImage={data.image}
           foregroundAlt={data.imageAlt ?? `Abstract sculptural artwork representing ${data.eyebrow}`}
           foregroundHeading={data.sectionHeading}
-          leftTitle="What it includes"
-          leftBody={`${data.definition} Scope includes ${data.services.join(", ")}.`}
-          rightTitle="What it solves"
-          rightBody={`${data.supporting} ${data.audience} ${data.problem}`}
+          leftTitle="Services included"
+          leftBody={data.definition}
+          leftItems={data.services}
+          rightTitle="When this helps"
+          rightBody={data.problem}
           outroImages={[
             { src: data.image, alt: data.imageAlt ?? `${data.eyebrow} visual study` },
             data.supportImage ?? humanImages.websiteWorkshop,
           ]}
-          outroHeading="Turn attention into action."
+          outroHeading="Tell us what you need to make."
           outroCtaLabel={data.cta}
           outroCtaHref={whatsapp}
-          afterHeading="Useful outputs. Ready for the right channel."
-          afterBody={`${data.approach} Example deliverables include ${data.deliverables.join(", ")}.`}
+          afterHeading="Example project deliverables."
+          afterBody={data.approach}
+          afterItems={data.deliverables}
         />
 
         <section className="faq-section section-pad" aria-labelledby="faq-title">
-          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">What buyers usually need to know.</h2></header>
+          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">Questions about this service.</h2></header>
           <div>{data.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
         </section>
 
@@ -144,7 +146,7 @@ export function ServiceLanding({ data }: { data: ServiceLandingData }) {
           <p className="eyebrow">Start a conversation</p><h2>{data.cta}.</h2><a href={whatsapp} target="_blank" rel="noopener noreferrer">{data.cta} <ArrowUpRight size={28} weight="light" /></a>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

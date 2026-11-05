@@ -39,8 +39,8 @@ function StudioPage() {
           <div className="studio-words" aria-hidden="true"><span>Think</span><span>Shape</span><span>Connect</span></div>
           <div className="interior-hero-copy">
             <p className="eyebrow">The studio</p>
-            <h1>Good digital work<span>starts with better questions.</span></h1>
-            <p>Good digital work rarely fits inside one discipline. A website, campaign, video, or visual experience needs the right thinking behind it. We start with the problem, bring in the right skills, and carry the idea through to execution.</p>
+            <h1>Website, creative<span>and marketing expertise.</span></h1>
+            <p>We plan, design and deliver websites, content and campaigns around your customers and business goals.</p>
             <div className="interior-hero-actions">
               <TransitionLink className="primary-btn" href="/#contact">Discuss Your Project</TransitionLink>
               <TransitionLink href="/services">Explore Our Services</TransitionLink>
@@ -61,7 +61,7 @@ function StudioPage() {
 
         <section className="studio-belief section-pad">
           <div className="belief-media"><StudioBeliefVideo /></div>
-          <div className="belief-copy"><p className="eyebrow">Why connected thinking matters</p><h2>Different skills.<br />One business goal.</h2><p>Good digital work rarely fits inside one discipline. The message, visual direction, experience, and channel all shape what people understand.</p><p>We start with the problem, bring in the right skills, and carry the idea through to execution without forcing every project into the same process.</p><TransitionLink href="/creative-production" className="text-link">Explore Creative Production <ArrowUpRight size={18} weight="light" /></TransitionLink></div>
+          <div className="belief-copy"><p className="eyebrow">Why connected thinking matters</p><h2>One brief.<br />The skills it needs.</h2><p>A website launch may need copy, design, development and campaign content. We scope those parts together.</p><p>Start with one service or combine the work your project needs.</p><TransitionLink href="/creative-production" className="text-link">Explore Creative Production <ArrowUpRight size={18} weight="light" /></TransitionLink></div>
         </section>
 
         <section className="interior-contact section-pad">
@@ -69,7 +69,7 @@ function StudioPage() {
           <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer">Discuss Your Project <ArrowUpRight size={28} weight="light" /></a>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

@@ -25,8 +25,8 @@ const services = [
     name: "Build",
     cardTitle: "Website Design",
     category: "Websites / Digital Experiences",
-    lead: "Make your website worth visiting.",
-    body: "Your website should make your business easy to understand, credible, and simple to contact. We bring strategy, messaging, design, and development together to create a digital experience with a clear purpose.",
+    lead: "Websites that make enquiries easier.",
+    body: "Plan, write, design and build a website that explains your services and makes contacting you easy.",
     items: ["Website Strategy & Positioning", "Website Design & Development", "User Experience & Conversion", "Interactive Digital Experiences"],
     result: "A distinctive digital presence that gives visitors a clear reason to stay, explore, and take action.",
     heroSummary: "Business websites and landing pages.",
@@ -39,8 +39,8 @@ const services = [
     name: "Create",
     cardTitle: "Creative Production",
     category: "Video / CGI / Animation / Design",
-    lead: "Make your message worth seeing.",
-    body: "From polished campaign videos to detailed 3D visuals, we create content that helps brands show what words alone cannot. Every format starts with the message, the audience, and what the content needs to accomplish.",
+    lead: "Video, CGI and design for campaigns.",
+    body: "Create brand videos, product renders, animation and graphics for your website, social channels and advertising.",
     items: ["Video Production & Editing", "3D Design, CGI & Rendering", "2D Animation & Motion Graphics", "Trailers & Advertisement Videos", "Graphic Design & Campaign Assets"],
     result: "Distinctive creative content for websites, marketing campaigns, product presentations, and social channels.",
     heroSummary: "Video, animation, CGI and graphic design.",
@@ -55,8 +55,8 @@ const services = [
     name: "Grow",
     cardTitle: "SEO & Paid Media",
     category: "Search / Paid Media / Social",
-    lead: "Reach the right people. Make the spend count.",
-    body: "SEO, paid media, content, and social management connected to the customers you want to reach and the actions that matter to your business.",
+    lead: "Search and ads for the right audience.",
+    body: "Connect SEO, paid advertising and social content to relevant landing pages and tracked enquiries.",
     items: ["SEO & Search Visibility", "Performance Marketing", "Social Media Management", "Campaign Measurement"],
     result: "A clearer path from visibility to informed campaign decisions and meaningful customer action.",
     heroSummary: "Search visibility and paid campaigns.",
@@ -71,8 +71,8 @@ const services = [
     name: "Connect",
     cardTitle: "CRM & Automation",
     category: "CRM / Integrations / Automation",
-    lead: "Make the next step easier for everyone.",
-    body: "A customer journey doesn't end with a form submission. We help connect selected tools, information, and simple workflows so inquiries reach the right place and follow-up becomes easier.",
+    lead: "Enquiries delivered to the right team.",
+    body: "Link forms, booking tools and your CRM so each enquiry reaches the people responsible for follow-up.",
     items: ["CRM & Form Integrations", "Booking & Inquiry Workflows", "Customer Information Handoffs", "Practical Workflow Automation"],
     result: "Fewer disconnected steps between an inquiry and the people responsible for responding.",
     heroSummary: "Forms, bookings and customer follow-up.",
@@ -85,8 +85,8 @@ const services = [
     name: "Improve",
     cardTitle: "Analytics & Optimization",
     category: "Analytics / Reporting / Optimization",
-    lead: "Find the friction. Make the next move.",
-    body: "Better decisions start with understanding what's happening. We review websites, customer journeys, and available performance information to identify practical improvements worth making.",
+    lead: "Know which changes to make next.",
+    body: "Review website journeys and campaign data to find problems, prioritise improvements and track what changes.",
     items: ["Website & Conversion Reviews", "Analytics & Reporting", "Process & Workflow Reviews", "Ongoing Optimization"],
     result: "Clearer priorities, more useful information, and a practical direction for improvement.",
     heroSummary: "Website reviews and campaign reporting.",
@@ -106,9 +106,9 @@ const preloaderFrames = [
 ];
 
 const engagementModels = [
-  { number: "01", name: "Find the direction", label: "Strategy & Discovery", copy: "When the challenge isn't clear, start by understanding the audience, the problem, and the priorities." },
-  { number: "02", name: "Build the experience", label: "Projects & Implementation", copy: "For businesses ready to create a website, campaign, video, visual asset, or another clearly defined digital project." },
-  { number: "03", name: "Keep moving", label: "Ongoing Support", copy: "For businesses that need continued work across SEO, content, social media, campaigns, creative production, or measurable improvements." },
+  { number: "01", name: "Start with a review", label: "Strategy & Discovery", copy: "Review your website, offer and priorities before deciding what to build." },
+  { number: "02", name: "Build a specific project", label: "Projects & Implementation", copy: "Commission a website, campaign, video or another clearly scoped deliverable." },
+  { number: "03", name: "Get ongoing support", label: "Ongoing Support", copy: "Keep improving SEO, content, campaigns or creative with agreed ongoing work." },
 ];
 
 function ServicesPage() {
@@ -355,17 +355,6 @@ function ServicesPage() {
           </nav>
         </section>
 
-        <section className="services-opening section-pad">
-          <div>
-            <p className="eyebrow">One connected approach</p>
-            <h2>Different disciplines. One clear direction.</h2>
-          </div>
-          <div className="services-opening-note">
-            <span>From First Impression to First Inquiry</span>
-            <p>Your customers don't separate design, content, websites, and marketing. They experience one business. We bring the right pieces together to make that experience work.</p>
-          </div>
-        </section>
-
         <section className="service-stack" id="service-stack" aria-label="Service areas">
           {services.map((service) => (
             <article className="service-chapter" id={service.name.toLowerCase()} key={service.name}>
@@ -380,7 +369,7 @@ function ServicesPage() {
                 <ul>
                   {service.items.map((item) => <li key={item}><span aria-hidden="true" />{item}</li>)}
                 </ul>
-                <div className="service-result"><span>What This Makes Possible</span><p>{service.result}</p></div>
+
                 <div className="service-chapter-actions">
                   <TransitionLink href={service.href}>{service.cta} <ArrowUpRight size={18} weight="light" /></TransitionLink>
                   {"secondaryCta" in service && service.secondaryCta && <TransitionLink href={service.secondaryHref}>{service.secondaryCta} <ArrowUpRight size={18} weight="light" /></TransitionLink>}
@@ -393,9 +382,9 @@ function ServicesPage() {
         <section className="services-system section-pad" aria-labelledby="system-title">
           <div className="services-system-copy">
             <p className="services-system-label">The multiplier</p>
-            <h2 id="system-title">Better work happens<br />when the pieces connect.</h2>
-            <p>A strong website gives your message a home. Better creative gives people a reason to pay attention. Search and marketing help the right people find it. Connected tools and measurement help you decide what comes next.</p>
-            <p>Each service can stand alone. Together, they can make more sense.</p>
+            <h2 id="system-title">Connect your website,<br />ads and follow-up.</h2>
+            <p>Send campaigns to useful pages, route enquiries to the right people and track what happens after each click.</p>
+            <p>Book one service or combine the work your project needs.</p>
           </div>
           <div className="services-system-visual" aria-hidden="true">
             <svg viewBox="0 0 760 760" role="presentation">
@@ -411,19 +400,19 @@ function ServicesPage() {
               <path className="services-system-path" d="M93 286 C200 320 268 342 380 380" />
               <circle className="services-system-core" cx="380" cy="380" r="78" />
             </svg>
-            <span className="system-node system-node-build">Build</span>
-            <span className="system-node system-node-create">Create</span>
-            <span className="system-node system-node-grow">Grow</span>
-            <span className="system-node system-node-connect">Connect</span>
-            <span className="system-node system-node-improve">Improve</span>
-            <strong>Progress</strong>
+            <span className="system-node system-node-build">Website</span>
+            <span className="system-node system-node-create">Creative</span>
+            <span className="system-node system-node-grow">Search &amp; Ads</span>
+            <span className="system-node system-node-connect">Follow-up</span>
+            <span className="system-node system-node-improve">Reporting</span>
+            <strong>Customer</strong>
           </div>
         </section>
 
         <section className="engagements section-pad" aria-labelledby="engagement-title">
           <div className="engagements-heading">
             <p className="engagements-label">Ways to work together</p>
-            <h2 id="engagement-title">Start where it matters.</h2>
+            <h2 id="engagement-title">Choose how we work together.</h2>
           </div>
           <div className="engagement-grid">
             {engagementModels.map((model) => (
@@ -439,14 +428,14 @@ function ServicesPage() {
 
         <section className="services-closing section-pad">
           <p>Have an idea?</p>
-          <h2>Let's make it happen.</h2>
+          <h2>Ready to discuss your project?</h2>
           <p className="services-closing-support">Tell us what you need, what you're trying to achieve, and where you're getting stuck.</p>
           <a href="https://wa.me/15707077078" target="_blank" rel="noopener noreferrer">
             Discuss Your Project <ArrowUpRight size={30} weight="light" />
           </a>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

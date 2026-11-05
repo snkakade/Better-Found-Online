@@ -45,11 +45,13 @@ test("landscape showcase videos stay full-frame, with actions outside the footag
   assert.match(creative, /closest\("a,button"\)\) return/);
 });
 
-test("showcase playback stops offscreen, in hidden tabs, and for reduced motion", () => {
-  assert.match(creative, /allowed = visible && !document\.hidden && !motionPreference\.matches && !hiddenHalf/);
-  assert.match(creative, /playbackObserver\.disconnect\(\)/);
-  assert.match(creative, /removeEventListener\("visibilitychange", syncPlayback\)/);
-  assert.match(creative, /compactVideo\.removeEventListener\("change", syncPlayback\)/);
+test("showcase playback uses the shared offscreen and reduced-motion lifecycle", () => {
+  const autoplay = source("hooks/use-autoplay-video.ts");
+  assert.match(creative, /useAutoplayVideo\(videoRef, \{ src: item\.video \?\? "", enabled: Boolean\(item\.video\) \}\)/);
+  assert.match(autoplay, /enabled && visible && !document\.hidden && !motion\.matches/);
+  assert.match(autoplay, /observer\.disconnect\(\)/);
+  assert.match(autoplay, /removeEventListener\("visibilitychange", sync\)/);
+  assert.match(autoplay, /motion\.removeEventListener\("change", sync\)/);
 });
 
 test("the public creative process uses branded native controls, not app-kit typography", () => {

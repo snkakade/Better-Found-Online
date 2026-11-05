@@ -31,18 +31,18 @@ export const Route = createFileRoute("/services_/performance-marketing")({
 
 
 const campaignSystem: { label: string; outcome: string; icon: typeof MagnifyingGlass; platforms?: AdPlatform[] }[] = [
-  { label: "Paid search", outcome: "Capture demand", icon: MagnifyingGlass, platforms: ["google", "microsoft"] },
-  { label: "Paid social", outcome: "Build interest", icon: Broadcast, platforms: ["meta", "linkedin"] },
-  { label: "Creative and landing pages", outcome: "Turn attention into action", icon: CursorClick },
-  { label: "Tracking and attribution", outcome: "See what happened", icon: ChartLineUp },
-  { label: "Media planning", outcome: "Choose the next move", icon: Strategy },
+  { label: "Paid search", outcome: "Reach people searching for your offer.", icon: MagnifyingGlass, platforms: ["google", "microsoft"] },
+  { label: "Paid social", outcome: "Show your offer to relevant audiences.", icon: Broadcast, platforms: ["meta", "linkedin"] },
+  { label: "Creative and landing pages", outcome: "Match ads to a useful landing page.", icon: CursorClick },
+  { label: "Tracking and attribution", outcome: "Track calls, forms and purchases.", icon: ChartLineUp },
+  { label: "Media planning", outcome: "Agree channels, budget and priorities.", icon: Strategy },
 ];
 
 const process = [
-  { number: "01", label: "Define", title: "Know what success should mean.", body: "Understand the audience, offer, available budget, and commercial action worth pursuing." },
-  { number: "02", label: "Measure", title: "Get the tracking foundations right.", body: "Review existing data, conversion actions, campaign structure, and the website experience." },
-  { number: "03", label: "Launch", title: "Put the plan into motion.", body: "Activate agreed campaigns, audience targeting, creative, and supporting landing pages." },
-  { number: "04", label: "Refine", title: "Make the next decision count.", body: "Review performance, identify friction, and adjust campaigns based on the available evidence." },
+  { number: "01", label: "Define", title: "Agree the campaign goal.", body: "Understand the audience, offer, available budget, and commercial action worth pursuing." },
+  { number: "02", label: "Measure", title: "Check calls, forms and sales tracking.", body: "Review existing data, conversion actions, campaign structure, and the website experience." },
+  { number: "03", label: "Launch", title: "Launch the agreed campaigns.", body: "Activate agreed campaigns, audience targeting, creative, and supporting landing pages." },
+  { number: "04", label: "Refine", title: "Review results and adjust.", body: "Review performance, identify friction, and adjust campaigns based on the available evidence." },
 ];
 
 const related = [
@@ -86,7 +86,7 @@ function PerformanceMarketingPage() {
           <div className="service-detail-hero-copy">
             <p className="eyebrow">Performance Marketing</p>
             <h1 id="performance-title">Turn ad spend into measurable growth.</h1>
-            <p>Paid search, social advertising, marketplace campaigns, tracking, and optimization for businesses that need to reach relevant audiences and connect ad spend to meaningful actions.</p>
+            <p>Google Ads, paid social and marketplace campaigns, with tracking for the calls, forms and sales that matter to your business.</p>
             <div className="service-detail-actions">
               <TransitionLink className="primary-btn" href="/#contact">Discuss Your Growth Goals <ArrowUpRight size={17} weight="light" /></TransitionLink>
               <a className="story-link" href="#results">See Campaign Results <ArrowDown size={16} weight="light" /></a>
@@ -106,9 +106,9 @@ function PerformanceMarketingPage() {
           foregroundImage={humanImages.campaignReview.src}
           foregroundAlt={humanImages.campaignReview.alt}
           foregroundHeading="Better decisions before bigger budgets."
-          leftTitle="Before the first click"
+          leftTitle="Set the goal and tracking"
           leftBody="Understand the offer, the audience, and the action worth measuring. Those questions come before channel selection, media planning, and creative."
-          rightTitle="Campaigns with a job to do"
+          rightTitle="Match the ad to the page"
           rightBody="Match the message, channel, and destination to the customer's intent. Use the evidence to decide what to adjust, maintain, or expand."
           outroImages={[
             humanImages.customerFollowup,
@@ -122,8 +122,8 @@ function PerformanceMarketingPage() {
 
         <section className="performance-capabilities section-pad" aria-labelledby="capabilities-title">
           <header className="performance-system-heading">
-            <h2 id="capabilities-title">Reach. Convert. Learn.</h2>
-            <p>Five connected decisions. One campaign system.</p>
+            <h2 id="capabilities-title">What your paid campaign needs.</h2>
+            <p>Choose channels, create relevant ads and track the actions you want customers to take.</p>
           </header>
           <div className="performance-system-grid">
             {campaignSystem.map((item) => {
@@ -136,7 +136,7 @@ function PerformanceMarketingPage() {
             })}
           </div>
           <div className="performance-system-footer">
-            <p>From the first impression to the next decision.</p>
+            <p>Agree the goal and tracking before increasing spend.</p>
             <TransitionLink className="performance-inline-cta" href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={17} weight="light" /></TransitionLink>
           </div>
         </section>
@@ -145,8 +145,8 @@ function PerformanceMarketingPage() {
           <div className="performance-section-heading">
             <p className="eyebrow">The process</p>
             <div>
-              <h2 id="process-title">From business goals to better campaign decisions.</h2>
-              <p className="performance-section-intro">A practical process keeps the work focused on what matters.</p>
+              <h2 id="process-title">How we plan and improve campaigns.</h2>
+              <p className="performance-section-intro">Agree the goal, check tracking, launch and review.</p>
             </div>
           </div>
           <ol>
@@ -178,8 +178,8 @@ function PerformanceMarketingPage() {
         <section className="service-detail-related performance-related section-pad" aria-labelledby="related-title">
           <div className="performance-related-heading">
             <p className="eyebrow">Beyond the campaign</p>
-            <h2 id="related-title">Better campaigns need better supporting experiences.</h2>
-            <p>Paid advertising works alongside the pages, creative, content, and systems that support the customer journey.</p>
+            <h2 id="related-title">Improve what happens after the click.</h2>
+            <p>Connect your ads to relevant pages, useful creative and reliable follow-up.</p>
           </div>
           <nav aria-label="Related performance marketing services">
             {related.map((item) => (
@@ -193,7 +193,7 @@ function PerformanceMarketingPage() {
         </section>
 
         <section className="faq-section section-pad" aria-labelledby="faq-title">
-          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">What buyers usually need to know.</h2></header>
+          <header><p className="eyebrow">Frequently asked questions</p><h2 id="faq-title">Your paid advertising questions, answered.</h2></header>
           <div>{faqs.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
         </section>
 
@@ -201,7 +201,7 @@ function PerformanceMarketingPage() {
           <p className="eyebrow">Make the next budget decision count</p>
           <div className="performance-closing-message">
             <h2 id="closing-title">Know what you&apos;re spending.<br />Know what you&apos;re working toward.</h2>
-            <p>Have a campaign to improve or a new growth goal in mind? Tell us what you sell, who you want to reach, and what&apos;s happening with your advertising today. We&apos;ll start with the problem worth solving.</p>
+            <p>Share what you sell, who you want to reach and which campaigns need improving.</p>
             <div className="performance-closing-actions">
               <TransitionLink href="/#contact">Discuss Your Paid Marketing <ArrowUpRight size={24} weight="light" /></TransitionLink>
             </div>
@@ -209,7 +209,7 @@ function PerformanceMarketingPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

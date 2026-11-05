@@ -17,16 +17,16 @@ function WorkPage() {
   return (
     <div className="site interior-site">
       <PageTransition />
-      <PageSchema name="Website & Digital Projects | Better Found Online" path="/work" description="The proposed portfolio features website projects involving clear service positioning, customer-focused navigation, responsive development, and distinctive visual design. Project attribution must be confirmed before publication." />
+      <PageSchema name="Website & Digital Projects | Better Found Online" path="/work" description="Explore selected website and digital project examples, including service positioning, navigation and responsive design." />
       <a className="skip-link" href="#main">Skip to Content</a>
       <SiteHeader />
       <main id="main">
         <section className="interior-hero work-hero">
           <div className="interior-hero-copy">
             <p className="eyebrow">Selected Work</p>
-            <h1>Real challenges.<span>Work with a purpose.</span></h1>
-            <p>From specialist service businesses to distinctive brands, explore digital projects built around clear positioning, considered design, and practical customer journeys.</p>
-            <p className="work-taxonomy">Website Design / SEO / Performance Marketing</p>
+            <h1>Explore the websites<span>and digital projects.</span></h1>
+            <p>Browse projects across healthcare, recruitment, agriculture and leisure, with website previews and project details.</p>
+
             <div className="interior-hero-actions">
               <a className="story-link" href="#cases">View Selected Work</a>
               <TransitionLink className="primary-btn" href="/#contact">Discuss Your Project</TransitionLink>
@@ -47,9 +47,9 @@ function WorkPage() {
         <section className="work-paid-media section-pad" aria-labelledby="work-paid-media-title">
           <p className="eyebrow">Performance marketing</p>
           <div>
-            <h2 id="work-paid-media-title">Planning paid media?<br />Start with the reason.</h2>
+            <h2 id="work-paid-media-title">Paid campaigns.<br />See the reported results.</h2>
             <div>
-              <p>See how we connect business goals, audience intent, tracking, creative, landing pages, and practical optimization before asking the budget to do more.</p>
+              <p>Explore campaign reports, tracking and the context behind each result.</p>
               <TransitionLink href="/services/performance-marketing">See Our Paid Media Approach <ArrowUpRight size={18} weight="light" /></TransitionLink>
             </div>
           </div>

@@ -145,9 +145,8 @@ export function SiteHeader({
     if (open) {
       previousOverflow.current = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-      setAnimating(true);
       gsap.set(menu, { pointerEvents: "auto" });
-      gsap.timeline({ onComplete: () => setAnimating(false) })
+      gsap.timeline({ onStart: () => setAnimating(true), onComplete: () => setAnimating(false) })
         .to(menu, {
           clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
           duration: 1.5,
@@ -161,11 +160,11 @@ export function SiteHeader({
 
       window.setTimeout(() => menu.querySelector<HTMLAnchorElement>(".site-menu-link a")?.focus(), 850);
     } else {
-      setAnimating(true);
       gsap.to(menu, {
         clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
         duration: 0.975,
         ease: "menuHop",
+        onStart: () => setAnimating(true),
         onComplete: () => {
           gsap.set(menu, {
             clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
@@ -339,19 +338,20 @@ export function SiteHeader({
   );
 }
 
-export function SiteFooter({ motionPaused, onMotionToggle, projectCta }: {
+export function SiteFooter({ motionPaused, onMotionToggle, projectCta, showProjectCta = true }: {
   motionPaused?: boolean;
   onMotionToggle?: () => void;
   projectCta?: { heading: string; label: string; anchorId: string };
+  showProjectCta?: boolean;
 }) {
   return (
     <footer id="site-footer" className="footer">
-      <div className={`footer-cta${projectCta ? " footer-cta--project" : ""}`} id={projectCta?.anchorId}>
+      {showProjectCta && <div className={`footer-cta${projectCta ? " footer-cta--project" : ""}`} id={projectCta?.anchorId}>
         <h2>{projectCta?.heading ?? "Build something people can find, understand, and choose."}</h2>
         <TransitionLink href="/#contact" className={projectCta ? "primary-btn" : "footer-project-link"}>
           <span>{projectCta?.label ?? "Discuss your project"}</span>
         </TransitionLink>
-      </div>
+      </div>}
 
       <div className="footer-directory">
         <div className="footer-brand-block">

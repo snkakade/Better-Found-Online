@@ -257,9 +257,7 @@ function WebsitesPage() {
               <span>Your website should do</span> <em>more than look good.</em>
             </h1>
             <p>
-              Custom website design, development, and redesign for service businesses and growing
-              brands that need to explain their value clearly, earn trust, and turn visits into
-              enquiries.
+              Custom websites and redesigns that explain your services, build trust and make enquiries easier.
             </p>
             <div className="growth-actions">
               <TransitionLink className="primary-btn" href="/#contact">
@@ -267,9 +265,6 @@ function WebsitesPage() {
               </TransitionLink>
               <a href="#website-projects">Explore Website Projects</a>
             </div>
-            <small>
-              From focused landing pages to complete business websites and connected platforms.
-            </small>
           </div>
           <figure className="website-phone-hero">
             <IPhoneFrame>
@@ -390,7 +385,7 @@ function WebsitesPage() {
         </section>
         <section className="website-scope section-pad" aria-labelledby="website-scope-title">
           <div>
-            <h2 id="website-scope-title">A clear scope makes a better start.</h2>
+            <h2 id="website-scope-title">Agree the scope before we build.</h2>
             <p>
               Before work begins, we agree on what is included, what you need to supply, and what
               the project will cost.
@@ -421,7 +416,7 @@ function WebsitesPage() {
         <section className="faq-section section-pad">
           <header>
             <p className="eyebrow">Frequently asked questions</p>
-            <h2>What buyers usually need to know.</h2>
+            <h2>Your website project questions, answered.</h2>
           </header>
           <div>
             {faqs.map(([q, a]) => (
@@ -462,7 +457,7 @@ function WebsitesPage() {
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

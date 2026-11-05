@@ -1,9 +1,10 @@
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TransitionLink } from "@/components/site-chrome";
 import { useAutoplayVideo } from "@/hooks/use-autoplay-video";
-import { humanImages } from "@/editorial-images";
+import { editorialSrcSet, humanImages } from "@/editorial-images";
 export { CreativeProofReel } from "@/components/creative-proof-reel/creative-proof-reel";
 
 export interface CreativeCapability {
@@ -15,7 +16,7 @@ export interface CreativeCapability {
   cta: string;
   href: string;
   image: string;
-  video: string;
+  video?: string;
   poster?: string;
   sliderTitle: string;
 }
@@ -30,7 +31,7 @@ export function CreativeCampaignFilms({ ctaHref }: { ctaHref: string }) {
   return (
     <section className="creative-films section-pad" id="selected-work" aria-labelledby="creative-films-title">
       <header className="creative-films-header">
-        <div><p className="eyebrow">Selected motion work</p><h2 id="creative-films-title">Stories built to move.</h2></div>
+        <div><p className="eyebrow">Selected motion work</p><h2 id="creative-films-title">Campaign films and edits.</h2></div>
       </header>
       <div className="creative-films-reel">
         <figure className="creative-film creative-film-primary">
@@ -133,294 +134,39 @@ export function CreativeTransformation() {
 
 export function CreativeCapabilityCarousel({ capabilities }: { capabilities: CreativeCapability[] }) {
   const [active, setActive] = useState(0);
-  const slider = useRef<HTMLDivElement>(null);
-  const slideTitles = useRef<HTMLDivElement>(null);
-  const slideImages = useRef<HTMLDivElement>(null);
-  const imgTop = useRef<HTMLDivElement>(null);
-  const imgBottom = useRef<HTMLDivElement>(null);
-  const currentIndex = useRef(1);
-  const handleSlider = useRef<() => void>(() => undefined);
-  const handleMediaHover = useRef<(expanded: boolean) => void>(() => undefined);
-
-  useEffect(() => {
-    let disposed = false;
-    let activeTimer: ReturnType<typeof setTimeout> | undefined;
-    let gsapInstance: typeof import("gsap").gsap | undefined;
-    let mediaRequest = 0;
-    const totalSlides = 7;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let visible = false;
-    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const compactVideo = window.matchMedia("(max-width: 900px)");
-    const syncPlayback = () => {
-      [imgTop.current, imgBottom.current].forEach(container => {
-        container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
-          const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
-          const allowed = visible && !document.hidden && !motionPreference.matches && !hiddenHalf;
-          video.autoplay = allowed;
-          if (allowed && !video.error) void video.play().catch(() => undefined);
-          else video.pause();
-        });
-      });
-    };
-    const playbackObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; syncPlayback(); }, { threshold: .1 });
-    if (slider.current) playbackObserver.observe(slider.current);
-    document.addEventListener("visibilitychange", syncPlayback);
-    motionPreference.addEventListener("change", syncPlayback);
-    compactVideo.addEventListener("change", syncPlayback);
-    const resumePlayback = () => {
-      [imgTop.current, imgBottom.current].forEach(container => container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => {
-        const hiddenHalf = compactVideo.matches && video.classList.contains("slider-video-bottom");
-        if (visible && !document.hidden && !motionPreference.matches && !hiddenHalf && video.error) video.load();
-      }));
-      syncPlayback();
-    };
-    document.addEventListener("pointerup", resumePlayback, { passive: true });
-    window.addEventListener("online", resumePlayback);
-
-    const updateActiveSlide = () => {
-      slideTitles.current?.querySelectorAll<HTMLElement>(".title").forEach((el, index) => {
-        const isActive = index === currentIndex.current - 1;
-        el.classList.toggle("active", isActive);
-        el.setAttribute("aria-hidden", isActive ? "false" : "true");
-      });
-      setActive(currentIndex.current - 1);
-    };
-
-    const trimExcessImages = () => {
-      [imgTop.current, imgBottom.current].forEach((container) => {
-        if (!container) return;
-        while (container.children.length > 5) {
-          const first = container.firstElementChild as HTMLVideoElement | null;
-          first?.pause();
-          first?.remove();
-        }
-      });
-    };
-
-    handleMediaHover.current = (expanded: boolean) => {
-      if (!imgTop.current || !imgBottom.current) return;
-
-      const clips = expanded
-        ? ["polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%)", "polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%)"]
-        : ["polygon(85% 0%, 0% 0%, 0% 50%, 85% 50%)", "polygon(100% 50%, 15% 50%, 15% 100%, 100% 100%)"];
-
-      if (reducedMotion || !gsapInstance) {
-        imgTop.current.style.clipPath = clips[0];
-        imgBottom.current.style.clipPath = clips[1];
-        return;
-      }
-
-      gsapInstance.to([imgTop.current, imgBottom.current], {
-        clipPath: (index: number) => clips[index],
-        duration: 1,
-        ease: "power4.out",
-        overwrite: true,
-      });
-    };
-
-    const updateImages = (imageNumber: number) => {
-      const requestId = ++mediaRequest;
-      const sourceIndex = (imageNumber - 2 + totalSlides) % totalSlides;
-      const item = capabilities[sourceIndex];
-      if (!item || !imgTop.current || !imgBottom.current) return;
-      // Keep the selected artwork visible while its actual video prepares.
-      // Never leave an old slide or an empty blue box behind a loading gate.
-      [imgTop.current, imgBottom.current].forEach(container => {
-        container?.querySelectorAll<HTMLVideoElement>("video").forEach(video => { video.pause(); video.remove(); });
-      });
-
-      const createVideo = (className: string) => {
-        const video = document.createElement("video");
-        video.className = className;
-        video.src = item.video;
-        if (item.poster) video.poster = item.poster;
-        video.autoplay = false;
-        video.muted = true;
-        video.defaultMuted = true;
-        video.controls = false;
-        video.loop = true;
-        video.playsInline = true;
-        video.preload = "metadata";
-        video.style.opacity = "0";
-        video.setAttribute("aria-hidden", "true");
-        video.tabIndex = -1;
-        video.addEventListener("canplay", syncPlayback);
-        return video;
-      };
-
-      const videoTop = createVideo("slider-video slider-video-top");
-      const videoBottom = createVideo("slider-video slider-video-bottom");
-
-      if (!reducedMotion && gsapInstance) {
-        gsapInstance.set(videoTop, {
-          clipPath: "polygon(85% 0%, 85% 0%, 85% 50%, 85% 50%)",
-          scale: 2,
-        });
-        gsapInstance.set(videoBottom, {
-          clipPath: "polygon(15% 50%, 15% 50%, 15% 100%, 15% 100%)",
-          scale: 2,
-        });
-      }
-
-      imgTop.current.appendChild(videoTop);
-      imgBottom.current.appendChild(videoBottom);
-
-      let revealed = false;
-      const revealPreparedVideo = () => {
-        if (revealed || videoTop.readyState < 2 || (!compactVideo.matches && videoBottom.readyState < 2)) return;
-        revealed = true;
-
-        if (disposed || requestId !== mediaRequest) {
-          videoTop.pause();
-          videoBottom.pause();
-          videoTop.remove();
-          videoBottom.remove();
-          return;
-        }
-
-        [imgTop.current, imgBottom.current].forEach((container) => {
-          container?.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
-            if (video !== videoTop && video !== videoBottom) {
-              video.pause();
-              video.remove();
-            }
-          });
-        });
-
-        videoBottom.currentTime = videoTop.currentTime;
-        videoTop.style.opacity = "1";
-        videoBottom.style.opacity = "1";
-        syncPlayback();
-
-        if (reducedMotion || !gsapInstance) return;
-
-        gsapInstance.to([videoTop, videoBottom], {
-          clipPath: "polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%)",
-          scale: 1,
-          duration: 2,
-          ease: "power4.out",
-          stagger: 0.15,
-          overwrite: true,
-          onComplete: trimExcessImages,
-        });
-      };
-
-      // A display:none duplicate may never emit canplay on iPhone. Start the
-      // visible clip immediately and never wait on the hidden mobile half.
-      videoTop.addEventListener("loadeddata", revealPreparedVideo, { once: true });
-      videoBottom.addEventListener("loadeddata", revealPreparedVideo, { once: true });
-      videoTop.load();
-      if (!compactVideo.matches) videoBottom.load();
-      syncPlayback();
-    };
-
-    handleSlider.current = () => {
-      currentIndex.current = currentIndex.current < totalSlides ? currentIndex.current + 1 : 1;
-
-      if (reducedMotion || !gsapInstance || !slideTitles.current) {
-        if (slideTitles.current) slideTitles.current.style.transform = `translateX(-${(currentIndex.current - 1) * 11.1111}%)`;
-        updateImages(currentIndex.current + 1);
-        updateActiveSlide();
-        return;
-      }
-
-      gsapInstance.to(slideTitles.current, {
-        onStart: () => {
-          activeTimer = setTimeout(updateActiveSlide, 100);
-          updateImages(currentIndex.current + 1);
-        },
-        x: `-${(currentIndex.current - 1) * 11.1111}%`,
-        duration: 2,
-        ease: "power4.out",
-      });
-    };
-
-    import("gsap").then(({ gsap }) => {
-      if (disposed) return;
-      gsapInstance = gsap;
-      updateImages(2);
-      updateActiveSlide();
-    });
-
-    const slideTitlesElement = slideTitles.current;
-    const imgTopElement = imgTop.current;
-    const imgBottomElement = imgBottom.current;
-
-    return () => {
-      disposed = true;
-      playbackObserver.disconnect();
-      document.removeEventListener("visibilitychange", syncPlayback);
-      motionPreference.removeEventListener("change", syncPlayback);
-      compactVideo.removeEventListener("change", syncPlayback);
-      document.removeEventListener("pointerup", resumePlayback);
-      window.removeEventListener("online", resumePlayback);
-      handleMediaHover.current = () => undefined;
-      if (activeTimer) clearTimeout(activeTimer);
-      if (gsapInstance) {
-        gsapInstance.killTweensOf(slideTitlesElement);
-        gsapInstance.killTweensOf([...(imgTopElement?.children ?? []), ...(imgBottomElement?.children ?? [])]);
-      }
-      [imgTopElement, imgBottomElement].forEach((container) => {
-        container?.querySelectorAll("video").forEach((video) => video.pause());
-      });
-    };
-  }, [capabilities]);
-
-  const titles = [...capabilities, ...capabilities.slice(0, 2)];
+  const videoRef = useRef<HTMLVideoElement>(null);
   const item = capabilities[active];
+  useAutoplayVideo(videoRef, { src: item.video ?? "", enabled: Boolean(item.video) });
+  const advance = (direction: number) => setActive(previous => (previous + direction + capabilities.length) % capabilities.length);
 
   return (
     <section className="creative-capability-story modular-video-showcase" id="capabilities" aria-labelledby="capabilities-title">
-      <h2 id="capabilities-title" className="sr-only">Creative production work and capabilities</h2>
-      <div
-        ref={slider}
-        className="slider"
-        role="region"
-        aria-roledescription="carousel"
-        aria-label="Creative production video showcase. Select the showcase to advance."
-        aria-live="polite"
+      <h2 id="capabilities-title" className="sr-only">Creative production services</h2>
+      <div className="slider" role="region" aria-roledescription="carousel" aria-label="Creative production services"
         onClick={(event) => {
           if ((event.target as HTMLElement).closest("a,button,video")) return;
-          handleSlider.current();
+          advance(1);
         }}
         onKeyDown={(event) => {
           if ((event.target as HTMLElement).closest("a,button")) return;
-          if (event.key === "Enter" || event.key === " ") {
+          if (["ArrowRight", "ArrowLeft", "Enter", " "].includes(event.key)) {
             event.preventDefault();
-            handleSlider.current();
+            advance(event.key === "ArrowLeft" ? -1 : 1);
           }
-        }}
-        tabIndex={0}
-      >
-        <div className="slide-titles" ref={slideTitles}>
-          {titles.map((capability, index) => (
-            <div className={`title${index === 0 ? " active" : ""}`} key={`${capability.number}-${index}`} aria-hidden={index === 0 ? "false" : "true"}>
-              <h3>{capability.sliderTitle}</h3>
-            </div>
-          ))}
-        </div>
-        <div
-          className="slide-images"
-          ref={slideImages}
-          aria-hidden="true"
-          onPointerEnter={() => handleMediaHover.current(true)}
-          onPointerLeave={() => handleMediaHover.current(false)}
-        >
-          <img className="slider-loading-artwork" src={item?.poster ?? item?.image} alt="" loading="eager" decoding="async" />
-          <div className="img-top" ref={imgTop} />
-          <div className="img-bottom" ref={imgBottom} />
-        </div>
-        <div className="modular-slider-kicker" aria-hidden="true">
-          <span>Better Found Online</span>
-          <span>Creative Production</span>
+        }} tabIndex={0}>
+        <div className="slide-titles" aria-live="polite"><div className="title active"><h3>{item.sliderTitle}</h3></div></div>
+        <div className="slide-images">
+          {item.video ? <video key={item.video} ref={videoRef} className="slider-video" src={item.video} poster={item.poster}
+            autoPlay muted loop playsInline preload="metadata" aria-label={item.title} />
+            : <img key={item.image} className="slider-artwork" src={item.image} srcSet={editorialSrcSet(item.image)} sizes="(max-width: 900px) 100vw, 65vw" width="1440" height="960" alt={`Production planning for ${item.title.toLowerCase()}`} decoding="async" />}
         </div>
         <footer className="modular-slider-footer">
-          <div className="links">
-            <a href={item?.href ?? "/services"}>{item?.cta ?? "Explore the work"}</a>
-            <TransitionLink href="/services">All services</TransitionLink>
-          </div>
-          <p><span>{item?.headline}</span><span>{String(active + 1).padStart(2, "0")} / 07 - Select to advance</span></p>
+          <div className="links"><a href={item.href}>{item.cta}</a><TransitionLink href="/services">All services</TransitionLink></div>
+          <nav className="creative-showcase-navigation" aria-label="Browse creative services">
+            <button type="button" onClick={() => advance(-1)} aria-label="Previous creative service"><ArrowLeft size={22} aria-hidden="true" /></button>
+            <span aria-live="polite" aria-atomic="true">{active + 1} / {capabilities.length}</span>
+            <button type="button" onClick={() => advance(1)} aria-label="Next creative service"><ArrowRight size={22} aria-hidden="true" /></button>
+          </nav>
         </footer>
       </div>
     </section>
@@ -449,7 +195,7 @@ export function CreativeFaq({ faq }: { faq: string[][] }) {
     <section className="faq-section section-pad" aria-labelledby="creative-faq-title">
       <header>
         <p className="eyebrow">Frequently asked questions</p>
-        <h2 id="creative-faq-title">What buyers usually need to know.</h2>
+        <h2 id="creative-faq-title">Your creative project questions, answered.</h2>
       </header>
       <div>
         {faq.map(([question, answer]) => (

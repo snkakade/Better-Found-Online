@@ -60,12 +60,15 @@ test("mobile project media keeps its aspect ratio and retries autoplay without p
   assert.match(source("components/website-preview.css"), /data-ready="true"\]\s*> video \{ opacity: 1/);
 });
 
-test("creative mobile playback never waits for a hidden video half to buffer", () => {
+test("creative playback chooses one media item without a loading image or hidden duplicate", () => {
   const creative = source("components/creative-story-components.tsx");
-  assert.match(creative, /!compactVideo\.matches && videoBottom\.readyState < 2/);
-  assert.match(creative, /if \(!compactVideo\.matches\) videoBottom\.load\(\)/);
-  assert.match(creative, /document\.addEventListener\("pointerup", resumePlayback/);
-  assert.doesNotMatch(creative, /readyCount < 2/);
+  const carousel = creative.split("export function CreativeCapabilityCarousel")[1].split("export function CreativeProcessStory")[0];
+  assert.equal((carousel.match(/<video /g) || []).length, 1);
+  assert.match(carousel, /item\.video \? <video/);
+  assert.match(carousel, /: <img/);
+  assert.doesNotMatch(carousel, /img-bottom|videoBottom|slider-loading-artwork/);
+  assert.match(carousel, /autoPlay muted loop playsInline preload="metadata"/);
+  assert.match(creative, /useAutoplayVideo\(videoRef, \{ src: item\.video \?\? "", enabled: Boolean\(item\.video\) \}\)/);
   assert.doesNotMatch(source("components/ambient-video.tsx"), /failed \? \(/);
   assert.doesNotMatch(source("components/creative-proof-reel/creative-proof-reel.tsx"), /return failed/);
 });

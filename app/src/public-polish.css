@@ -1,0 +1,58 @@
+/* Public-site production pass. Keep decorative motion, media and facts intact;
+   give every section a clear heading, readable supporting copy and next step. */
+:root .site .eyebrow { font-size: .75rem; line-height: 1.5; letter-spacing: .1em; }
+:root .site .section-heading > p:not(.eyebrow) { max-width: 60ch; line-height: 1.55; }
+:root .site .faq-section summary { min-height: 56px; padding-block: 16px; line-height: 1.4; }
+:root .site .faq-section details > p { max-width: 68ch; margin-top: 12px; font-size: 1rem; line-height: 1.6; }
+:root .site .footer :is(.footer-label,.footer-bottom) { font-family: Outfit,sans-serif; font-size: .8125rem; line-height: 1.5; }
+:root .site .footer .footer-label { font-size: .875rem; font-weight: 500; letter-spacing: .04em; text-transform: none; }
+:root .site .footer .footer-bottom { color: color-mix(in srgb,var(--brand-white) 78%,var(--brand-blue)); font-weight: 400; text-transform: none; }
+:root .site .footer-bottom :is(a,button) { min-height: 44px; display: inline-flex; align-items: center; }
+.scroll63-scope-list { margin: 8px 0 0; padding-left: 20px; font-size: 1rem; line-height: 1.6; }
+.scroll63-scope-list li + li { margin-top: 6px; }
+.scroll63-scope-list li::marker { color: var(--brand-red); }
+.scroll63-deliverables { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 32px; max-width: 760px; margin: 28px auto 0; padding-left: 20px; text-align: left; font-size: 1rem; line-height: 1.5; }
+.scroll63-deliverables li::marker { color: var(--brand-white); }
+:root .site.studio-page .process-map { grid-template-columns: 80px minmax(0,1fr); gap: 40px; margin-top: 32px; }
+:root .site.studio-page .process-svg { position: relative; top: 0; height: 340px; }
+:root .site.studio-page .process-stages { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 32px; }
+:root .site.studio-page .process-stage { display: block; min-height: 0; padding: 0; }
+:root .site.studio-page .process-stage > span { display: block; margin-bottom: 12px; font-size: .75rem; }
+:root .site.studio-page .process-stage h3 { font-size: clamp(1.5rem,2.2vw,2rem); line-height: 1.15; }
+:root .site.studio-page .process-stage p { margin-top: 12px; font-size: 1rem; line-height: 1.55; }
+:root .site .accordion-panel > span { right: 0; bottom: 0; left: 0; padding: 20px; background: var(--brand-blue); }
+:root .site .accordion-panel:not(.active) b { font-size: clamp(1.25rem,1.8vw,1.75rem); line-height: 1.15; }
+:root .site .accordion-panel small { font-size: .9375rem; line-height: 1.5; color: var(--brand-white); }
+
+/* One media item per slide. A service photograph is an alternative to video,
+   never a loading image layered behind it. */
+:root .site.creative-page .modular-video-showcase { height: auto; min-height: calc(100svh - 80px); }
+:root .site.creative-page .modular-video-showcase .slider { display: grid; align-content: center; gap: 24px; height: auto; min-height: inherit; padding: 32px max(5vw,24px); }
+:root .site.creative-page .modular-video-showcase .slider::before { display: none; }
+:root .site.creative-page .modular-video-showcase .slide-titles { position: static; display: block; width: 100%; height: auto; transform: none; }
+:root .site.creative-page .modular-video-showcase .title { display: block; }
+:root .site.creative-page .modular-video-showcase .title h3 { max-width: none; font-size: clamp(1.75rem,2.8vw,2.5rem); line-height: 1.15; transform: none; }
+:root .site.creative-page .modular-video-showcase .slide-images { position: relative; inset: auto; width: min(100%,960px,calc((100svh - 310px) * 16 / 9)); height: auto; min-height: 0; aspect-ratio: 16 / 9; justify-self: center; overflow: hidden; isolation: isolate; transform: none; opacity: 1; background: var(--brand-blue); transition: none; }
+:root .site.creative-page .modular-video-showcase .slider-video { width: 100%; height: 100%; object-fit: contain; clip-path: none; transform: none; filter: none; opacity: 1; background: var(--brand-blue); }
+:root .site.creative-page .modular-video-showcase .slider-artwork { display: block; width: 100%; height: 100%; object-fit: contain; }
+:root .site.creative-page .modular-video-showcase .modular-slider-footer { position: static; display: flex; align-items: center; flex-wrap: wrap; gap: 20px; padding: 0; background: none; }
+:root .site.creative-page .modular-video-showcase .links { flex-wrap: wrap; gap: 12px; }
+.creative-showcase-navigation { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+.creative-showcase-navigation button { display: grid; width: 48px; height: 48px; place-items: center; padding: 0; border: 1px solid var(--brand-white); border-radius: 50%; background: transparent; color: var(--brand-white); cursor: pointer; }
+.creative-showcase-navigation button:hover { background: var(--brand-red); }
+.creative-showcase-navigation button:focus-visible { outline: 2px solid var(--brand-white); outline-offset: 4px; }
+.creative-showcase-navigation span { min-width: 42px; text-align: center; font-size: 1rem; }
+@media (max-width: 900px) {
+  :root .site.creative-page .modular-video-showcase { min-height: 0; }
+  :root .site.creative-page .modular-video-showcase .slider { padding: 32px 20px; }
+  :root .site.creative-page .modular-video-showcase .slide-images { width: 100%; }
+  :root .site.creative-page .modular-video-showcase .modular-slider-footer { display: grid; grid-template-columns: 1fr; }
+  .creative-showcase-navigation { justify-self: center; margin: 0; }
+}
+@media (max-width: 600px) {
+  .scroll63-deliverables { grid-template-columns: 1fr; }
+  :root .site.studio-page .process-map { grid-template-columns: 24px minmax(0,1fr); gap: 20px; }
+  :root .site.studio-page .process-svg { position: sticky; top: 96px; }
+  :root .site.studio-page .process-stages { grid-template-columns: 1fr; gap: 24px; }
+  :root .site.creative-page .modular-video-showcase .links { display: grid; grid-template-columns: 1fr; --action-width: 100%; }
+}

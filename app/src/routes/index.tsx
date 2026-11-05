@@ -286,7 +286,7 @@ function Index() {
                   <span>Get chosen.</span>
                 </h1>
                 <p className="hero-sub">
-                  We build websites and create search, advertising, and digital experiences for service businesses and growing brands in the U.S. and beyond.
+                  Websites, search, paid advertising and creative production for service businesses and growing brands.
                 </p>
                 <div className="hero-actions">
                   <a href="#contact" className="primary-btn" data-cta>
@@ -370,8 +370,8 @@ function Index() {
         <section className="services section-pad" id="services" aria-labelledby="services-title">
           <div className="section-heading">
             <p className="eyebrow">What we do</p>
-            <h2 id="services-title">Five ways to make<br />digital work harder.</h2>
-            <p>From the first impression to the next opportunity, we bring together the right skills for the problem in front of you.</p>
+            <h2 id="services-title">Website, creative<br />and marketing services.</h2>
+            <p>Choose a service to see what we deliver and how it can help your business.</p>
           </div>
 
           <ServicesAccordion services={services} motionDisabled={reduced || motionPaused || compact} />
@@ -383,25 +383,25 @@ function Index() {
           <div className="about-statement section-pad">
             <p className="eyebrow">How we think</p>
             <h2>
-              Good design gets attention.<br />
-              <span>Good thinking gives it direction.</span>
+              Start with your customer.<br />
+              <span>Make their next step easy.</span>
             </h2>
             <div className="about-grid">
               <div className="macro-window">
                 <img {...humanImages.storyboardSession} sizes="(max-width: 900px) 100vw, 45vw" loading="lazy" decoding="async" />
               </div>
               <div className="about-copy">
-                <p>A beautiful website means little if people can't understand your offer. More traffic means little if visitors don't know what to do next.</p>
-                <p>We connect business goals, creative thinking, and practical execution so each part supports the next.</p>
+                <p>Explain your offer, show useful proof and give visitors a clear way to contact you.</p>
+                <p>Connect the website, campaigns and follow-up to the same customer goal.</p>
                 <ol>
                   <li>
-                    <span>Understand</span>Find the real problem before choosing the solution.
+                    <span>Your offer</span>Explain who you help and what you do.
                   </li>
                   <li>
-                    <span>Connect</span>Make the message, experience, and tools work together.
+                    <span>Your website</span>Put useful proof and contact options where visitors expect them.
                   </li>
                   <li>
-                    <span>Improve</span>Learn from what happens and make the next decision count.
+                    <span>Your follow-up</span>Send enquiries to the right tools and people.
                   </li>
                 </ol>
               </div>
@@ -412,10 +412,10 @@ function Index() {
         <section className="insights section-pad" id="insights" aria-labelledby="insights-title">
           <div className="section-heading">
             <h2 id="insights-title">
-              Good questions.<br />
-              <span>Better digital decisions.</span>
+              Website, search<br />
+              <span>and marketing advice.</span>
             </h2>
-            <p>Clear thinking on websites, search, design, and what makes digital work useful.</p>
+            <p>Short guides to clearer websites, useful content and purposeful animation.</p>
           </div>
 
           <div className="insight-list">
@@ -445,7 +445,7 @@ function Index() {
         <ProjectEnquiry onSubmit={handleInquiry} inquiryReady={inquiryReady} projectTypeError={projectTypeError} onServicesChange={() => setProjectTypeError("")} />
       </main>
 
-      <SiteFooter motionPaused={motionPaused} onMotionToggle={() => setMotionPaused(!motionPaused)} />
+      <SiteFooter showProjectCta={false} motionPaused={motionPaused} onMotionToggle={() => setMotionPaused(!motionPaused)} />
     </div>
   );
 }

@@ -87,7 +87,7 @@ export function ProjectReel() {
     <section className="work-reel" aria-labelledby="work-reel-title" ref={section}>
       <div className="reel-pin section-pad">
         <div className="reel-heading">
-          <div><p className="eyebrow">Selected Work</p><h2 id="work-reel-title">Different challenges.<br />Thoughtful solutions.</h2><p className="reel-intro">Selected digital projects where strategy, design, and technology come together with a clear purpose.</p></div>
+          <div><p className="eyebrow">Selected Work</p><h2 id="work-reel-title">Explore our<br />website projects.</h2><p className="reel-intro">Website previews across healthcare, recruitment, agriculture and leisure.</p></div>
           <div className="reel-controls">
             <span>{String(active + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
           </div>

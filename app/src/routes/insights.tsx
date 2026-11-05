@@ -151,24 +151,12 @@ function InsightsPage() {
           <OrbitType orbitRef={orbitRef} />
           <div className="insights-hero-copy">
             <p className="eyebrow">Insights</p>
-            <h1 id="insights-title">Good questions.<span>Better digital decisions.</span></h1>
-            <p>Clear thinking on websites, search, design, and what makes digital work useful.</p>
+            <h1 id="insights-title">Practical advice<span>for your next project.</span></h1>
+            <p>Short guides to clearer websites, useful search content and purposeful animation.</p>
           </div>
           <button className="insights-enter" type="button" onClick={enterInsights} disabled={tunneling}>
             <span>Explore Insights</span>
           </button>
-        </section>
-
-        <section className="insights-story insights-shell" data-insight-reveal aria-labelledby="insights-story-title">
-          <div className="insights-story-intro">
-            <h2 id="insights-story-title">Better digital work begins<br /><em>with clearer thinking.</em></h2>
-            <p>Different questions need different answers. The aim stays the same: make every digital decision more useful.</p>
-          </div>
-          <div className="insights-story-rows" aria-label="Our editorial principles">
-            <div className="insights-story-row"><span>Clarity</span><span>Action</span><small>01 / Websites</small></div>
-            <div className="insights-story-row"><span>Questions</span><span>Answers</span><small>02 / Search</small></div>
-            <div className="insights-story-row"><span>Motion</span><span>Purpose</span><small>03 / Design</small></div>
-          </div>
         </section>
 
         <section className="insights-library insights-shell" id="insight-library" aria-label="Website, SEO, and marketing insights">
@@ -190,7 +178,7 @@ function InsightsPage() {
                     <span className="insight-category"><span className="tiny">{item.number}</span>{item.category}</span>
                     <h2>{item.title}</h2>
                   </div>
-                  <span className="insights-reading-time">2 min read</span>
+                  <span className="insights-reading-time">Quick read</span>
                 </div>
                 <div className="insights-card-body">
                   {item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
@@ -205,12 +193,12 @@ function InsightsPage() {
           <div>
             <p className="eyebrow">Ready to apply the thinking?</p>
             <h2>Let&apos;s make your<br /><em>business better found.</em></h2>
-            <p>Bring us the question, the opportunity, or the part of your digital presence that is not working hard enough.</p>
+            <p>Tell us what needs improving: your website, search visibility, creative or campaigns.</p>
           </div>
           <TransitionLink href="/#contact">Discuss Your Project <ArrowUpRight size={22} weight="light" /></TransitionLink>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter showProjectCta={false} />
     </div>
   );
 }

@@ -1,0 +1,27 @@
+/* Clear destinations, with a useful reason to follow each link. */
+.seo-next-steps { background: var(--brand-white); color: var(--brand-blue); }
+.seo-next-steps header { max-width: 850px; margin-bottom: 28px; }
+.seo-next-steps h2 { margin: 0; text-wrap: balance; }
+.seo-next-steps header p { margin-top: 16px; font-size: 1.0625rem; line-height: 1.5; }
+.seo-next-steps nav { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; }
+.seo-next-link { position: relative; display: grid; grid-template-rows: auto auto 1fr; gap: 18px; min-width: 0; padding: 28px 24px 64px; border: 1px solid color-mix(in srgb,var(--brand-blue) 30%,transparent); border-radius: 8px; background: color-mix(in srgb,var(--brand-blue) 3%,var(--brand-white)); color: inherit; text-decoration: none; transition: border-color 180ms ease, translate 180ms ease; }
+.seo-next-link h3 { margin: 0; font-size: 1.375rem; font-weight: 500; line-height: 1.2; letter-spacing: -.03em; }
+.seo-next-link p { margin: 0; font-size: 1rem; line-height: 1.5; }
+.seo-next-arrow { position: absolute; right: 20px; bottom: 20px; display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: var(--brand-red); color: var(--brand-white); }
+.seo-next-link:hover { border-color: var(--brand-red); translate: 0 -3px; }
+.seo-next-link:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 4px; }
+:root .site.growth-service-page.seo-service-page .format-section > div { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 32px; }
+:root .site.growth-service-page.seo-service-page .format-section > div article:last-child { grid-column: 1 / -1; }
+.seo-service-page .format-section article h3 { font-size: 1.5rem; line-height: 1.2; }
+.seo-service-page .format-section article p { max-width: 56ch; }
+@media (max-width: 1100px) { .seo-next-steps nav { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 600px) {
+  .seo-next-steps nav { grid-template-columns: 1fr; gap: 12px; }
+  .seo-next-link { grid-template-columns: 28px minmax(0,1fr) 32px; grid-template-rows: auto auto; align-items: start; gap: 8px 14px; padding: 20px; }
+  .seo-next-icon { grid-row: 1 / 3; width: 28px; }
+  .seo-next-link h3 { font-size: 1.125rem; }
+  .seo-next-link p { grid-column: 2; font-size: .9375rem; }
+  .seo-next-arrow { position: static; grid-column: 3; grid-row: 1 / 3; align-self: center; }
+  :root .site.growth-service-page.seo-service-page .format-section > div { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .seo-next-link { transition: none; } .seo-next-link:hover { translate: none; } }

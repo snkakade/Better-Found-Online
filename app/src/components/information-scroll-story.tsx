@@ -11,6 +11,7 @@ export type InformationScrollStoryProps = {
   foregroundHeading: string;
   leftTitle: string;
   leftBody: string;
+  leftItems?: string[];
   rightTitle: string;
   rightBody: string;
   outroImages: [
@@ -23,6 +24,7 @@ export type InformationScrollStoryProps = {
   outroCtaHref: string;
   afterHeading?: string;
   afterBody?: string;
+  afterItems?: string[];
   scrollScreens?: number;
 };
 
@@ -33,6 +35,7 @@ export function InformationScrollStory({
   foregroundHeading,
   leftTitle,
   leftBody,
+  leftItems,
   rightTitle,
   rightBody,
   outroImages,
@@ -42,6 +45,7 @@ export function InformationScrollStory({
   outroCtaHref,
   afterHeading,
   afterBody,
+  afterItems,
   scrollScreens = 2.4,
 }: InformationScrollStoryProps) {
   const root = useRef<HTMLDivElement>(null);
@@ -120,7 +124,7 @@ export function InformationScrollStory({
         </div>
 
         <div className="scroll63-hero-bg-content">
-          <div className="scroll63-hero-bg-content-col"><div className="scroll63-hero-bg-content-copy"><h3>{leftTitle}</h3><p>{leftBody}</p></div></div>
+          <div className="scroll63-hero-bg-content-col"><div className="scroll63-hero-bg-content-copy"><h3>{leftTitle}</h3><p>{leftBody}</p>{leftItems && <ul className="scroll63-scope-list">{leftItems.map(item => <li key={item}>{item}</li>)}</ul>}</div></div>
           <div className="scroll63-hero-bg-content-col"><div className="scroll63-hero-bg-content-copy"><h3>{rightTitle}</h3><p>{rightBody}</p></div></div>
         </div>
 
@@ -136,7 +140,7 @@ export function InformationScrollStory({
         </div>
       </section>
 
-      {afterHeading && <section className="scroll63-about"><div><h3>{afterHeading}</h3>{afterBody && <p>{afterBody}</p>}</div></section>}
+      {afterHeading && <section className="scroll63-about"><div><h3>{afterHeading}</h3>{afterBody && <p>{afterBody}</p>}{afterItems && <ul className="scroll63-deliverables">{afterItems.map(item => <li key={item}>{item}</li>)}</ul>}</div></section>}
     </div>
   );
 }

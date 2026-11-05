@@ -3,10 +3,10 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const stages = [
-  ["Understand", "Get clear on the business, the audience, and the problem worth solving."],
-  ["Position", "Find the strongest way to explain what makes the offer valuable."],
-  ["Build", "Turn the thinking into a useful, distinctive digital experience."],
-  ["Improve", "Review what happens, learn from it, and refine what matters."],
+  ["Define the goal", "Agree the audience, offer and problem the project needs to solve."],
+  ["Plan the message", "Set the content, design direction and customer journey."],
+  ["Build and test", "Create the agreed work and check the important interactions."],
+  ["Review and improve", "Use feedback and available data to decide what needs changing."],
 ];
 
 export function ProcessPath() {
@@ -21,7 +21,7 @@ export function ProcessPath() {
     const context = gsap.context(() => {
       gsap.to(line.current, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: root.current, start: "top 72%", end: "bottom 62%", scrub: 1 } });
       gsap.utils.toArray<HTMLElement>(".process-stage").forEach((stage) => {
-        gsap.fromTo(stage, { autoAlpha: 0.25, y: 30 }, { autoAlpha: 1, y: 0, scrollTrigger: { trigger: stage, start: "top 78%", end: "top 48%", scrub: true } });
+        gsap.fromTo(stage, { y: 12 }, { y: 0, duration: .35, scrollTrigger: { trigger: stage, start: "top 96%", once: true } });
       });
     }, root);
     return () => context.revert();
@@ -29,7 +29,7 @@ export function ProcessPath() {
 
   return (
     <section className="process-path section-pad" ref={root} aria-labelledby="process-title">
-      <div className="process-heading"><p className="eyebrow">A connected practice</p><h2 id="process-title">From the big picture<br />to the small details.</h2></div>
+      <div className="process-heading"><p className="eyebrow">A connected practice</p><h2 id="process-title">How your project<br />moves from brief to launch.</h2></div>
       <div className="process-map">
         <svg className="process-svg" viewBox="0 0 120 740" preserveAspectRatio="none" aria-hidden="true">
           <path className="process-guide" d="M60 0 C15 110, 105 160, 58 270 C15 370, 104 420, 58 530 C18 625, 82 690, 60 740" />

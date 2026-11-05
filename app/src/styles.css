@@ -32,6 +32,7 @@
 @import "./mobile-refinements.css";
 @import "./service-viewport.css";
 @import "./editorial-photography.css";
+@import "./public-polish.css";
 /* shadcn v4 base (scrollbar/scroll-fade utilities, toast base) for src/components/ui */
 @import "shadcn/tailwind.css";
 
