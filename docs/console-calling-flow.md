@@ -25,3 +25,9 @@ These references inform the distinction between live business calls and artifici
 - [FTC: Do Not Call Q&A](https://www.ftc.gov/business-guidance/resources/qa-telemarketers-sellers-about-dnc-provisions-tsr-0)
 - [FTC: 2024 B2B telemarketing protections](https://www.ftc.gov/news-events/news/press-releases/2024/03/ftc-implements-new-protections-businesses-against-telemarketing-fraud-affirms-protections-against-ai)
 - [FCC: AI-generated voice declaratory ruling](https://docs.fcc.gov/public/attachments/FCC-24-17A1_Rcd.pdf)
+
+## Voice webhook correction
+
+The live trace showed an allowed call review followed by HTTP 403 at the voice webhook. A signed callback fixture reproduced the rejection. The validator used locale-based sorting, which puts `Called` before `CallSid`; Twilio signs with case-sensitive lexical sorting, which puts `CallSid` first. The validator now follows the [official Twilio SDK signing contract](https://github.com/twilio/twilio-node/blob/main/src/webhooks/webhooks.ts), including unique, sorted repeated values. Missing, altered and wrong-URL signatures are still rejected.
+
+Authenticated call refusals return HTTP 200 with explanatory TwiML and Hangup, without Dial. This avoids a generic provider application-error announcement for an intentional refusal. Unknown caller IDs cannot crash the refusal audit insert. Fourteen signed-webhook tests use the actual migrations in an in-memory SQLite database and cover dialing/attribution, DNC recheck, expired/mismatched reviews, tampering and call status updates.
