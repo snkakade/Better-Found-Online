@@ -1458,7 +1458,7 @@
     document.addEventListener("keydown", (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); $("#global-search-input").focus(); }
       if (event.key === "Escape") { $$("dialog[open]").forEach((dialog) => dialog.close()); closeSidebar(); if (state.voice.call) state.voice.call.disconnect(); }
-      if ($(".page[data-page='voice']").classList.contains("active") && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+      if (!$("dialog[open]") && $(".page[data-page='voice']").classList.contains("active") && !/INPUT|TEXTAREA|SELECT|BUTTON|A/.test(document.activeElement.tagName)) {
         if (/^[0-9*#]$/.test(event.key)) { if (state.voice.call?.sendDigits) state.voice.call.sendDigits(event.key); else $("#phone-input").value += event.key; updateCallButton(); }
         if (event.key === "Backspace") { $("#phone-input").value = $("#phone-input").value.slice(0, -1); updateCallButton(); }
         if (event.key === "Enter" && !$("#call-button").disabled) placeCall();
