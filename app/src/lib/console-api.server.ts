@@ -847,6 +847,31 @@ async function handleCallPreflight(request: Request, env: ConsoleEnv, actor: Aut
 async function handleCalls(request: Request, env: ConsoleEnv, actor: AuthenticatedUser) {
   const db = requireDb(env); const url = new URL(request.url);
   const id = url.pathname.match(/^\/api\/console\/calls\/([^/]+)$/)?.[1];
+  if (request.method === "POST" && !id) {
+    const body = await readJson(request);
+    const phone = cleanPhone(body?.phone);
+    if (!E164.test(phone)) return json({ error: "Enter a valid international phone number" }, 400);
+    const [settings, suppression, profile] = await Promise.all([
+      readComplianceSettings(env),
+      db.prepare("SELECT reason FROM console_suppressions WHERE phone=?").bind(phone).first(),
+      db.prepare("SELECT screening_basis FROM call_recipient_profiles WHERE phone=?").bind(phone).first<{ screening_basis: string }>(),
+    ]);
+    if (!settings.calls_enabled) return json({ error: "Outbound calling is paused by an administrator." }, 409);
+    if (suppression || profile?.screening_basis === "listed_do_not_call") return json({ error: "This number is on the internal do-not-call list." }, 409);
+    const callerId = settings.approved_caller_id || env.TWILIO_CALLER_ID || "";
+    if (!E164.test(callerId)) return json({ error: "Configure the outbound caller ID before calling." }, 503);
+    const sessionId = crypto.randomUUID();
+    const sellerIdentity = `${settings.legal_seller_name}, trading as ${settings.trading_name}`;
+    // This is an authenticated manual dial, not a claim that the recipient was
+    // screened or classified. Keep unknown facts unknown; never invent consent.
+    // The signed voice callback uses this short-lived, user/number-bound session.
+    await db.prepare(`INSERT INTO call_preflight_logs
+      (id,user_id,phone,recipient_type,relationship,screening_basis,call_mode,recording_mode,caller_id,seller_identity,decision,agent_attested,expires_at)
+      VALUES (?,?,?,'unknown','other','not_screened','live_agent','off',?,?,'allowed',0,datetime('now','+10 minutes'))`)
+      .bind(sessionId, actor.id, phone, callerId, sellerIdentity).run();
+    await logComplianceEvent(env, actor.id, "manual_call_requested", phone, { sessionId, callMode: "live_agent", recordingMode: "off" });
+    return json({ id: sessionId, phone, callMode: "live_agent", recordingMode: "off" }, 201);
+  }
   if (request.method === "GET") {
     const result = await db.prepare(`SELECT e.*, u.display_name, l.first_name, l.last_name, l.company FROM outreach_events e LEFT JOIN console_users u ON u.id=e.user_id LEFT JOIN console_leads l ON l.id=e.lead_id WHERE e.channel='call' ORDER BY e.created_at DESC LIMIT 200`).all();
     return json({ calls: result.results });
@@ -899,12 +924,14 @@ async function handleVoiceWebhook(request: Request, env: ConsoleEnv) {
   const db = requireDb(env);
   const preflight = await db.prepare(`SELECT p.* FROM call_preflight_logs p
     WHERE p.id=? AND p.phone=? AND p.user_id=? AND p.decision='allowed' AND p.expires_at>datetime('now')
-      AND NOT EXISTS (SELECT 1 FROM console_suppressions s WHERE s.phone=p.phone)`)
+      AND NOT EXISTS (SELECT 1 FROM console_suppressions s WHERE s.phone=p.phone)
+      AND NOT EXISTS (SELECT 1 FROM call_recipient_profiles r WHERE r.phone=p.phone AND r.screening_basis='listed_do_not_call')
+      AND EXISTS (SELECT 1 FROM call_compliance_settings WHERE id=1 AND calls_enabled=1)`)
     .bind(preflightId, target, userId).first<Record<string, unknown>>();
   if (!preflight) {
     const actor = userId ? await db.prepare("SELECT id FROM console_users WHERE id=?").bind(userId).first<{ id: number }>() : null;
     await logComplianceEvent(env, actor?.id || null, "outbound_call_blocked", target, { reason: "missing_or_expired_preflight", callSid });
-    return xml("<Response><Say>This call cannot start because its review is missing, expired, or the number is now on the do not call list. Please refresh the call review.</Say><Hangup/></Response>");
+    return xml("<Response><Say>This call cannot start. Calling may be paused, the number may be on the do not call list, or the call session has expired. Please try again from the dialer.</Say><Hangup/></Response>");
   }
   await db.prepare(
     `INSERT OR IGNORE INTO outreach_events

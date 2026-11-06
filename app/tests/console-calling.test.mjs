@@ -95,13 +95,18 @@ test('saved recipient facts are returned without inventing verification or conse
 });
 
 const clientSource = readFileSync(new URL('../public/console/assets/js/admin.js', import.meta.url), 'utf8');
-function clientFixture(result = {}, status = 201) {
+function clientFixture(result = { id: 'manual-session' }, status = 201) {
   const nodes = new Map();
   const listeners = new Map();
+  const timers = [];
+  const requests = [];
+  const events = new Map();
+  let connects = 0;
+  let disconnects = 0;
   function node(selector) {
     if (!nodes.has(selector)) nodes.set(selector, {
-      value: '', checked: false, hidden: false, disabled: false, open: true, textContent: '', innerHTML: '',
-      closest() { return this; }, setAttribute() {}, removeAttribute() {}, focus() {},
+      value: '', checked: false, hidden: true, disabled: false, open: false, textContent: '', innerHTML: '',
+      closest() { return this; }, setAttribute() {}, removeAttribute() {}, focus() {}, append() {}, remove() {},
       querySelectorAll() { return []; }, querySelector(s) { return node(s); },
       close() { this.open = false; }, showModal() { this.open = true; }, reset() {},
       addEventListener() {}, classList: { contains() { return true; }, toggle() {} },
@@ -110,136 +115,114 @@ function clientFixture(result = {}, status = 201) {
   }
   const storage = { getItem() { return null; }, setItem() {} };
   const context = vm.createContext({
-    document: { querySelector: selector => selector === 'dialog[open]' ? (node('#call-preflight-dialog').open ? node('#call-preflight-dialog') : null) : node(selector), querySelectorAll() { return []; }, activeElement: { tagName: 'BUTTON' }, addEventListener(event, handler) { listeners.set(event, handler); } },
-    localStorage: storage, sessionStorage: storage, navigator: {},
-    window: { setTimeout() {}, addEventListener() {} }, Date, console,
-    fetch: async () => ({ ok: status < 400, status, json: async () => result }),
+    document: { querySelector: selector => selector === 'dialog[open]' ? null : node(selector), createElement: () => node('toast'), querySelectorAll() { return []; }, activeElement: { tagName: 'BUTTON' }, addEventListener(event, handler) { listeners.set(event, handler); } },
+    localStorage: storage, sessionStorage: storage, navigator: {}, clearInterval() {},
+    window: { setTimeout(fn) { timers.push(fn); }, setInterval() {}, addEventListener() {} }, Date, console,
+    fetch: async (path, options) => { requests.push({ path, options }); return { ok: status < 400, status, json: async () => result }; },
   });
-  // Expose the real functions in the test VM, without running application boot.
   const boundary = clientSource.lastIndexOf('  if ("serviceWorker" in navigator');
-  vm.runInContext(`${clientSource.slice(0, boundary)}globalThis.fixture = {state, handleCallPreflight, renderPreflightResult, togglePreflightConsentFields, openCallPreflight, registerEvents};})();`, context);
+  vm.runInContext(`${clientSource.slice(0, boundary)}globalThis.fixture = {state, placeCall, cancelCall, endCallUI, registerEvents};})();`, context);
   const fixture = context.fixture;
-  for (const [selector, value] of Object.entries({
-    '#phone-input': valid.phone, '#preflight-recipient-type': valid.recipientType,
-    '#preflight-state': valid.stateCode, '#preflight-timezone': valid.timezone,
-    '#preflight-screening': valid.screeningBasis, '#preflight-relationship': valid.relationship,
-    '#preflight-call-mode': 'live_agent', '#preflight-recording-mode': 'off', '#preflight-consent-type': 'none',
-  })) node(selector).value = value;
-  node('#preflight-attestation').checked = true;
-  fixture.state.compliance = {};
-  let connects = 0;
-  let disconnects = 0;
-  fixture.state.voice.device = { connect: async () => { connects++; return { on() {}, disconnect() { disconnects++; } }; } };
-  return { ...fixture, node, context, listeners, connects: () => connects, disconnects: () => disconnects };
+  node('#phone-input').value = valid.phone;
+  fixture.state.voice.device = { connect: async () => { connects++; return call; } };
+  const call = { parameters: { CallSid: 'CA-current' }, on(event, fn) { events.set(event, fn); }, disconnect() { disconnects++; events.get('disconnect')?.(); }, status() { return 'pending'; } };
+  return { ...fixture, node, context, listeners, requests, events, timers, call, connects: () => connects, disconnects: () => disconnects };
 }
-const allowedResult = () => ({ id: 'test-review', allowed: true, expiresAt: new Date(Date.now() + 600000).toISOString(), reasons: [], warnings: ['State policy review pending.'], checks: [] });
-const submit = fixture => fixture.handleCallPreflight({ preventDefault() {} });
 
-test('one submit connects after a successful check, including non-blocking warnings', async () => {
-  const fixture = clientFixture(allowedResult());
-  await submit(fixture);
+test('one click connects with only a phone number and no pre-call dialog', async () => {
+  const fixture = clientFixture();
+  await fixture.placeCall();
   assert.equal(fixture.connects(), 1);
+  assert.equal(fixture.requests[0].path, '/api/console/calls');
+  assert.deepEqual(JSON.parse(fixture.requests[0].options.body), { phone: valid.phone });
   assert.equal(fixture.node('#call-preflight-dialog').open, false);
-  assert.match(fixture.node('#dial-review-notes').innerHTML, /State policy review pending/);
+  assert.equal(fixture.node('#in-call').hidden, false);
+  assert.equal(fixture.state.voice.call, fixture.call);
+  fixture.events.get('ringing')();
+  assert.equal(fixture.node('#in-call-status').textContent, 'Ringing');
+  fixture.events.get('accept')();
+  assert.equal(fixture.node('#in-call-status').textContent, 'Connected');
 });
 
-test('a blocked review leaves the dialog open and never connects', async () => {
-  const fixture = clientFixture({ allowed: false, reasons: ['This number is on the internal do-not-call list.'], warnings: ['State policy review pending.'] }, 409);
-  await submit(fixture);
-  assert.equal(fixture.connects(), 0);
-  assert.equal(fixture.node('#call-preflight-dialog').open, true);
-  assert.match(fixture.node('#preflight-result').innerHTML, /Before you can call/);
-  assert.doesNotMatch(fixture.node('#preflight-result').innerHTML, /State policy review/);
-  assert.match(fixture.node('#preflight-notes').innerHTML, /These do not block/);
-  assert.equal(fixture.node('#preflight-submit').disabled, false);
-});
-
-test('duplicate submits while a check is pending create only one connection', async () => {
+test('double-clicking while the server responds creates one connection', async () => {
   const fixture = clientFixture();
   let resolve;
   fixture.context.fetch = () => new Promise(done => { resolve = done; });
-  const pending = submit(fixture);
-  await submit(fixture);
-  resolve({ ok: true, status: 201, json: async () => allowedResult() });
+  const pending = fixture.placeCall();
+  await fixture.placeCall();
+  resolve({ ok: true, status: 201, json: async () => ({ id: 'manual-session' }) });
   await pending;
   assert.equal(fixture.connects(), 1);
 });
 
-test('validation errors are shown as problems rather than a successful check', async () => {
-  const fixture = clientFixture({ error: 'Choose the recipient state and time zone' }, 400);
-  await submit(fixture);
-  assert.equal(fixture.connects(), 0);
-  assert.match(fixture.node('#preflight-result').innerHTML, /Choose the recipient state and time zone/);
-  assert.doesNotMatch(fixture.node('#preflight-result').innerHTML, /Ready to connect/);
-  assert.equal(fixture.node('#preflight-submit').disabled, false);
-});
-
-test('an incomplete review response never starts a call or claims success', async () => {
-  const fixture = clientFixture({});
-  await submit(fixture);
-  assert.equal(fixture.connects(), 0);
-  assert.match(fixture.node('#preflight-result').innerHTML, /could not be completed/);
-});
-
-test('closing the dialog while checks run prevents a late connection', async () => {
+test('hang-up during the session request prevents a late connection', async () => {
   const fixture = clientFixture();
   let resolve;
   fixture.context.fetch = () => new Promise(done => { resolve = done; });
-  const pending = submit(fixture);
-  fixture.node('#call-preflight-dialog').close();
-  fixture.state.voice.reviewRequest++;
-  resolve({ ok: true, status: 201, json: async () => allowedResult() });
+  const pending = fixture.placeCall();
+  fixture.cancelCall();
+  resolve({ ok: true, status: 201, json: async () => ({ id: 'manual-session' }) });
   await pending;
   assert.equal(fixture.connects(), 0);
+  assert.equal(fixture.node('#in-call').hidden, true);
+  assert.equal(fixture.state.voice.connecting, false);
 });
 
-test('cancelling during connection tears down the pending call', async () => {
-  const fixture = clientFixture(allowedResult());
+test('hang-up while Twilio connects disconnects the late call', async () => {
+  const fixture = clientFixture();
   let resolve;
   fixture.state.voice.device.connect = () => new Promise(done => { resolve = done; });
-  const pending = submit(fixture);
+  const pending = fixture.placeCall();
   while (!resolve) await new Promise(done => setImmediate(done));
-  fixture.node('#call-preflight-dialog').close();
-  resolve({ disconnect() { fixture.state.cancelledConnection = true; } });
+  fixture.cancelCall();
+  resolve(fixture.call);
   await pending;
-  assert.equal(fixture.state.cancelledConnection, true);
+  assert.equal(fixture.disconnects(), 1);
   assert.equal(fixture.state.voice.call, null);
 });
 
-test('live mode hides AI evidence; AI and recording reveal only their own controls', () => {
-  const fixture = clientFixture();
-  fixture.togglePreflightConsentFields();
-  assert.equal(fixture.node('#preflight-ai-fields').hidden, true);
-  assert.equal(fixture.node('#recording-consent-row').hidden, true);
-  fixture.node('#preflight-call-mode').value = 'ai_or_prerecorded';
-  fixture.togglePreflightConsentFields();
-  assert.equal(fixture.node('#preflight-ai-fields').hidden, false);
-  assert.equal(fixture.node('#recording-consent-row').hidden, true);
-  fixture.node('#preflight-call-mode').value = 'live_agent';
-  fixture.node('#preflight-recording-mode').value = 'on';
-  fixture.togglePreflightConsentFields();
-  assert.equal(fixture.node('#preflight-ai-fields').hidden, true);
-  assert.equal(fixture.node('#recording-consent-row').hidden, false);
-});
-
-test('reopening loads saved facts but keeps recording off and permission unchecked', async () => {
-  const fixture = clientFixture({ profile: { recipient_type: 'business', us_state: 'FL', timezone: 'America/New_York', screening_basis: 'business_line_verified', company_name: 'Acme', recording_consent: 1 } }, 200);
-  await fixture.openCallPreflight();
-  assert.equal(fixture.node('#preflight-company').value, 'Acme');
-  assert.equal(fixture.node('#preflight-state').value, 'FL');
-  assert.equal(fixture.node('#preflight-screening').value, 'business_line_verified');
-  assert.equal(fixture.node('#preflight-recording-mode').value, 'off');
-  assert.equal(fixture.node('#preflight-recording-consent').checked, false);
+for (const [name, body, status] of [
+  ['blocked number', { error: 'This number is on the internal do-not-call list.' }, 409],
+  ['paused calling', { error: 'Outbound calling is paused by an administrator.' }, 409],
+  ['incomplete session response', {}, 201],
+]) test(`${name} never connects and restores the dialer`, async () => {
+  const fixture = clientFixture(body, status);
+  await fixture.placeCall();
   assert.equal(fixture.connects(), 0);
+  assert.equal(fixture.node('#in-call').hidden, true);
+  assert.equal(fixture.node('#call-button').disabled, false);
+  assert.equal(fixture.state.voice.connecting, false);
+  assert.equal(fixture.node('#call-preflight-dialog').open, false);
 });
 
-test('dialer shortcuts do not reset or edit an open call form', () => {
+test('changing the dialed number during a call does not misattribute post-call feedback', async () => {
   const fixture = clientFixture();
-  fixture.registerEvents();
-  const keydown = fixture.listeners.get('keydown');
-  keydown({ key: 'Enter' });
-  assert.equal(fixture.state.voice.reviewLoading, false);
-  fixture.context.document.activeElement.tagName = 'BODY';
-  keydown({ key: '7' });
-  assert.equal(fixture.node('#phone-input').value, valid.phone);
+  await fixture.placeCall();
+  fixture.node('#phone-input').value = '+12025550999';
+  fixture.context.fetch = async () => ({ ok: true, status: 200, json: async () => ({ calls: [
+    { id: 'other', twilio_sid: 'CA-other', direction: 'outbound', counterpart: valid.phone },
+    { id: 'current', twilio_sid: 'CA-current', direction: 'outbound', counterpart: valid.phone },
+  ] }) });
+  fixture.call.disconnect();
+  assert.equal(fixture.node('#call-outcome-dialog').open, false);
+  await fixture.timers.at(-1)();
+  assert.equal(fixture.node('#call-event-id').value, 'current');
+  assert.equal(fixture.node('#call-outcome-dialog').open, true);
+});
+
+test('an old call event cannot close a newer call', async () => {
+  const fixture = clientFixture();
+  await fixture.placeCall();
+  const oldDisconnect = fixture.events.get('disconnect');
+  fixture.state.voice.call = { parameters: { CallSid: 'CA-new' } };
+  oldDisconnect();
+  assert.equal(fixture.node('#in-call').hidden, false);
+});
+
+test('invalid number never requests a session', async () => {
+  const fixture = clientFixture();
+  fixture.node('#phone-input').value = 'abc';
+  await fixture.placeCall();
+  assert.equal(fixture.requests.length, 0);
+  assert.equal(fixture.connects(), 0);
 });

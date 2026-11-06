@@ -82,6 +82,6 @@ test('both applications reference blue versioned icons and separate any/maskable
   }
   assert.equal(JSON.parse(read('src/app-meta.json')).favicon_url, `/assets/brand/icon-32.png?v=${version}`);
   const sw = read('public/console/sw.js').toString();
-  assert.match(sw, /bfo-console-v7-blue-brand/);
+  assert.match(sw, /bfo-console-v\d+-[a-z-]+/);
   assert.match(sw, /\/console\/assets\/images\/maskable.png/);
 });

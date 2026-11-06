@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHmac } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import test from 'node:test';
@@ -35,6 +35,8 @@ function fixture(t) {
   sql.prepare(`INSERT INTO call_preflight_logs
     (id,user_id,phone,recipient_type,state_code,timezone,relationship,screening_basis,call_mode,recording_mode,caller_id,seller_identity,decision,agent_attested,expires_at)
     VALUES ('review-1',1,?,'business','FL','America/New_York','existing_customer','business_line_verified','live_agent','off',?,'Better Found Online','allowed',1,'2099-01-01 00:00:00')`).run(phone, callerId);
+  sql.prepare("UPDATE call_compliance_settings SET approved_caller_id=?").run(callerId);
+  sql.prepare("INSERT INTO console_sessions (user_id,token_hash,expires_at) VALUES (1,?,'2099-01-01 00:00:00')").run(createHash('sha256').update('test-session').digest('base64url'));
   const DB = { prepare(query) {
     let values = [];
     return {
@@ -128,4 +130,74 @@ test('signed call status updates are accepted using the same validator', async t
   const row = sql.prepare('SELECT status,duration_seconds FROM outreach_events').get();
   assert.equal(row.status, 'completed');
   assert.equal(row.duration_seconds, 24);
+});
+
+async function manualCall(env, body = { phone }, headers = {}) {
+  return handleConsoleApi(new Request('https://console.example.test/api/console/calls', {
+    method: 'POST', headers: { authorization: 'Bearer test-session', 'content-type': 'application/json', ...headers }, body: JSON.stringify(body),
+  }), env);
+}
+
+test('manual dial needs only a number and connects through the signed webhook with real schema', async t => {
+  const { env, sql } = fixture(t);
+  sql.exec("UPDATE call_compliance_settings SET default_window_start=1440; UPDATE call_state_policies SET status='blocked'");
+  const response = await manualCall(env);
+  assert.equal(response.status, 201, await response.clone().text());
+  const session = await response.json();
+  const saved = sql.prepare('SELECT * FROM call_preflight_logs WHERE id=?').get(session.id);
+  assert.equal(saved.recipient_type, 'unknown');
+  assert.equal(saved.state_code, null);
+  assert.equal(saved.timezone, '');
+  assert.equal(saved.screening_basis, 'not_screened');
+  assert.equal(saved.agent_attested, 0);
+  assert.equal(saved.call_mode, 'live_agent');
+  assert.equal(saved.recording_mode, 'off');
+  assert.equal(sql.prepare('SELECT COUNT(*) AS count FROM call_recipient_profiles').get().count, 0);
+  const callback = await handleConsoleApi(request(form({ PreflightId: session.id })), env);
+  assert.equal(callback.status, 200);
+  assert.match(await callback.text(), /<Dial/);
+  assert.equal(sql.prepare('SELECT call_preflight_id FROM outreach_events').get().call_preflight_id, session.id);
+});
+
+test('manual dial cannot opt itself into recording, AI voice, or another caller ID', async t => {
+  const { env, sql } = fixture(t);
+  const response = await manualCall(env, { phone, callMode: 'ai_or_prerecorded', recordingMode: 'on', callerId: '+12025550999' });
+  const session = await response.json();
+  assert.equal(response.status, 201);
+  const saved = sql.prepare('SELECT call_mode,recording_mode,caller_id FROM call_preflight_logs WHERE id=?').get(session.id);
+  assert.deepEqual({ ...saved }, { call_mode: 'live_agent', recording_mode: 'off', caller_id: callerId });
+});
+
+for (const [name, setup, body, status] of [
+  ['invalid number', () => {}, { phone: 'bad' }, 400],
+  ['workspace pause', sql => sql.exec('UPDATE call_compliance_settings SET calls_enabled=0'), { phone }, 409],
+  ['saved do-not-call', sql => sql.prepare("INSERT INTO console_suppressions (phone,reason,source) VALUES (?,'Requested','test')").run(phone), { phone }, 409],
+  ['recipient marked do-not-call', sql => sql.prepare("INSERT INTO call_recipient_profiles (phone,screening_basis) VALUES (?,'listed_do_not_call')").run(phone), { phone }, 409],
+  ['missing caller ID', sql => sql.exec("UPDATE call_compliance_settings SET approved_caller_id='invalid'"), { phone }, 503],
+]) test(`manual dial rejects ${name} without issuing a session`, async t => {
+  const { env, sql } = fixture(t);
+  setup(sql);
+  const response = await manualCall(env, body);
+  assert.equal(response.status, status, await response.clone().text());
+  assert.equal(sql.prepare('SELECT COUNT(*) AS count FROM call_preflight_logs').get().count, 1);
+});
+
+test('manual dial requires authentication and rejects cross-origin requests', async t => {
+  const { env } = fixture(t);
+  assert.equal((await manualCall(env, { phone }, { authorization: '' })).status, 401);
+  assert.equal((await manualCall(env, { phone }, { origin: 'https://other.example.test' })).status, 403);
+});
+
+for (const [name, setup] of [
+  ['workspace paused after session creation', sql => sql.exec('UPDATE call_compliance_settings SET calls_enabled=0')],
+  ['recipient marked do-not-call after session creation', sql => sql.prepare("INSERT INTO call_recipient_profiles (phone,screening_basis) VALUES (?,'listed_do_not_call')").run(phone)],
+]) test(`signed webhook refuses ${name}`, async t => {
+  const { env, sql } = fixture(t);
+  const session = await (await manualCall(env)).json();
+  assert.ok(session.id);
+  setup(sql);
+  const response = await handleConsoleApi(request(form({ PreflightId: session.id })), env);
+  assert.equal(response.status, 200);
+  assert.doesNotMatch(await response.text(), /<Dial/);
+  assert.equal(sql.prepare('SELECT COUNT(*) AS count FROM outreach_events').get().count, 0);
 });

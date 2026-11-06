@@ -1,4 +1,4 @@
-const CACHE_NAME = "bfo-console-v7-blue-brand";
+const CACHE_NAME = "bfo-console-v8-direct-calling";
 const STATIC_ASSETS = [
   "/console/assets/css/admin.css",
   "/console/assets/js/admin.js",
